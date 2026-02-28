@@ -1,13 +1,13 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Home extends CI_Controller {
+class Product extends CI_Controller {
 
 	public function index(){
 		
 		$data = [
-			"navbar" => "home",
-			"main" => "home",
+			"navbar" => "product",
+			"main" => "product",
 		];
 		
 		$this->load->view('layout', $data);
