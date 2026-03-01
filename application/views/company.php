@@ -1,4 +1,6 @@
-  <div class="row feature-section feature-style-2">
+<section id="services" class="feature-section feature-style-2">
+      <div class="container">
+        <div class="row">
           <div class="col-lg-8">
             <div class="row">
               <div class="col-xl-7 col-lg-10 col-md-9">
@@ -58,3 +60,9 @@
 
           </div>
         </div>
+      </div>
+      <div class="feature-img wow fadeInLeft" data-wow-delay=".2s">
+        <img src="assets/img/feature/feature-2-1.svg" alt="">
+      </div>
+    </section>
+	

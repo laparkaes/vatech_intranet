@@ -1,4 +1,6 @@
-  <div class="row contact-section contact-style-6">
+ <section id="contact" class="contact-section contact-style-6">
+      <div class="container">
+        <div class="row">
           <div class="col-lg-7">
             <div class="contact-form-wrapper">
               <form action="assets/php/contact.php" method="POST">
@@ -90,4 +92,6 @@
             </div>
           </div>
         </div>
-     
+      </div>
+    </section>
+   

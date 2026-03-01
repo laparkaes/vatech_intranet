@@ -1,5 +1,6 @@
-
-        <div class="row justify-content-center pricing-section pricing-style-1 bg-white">
+	<section id="pricing" class="pricing-section pricing-style-1 bg-white">
+      <div class="container">
+        <div class="row justify-content-center">
           <div class="col-xxl-5 col-xl-5 col-lg-7 col-md-10">
             <div class="section-title text-center mb-60">
               <h3 class="mb-15 wow fadeInUp" data-wow-delay=".2s">Pricing Plan</h3>
@@ -8,7 +9,7 @@
           </div>
         </div>
 
-        <div class="row justify-content-center pricing-section pricing-style-1 bg-white">
+        <div class="row justify-content-center">
           <div class="col-lg-4 col-md-8 col-sm-10">
             <div class="single-pricing wow fadeInUp" data-wow-delay=".2s">
               <div class="image">
@@ -62,3 +63,7 @@
             </div>
           </div>
         </div>
+
+      </div>
+    </section>
+   
