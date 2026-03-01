@@ -9,8 +9,9 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<link href="<?= base_url() ?>assets/img/favicon.ico" rel="icon">
 		
-		<link href="https://fonts.googleapis.com/css2?family=Raleway:wght@200;300;400;500;700&display=swap" rel="stylesheet">
-		<link href="<?= base_url() ?>assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Raleway:wght@200;300;400;500;700&display=swap">
+		<link rel="stylesheet" href="<?= base_url() ?>assets/vendor/bootstrap/css/bootstrap.min.css">
+		<link rel="stylesheet" href="<?= base_url() ?>assets/vendor/bootstrap-icons/bootstrap-icons.css">
 		<link rel="stylesheet" href="<?= base_url() ?>assets/css/LineIcons.2.0.css"/>
 		<link rel="stylesheet" href="<?= base_url() ?>assets/css/animate.css"/>
 		<link rel="stylesheet" href="<?= base_url() ?>assets/css/vpe.css"/>
