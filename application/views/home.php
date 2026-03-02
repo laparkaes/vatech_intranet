@@ -43,7 +43,7 @@
 		</div>
 	</div>
 </div>
-<section class="section_feature pb-3">
+<section class="section_feature">
 	<div class="container">
 		<div class="row">
 		<div class="col-md-4">
@@ -81,25 +81,21 @@
 		</div>
 	</div>
 </section>
-		
-		
-		
-          <div class="row align-items-end">
-            <div class="col-lg-6">
-              <div class="hero-content-wrapper">
-                <h4 class="wow fadeInUp" data-wow-delay=".2s">You're Using</h4>
-                <h2 class="mb-30 wow fadeInUp" data-wow-delay=".4s">Free Lite Version of Template</h2>
-                <p class="mb-50 wow fadeInUp" data-wow-delay=".6s">Please, purchase full version of the template to get all sections, features and permission to remove footer credit</p>
-                <div class="buttons">
-                  <a href="https://rebrand.ly/flat-ud/" rel="nofollow" target="blank" class="button button-lg radius-10 wow fadeInUp" data-wow-delay=".7s">Purchase Now</a>
-                </div>
-              </div>
-            </div>
-            <div class="col-lg-6">
-              <div class="hero-image text-center">
-				<img src="<?= base_url() ?>resource/image/home_product.png" class="wow fadeInRight" data-wow-delay=".2s" alt="image" />
-              </div>
-            </div>
-          </div>
-        </div>
-      
+<section class="section_feature bg_section py-0">
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-6 d-flex align-items-center">
+				<div class="hero-content-wrapper">
+					<h3 class="mb-30 wow fadeInUp" data-wow-delay=".2s">Explore nuestro Portafolio</h3>
+					<p class="mb-50 wow fadeInUp" data-wow-delay=".6s">Encuentre la solución perfecta para sus necesidades diagnósticas.</p>
+					<a href="#" rel="nofollow" target="blank" class="button button-lg radius-10 wow fadeInUp" data-wow-delay=".7s">Ver Productos</a>
+				</div>
+			</div>
+			<div class="col-lg-6">
+				<div class="hero-image text-end">
+					<img src="<?= base_url() ?>resource/image/home_product.png" class="wow fadeInRight" data-wow-delay=".2s" alt="image" />
+				</div>
+			</div>
+		</div>
+	</div>
+</section>

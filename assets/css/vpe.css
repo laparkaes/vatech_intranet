@@ -2652,3 +2652,8 @@ input:focus, textarea:focus, button:focus {
   font-style: oblique;
   bottom: 7rem;
 }
+
+/* common */
+.bg_section{
+  background-color: #fcfcfc;
+}
