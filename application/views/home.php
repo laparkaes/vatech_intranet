@@ -43,7 +43,7 @@
 		</div>
 	</div>
 </div>
-<section class="section_feature">
+<section class="section_feature pb-3">
 	<div class="container">
 		<div class="row">
 		<div class="col-md-4">
@@ -96,7 +96,7 @@
               </div>
             </div>
             <div class="col-lg-6">
-              <div class="hero-image">
+              <div class="hero-image text-center">
 				<img src="<?= base_url() ?>resource/image/home_product.png" class="wow fadeInRight" data-wow-delay=".2s" alt="image" />
               </div>
             </div>
