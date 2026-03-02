@@ -35,8 +35,8 @@
 		</div>
 	</div>
 	
-	<section class="hero-section-wrapper-2">
-		<header class="header header-2">
+	<section class="vpe_section">
+		<header class="vpe_header">
 			<div class="navbar-area">
 				<div class="container">
 					<div class="row align-items-center">

@@ -41,15 +41,46 @@
 				<span class="visually-hidden">Next</span>
 			</button>
 		</div>
-				
-				
+	</div>
+</div>
+<section class="section_feature">
+	<div class="container">
+		<div class="row">
+		<div class="col-md-4">
+			<div class="single-feature wow fadeInUp" data-wow-delay=".2s">
+				<div class="icon">
+					<img src="<?= base_url() ?>resource/icon/x-ray.png" alt="icon" />
+				</div>
+				<div class="content">
+					<h5 class="mb-25">RADIOLOGÍA DENTAL</h5>
+					<p>Brindamos radiografía dental digital 2D y 3D<br/>de alta precisión.</p>
 				</div>
 			</div>
- 
- <section class="hero-section hero-style-2 pt-5">
-        <div class="container">
-		
-		
+		</div>
+		<div class="col-md-4">
+			<div class="single-feature wow fadeInUp" data-wow-delay=".4s">
+				<div class="icon">
+					<img src="<?= base_url() ?>resource/icon/ranking.png" alt="icon" />
+				</div>
+				<div class="content">
+					<h5 class="mb-25">EL LÍDER GLOBAL</h5>
+					<p>Lideramos el mercado global con presencia<br/>en más de 70 países.</p>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-4">
+			<div class="single-feature wow fadeInUp" data-wow-delay=".6s">
+				<div class="icon">
+					<img src="<?= base_url() ?>resource/icon/korea-flag.png" alt="icon" />
+				</div>
+				<div class="content">
+					<h5 class="mb-25">TECNOLOGÍA COREANA</h5>
+					<p>Fabricamos todos los productos en Corea del Sur<br/>con la más alta tecnología innovadora.</p>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
 		
 		
 		
@@ -66,10 +97,9 @@
             </div>
             <div class="col-lg-6">
               <div class="hero-image">
-                <img src="assets/img/hero/hero-2/hero-img.svg" alt="" class="wow fadeInRight" data-wow-delay=".2s">
-                <img src="assets/img/hero/hero-2/paattern.svg" alt="" class="shape shape-1">
+				<img src="<?= base_url() ?>resource/image/home_product.png" class="wow fadeInRight" data-wow-delay=".2s" alt="image" />
               </div>
             </div>
           </div>
         </div>
-      </section>
+      

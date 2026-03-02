@@ -1,4 +1,4 @@
-<section id="services" class="feature-section feature-style-2">
+<section id="services" class="feature-style-2">
       <div class="container">
         <div class="row">
           <div class="col-lg-8">
