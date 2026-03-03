@@ -93,7 +93,93 @@
 			</div>
 			<div class="col-lg-6">
 				<div class="hero-image text-end">
-					<img src="<?= base_url() ?>resource/image/home_product.png" class="wow fadeInRight" data-wow-delay=".2s" alt="image" />
+					<img src="<?= base_url() ?>resource/image/product/label.png" class="wow fadeInRight" data-wow-delay=".2s" alt="image" />
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+<section class="section_feature product_portfolio bg-white">
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-4 col-md-8 col-sm-10">
+				<div class="single_portfolio wow fadeInUp" data-wow-delay=".2s">
+					<div class="image">
+						<img src="<?= base_url() ?>resource/image/product/3d_green_x.png" class="wow fadeInRight" data-wow-delay=".2s" alt="image" />
+					</div>
+					<h5>Sistema de imagen 3D</h5>
+					<ul>
+						<li> <i class="lni lni-checkmark-circle"></i> Tecnología de vanguardia</li>
+						<li> <i class="lni lni-checkmark-circle"></i> Gran campo de visión</li>
+						<li> <i class="lni lni-checkmark-circle"></i> Proceso de reconstrucción rápido</li>
+					</ul>
+					<a href="#0" class="button radius-30">Ver más</a>
+				</div>
+			</div>
+			<div class="col-lg-4 col-md-8 col-sm-10">
+				<div class="single_portfolio wow fadeInUp" data-wow-delay=".2s">
+					<div class="image">
+						<img src="<?= base_url() ?>resource/image/product/2d_pax_i_plus.png" class="wow fadeInRight" data-wow-delay=".2s" alt="image" />
+					</div>
+					<h5>Sistema de imagen 2D</h5>
+					<ul>
+						<li> <i class="lni lni-checkmark-circle"></i> Imágenes panorámicas de alta resolución</li>
+						<li> <i class="lni lni-checkmark-circle"></i> Cefalometría ultra rápida</li>
+						<li> <i class="lni lni-checkmark-circle"></i> Precisión diagnóstica superior</li>
+					</ul>
+					<a href="#0" class="button radius-30">Ver más</a>
+				</div>
+			</div>
+			<div class="col-lg-4 col-md-8 col-sm-10">
+				<div class="single_portfolio wow fadeInUp" data-wow-delay=".2s">
+					<div class="image">
+						<img src="<?= base_url() ?>resource/image/product/sensor_ez_sensor_hd.png" class="wow fadeInRight" data-wow-delay=".2s" alt="image" />
+					</div>
+					<h5>Intraoral / Sensor</h5>
+					<ul>
+						<li> <i class="lni lni-checkmark-circle"></i> Innovador diseño flexible y suave</li>
+						<li> <i class="lni lni-checkmark-circle"></i> Diseño ergonómico y cómodo</li>
+						<li> <i class="lni lni-checkmark-circle"></i> Durabilidad extrema y alta resistencia</li>
+					</ul>
+					<a href="#0" class="button radius-30">Ver más</a>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+<section class="section_feature pt-0">
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-6">
+				<div class="text-center">
+					<img src="<?= base_url() ?>resource/image/product/software_ez3d.png" class="wow fadeInRight" data-wow-delay=".2s" alt="image" />
+				</div>
+			</div>
+			<div class="col-lg-6">
+				<h3 class="text-center mb-15">Software</h3>
+				<p style="text-align: justify;">Optimiza tu clínica con nuestros software para radiografía dental digital.<br/><br/>Descubre herramientas intuitivas como EzDent-i y Ez3D-i, diseñadas para agilizar tu trabajo, mejorar el diagnóstico y ofrecer una experiencia excepcional tanto para ti como para tus pacientes.</p>
+				<div class="text-center mt-5">
+					<a href="#0" class="button radius-30">Quiero conocer</a>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<section class="section_feature bg_section">
+	<div class="container">
+		<div class="row justify-content-center">
+			<div class="col">
+				<div class="text-center mb-60">
+					<h3 class="text-color mb-15 wow fadeInUp" data-wow-delay=".2s">Vatech, expandiéndose por el mundo</h3>
+					<p class="wow fadeInUp" data-wow-delay=".4s">Llevamos soluciones de diagnóstico dental de alta precisión a más de 70 países, creciendo junto a nuestros clientes!</p>
+				</div>
+			</div>
+		</div>
+		<div class="row justify-content-center">
+			<div class="col">
+				<div class="text-center">
+					<img src="<?= base_url() ?>resource/image/worldwide.png" alt="">
 				</div>
 			</div>
 		</div>

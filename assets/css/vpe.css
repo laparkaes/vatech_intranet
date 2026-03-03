@@ -37,6 +37,10 @@ button {
   }
 }
 
+.text-color{
+	color: #d90c30;
+}
+
 /* ============ scroll-top =============== */
 .scroll-top {
   width: 45px;
@@ -966,94 +970,91 @@ p {
   margin-bottom: 20px;
 }
 
-/* ============================= 
-    PRICING-1 CSS
-================================ */
-.pricing-style-1 {
+/* product_portfolio */
+
+.product_portfolio {
   padding: 100px 0 60px;
   background: #F3F3F3;
 }
 
-.pricing-style-1 .single-pricing {
+.product_portfolio .single_portfolio {
   background: #ffffff;
   border-radius: 40px;
-  box-shadow: 0px 5px 25px rgba(218, 211, 211, 0.3);
   margin-bottom: 40px;
   padding: 45px 40px;
   border: 1px solid transparent;
   transition: all 0.3s ease-out 0s;
   position: relative;
+  text-align: center;
 }
 
 @media only screen and (min-width: 992px) and (max-width: 1199px) {
-  .pricing-style-1 .single-pricing {
+  .product_portfolio .single_portfolio {
     padding: 45px 25px;
   }
 }
 
-.pricing-style-1 .single-pricing .popular-badge {
+.product_portfolio .single_portfolio .popular-badge {
   position: absolute;
   top: 45px;
   right: 35px;
 }
 
 @media only screen and (min-width: 992px) and (max-width: 1199px) {
-  .pricing-style-1 .single-pricing .popular-badge {
+  .product_portfolio .single_portfolio .popular-badge {
     right: 20px;
   }
 }
 
-.pricing-style-1 .single-pricing.active, .pricing-style-1 .single-pricing:hover {
+.product_portfolio .single_portfolio.active, .product_portfolio .single_portfolio:hover {
   border-color: #d90c30;
 }
 
-.pricing-style-1 .single-pricing .image {
-  width: 120px;
-  height: 120px;
-  background: #EBF4FF;
-  border-radius: 50%;
+.product_portfolio .single_portfolio .image {
+  width: 100%;
   margin-bottom: 30px;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-.pricing-style-1 .single-pricing .image img {
+.product_portfolio .single_portfolio .image img {
   max-width: 100%;
 }
 
-.pricing-style-1 .single-pricing h6 {
+.product_portfolio .single_portfolio h6 {
   color: #585978;
   margin-bottom: 15px;
 }
 
 @media only screen and (min-width: 992px) and (max-width: 1199px) {
-  .pricing-style-1 .single-pricing h6 {
+  .product_portfolio .single_portfolio h6 {
     font-size: 16px;
   }
 }
 
-.pricing-style-1 .single-pricing h4 {
+.product_portfolio .single_portfolio h4 {
   margin-bottom: 20px;
   font-weight: 500;
 }
 
 @media only screen and (min-width: 992px) and (max-width: 1199px) {
-  .pricing-style-1 .single-pricing h4 {
+  .product_portfolio .single_portfolio h4 {
     font-size: 24px;
   }
 }
 
-.pricing-style-1 .single-pricing h3 {
+.product_portfolio .single_portfolio h5 {
   margin-bottom: 18px;
   color: #d90c30;
+  text-align: center;
 }
 
-.pricing-style-1 .single-pricing ul {
+.product_portfolio .single_portfolio ul {
   margin-bottom: 30px;
 }
 
-.pricing-style-1 .single-pricing ul li {
+.product_portfolio .single_portfolio ul li {
   display: flex;
   align-items: center;
   font-size: 16px;
@@ -1061,7 +1062,7 @@ p {
   margin-bottom: 12px;
 }
 
-.pricing-style-1 .single-pricing ul li i {
+.product_portfolio .single_portfolio ul li i {
   color: #d90c30;
   margin-right: 10px;
 }
