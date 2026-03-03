@@ -16,7 +16,7 @@
 		<link rel="stylesheet" href="<?= base_url() ?>assets/css/animate.css"/>
 		<link rel="stylesheet" href="<?= base_url() ?>assets/css/vpe.css"/>
 	</head>
-	<body>
+	<body class="overflow-x-hidden">
     
     <div class="preloader">
 		<div class="loader">

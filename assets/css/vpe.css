@@ -1070,34 +1070,34 @@ p {
 /* ============================= 
     ABOUT-3 CSS
 ================================ */
-.about-style-3 {
+.numone_style {
   background: #f3f3f3;
   padding: 100px 0;
 }
 
 @media only screen and (min-width: 768px) and (max-width: 991px), (max-width: 767px) {
-  .about-style-3 .about-image {
+  .numone_style .numone-image {
     margin-bottom: 50px;
   }
 }
 
-.about-style-3 .about-image img {
+.numone_style .numone-image img {
   max-width: 100%;
 }
 
 @media only screen and (min-width: 1400px) {
-  .about-style-3 .about-content-wrapper {
+  .numone_style .numone-content-wrapper {
     margin-left: 85px;
   }
 }
 
 @media only screen and (min-width: 1200px) and (max-width: 1399px) {
-  .about-style-3 .about-content-wrapper {
+  .numone_style .numone-content-wrapper {
     margin-left: 50px;
   }
 }
 
-.about-style-3 .about-content-wrapper .counter-up-wrapper {
+.numone_style .numone-content-wrapper .counter-up-wrapper {
   background: #EAEAEA;
   border-radius: 5px;
   padding: 20px 0px;
@@ -1107,22 +1107,22 @@ p {
   flex-wrap: wrap;
 }
 
-.about-style-3 .about-content-wrapper .counter-up-wrapper .single-counter {
+.numone_style .numone-content-wrapper .counter-up-wrapper .single-counter {
   text-align: center;
   position: relative;
 }
 
 @media (max-width: 767px) {
-  .about-style-3 .about-content-wrapper .counter-up-wrapper .single-counter {
+  .numone_style .numone-content-wrapper .counter-up-wrapper .single-counter {
     padding: 10px;
   }
 }
 
-.about-style-3 .about-content-wrapper .counter-up-wrapper .single-counter:last-child::after {
+.numone_style .numone-content-wrapper .counter-up-wrapper .single-counter:last-child::after {
   display: none;
 }
 
-.about-style-3 .about-content-wrapper .counter-up-wrapper .single-counter::after {
+.numone_style .numone-content-wrapper .counter-up-wrapper .single-counter::after {
   content: '';
   position: absolute;
   height: 100%;
@@ -1133,34 +1133,34 @@ p {
 }
 
 @media only screen and (min-width: 768px) and (max-width: 991px) {
-  .about-style-3 .about-content-wrapper .counter-up-wrapper .single-counter::after {
+  .numone_style .numone-content-wrapper .counter-up-wrapper .single-counter::after {
     right: -60px;
   }
 }
 
 @media (max-width: 767px) {
-  .about-style-3 .about-content-wrapper .counter-up-wrapper .single-counter::after {
+  .numone_style .numone-content-wrapper .counter-up-wrapper .single-counter::after {
     display: none;
   }
 }
 
-.about-style-3 .about-content-wrapper .counter-up-wrapper .single-counter h4 {
+.numone_style .numone-content-wrapper .counter-up-wrapper .single-counter h4 {
   margin-bottom: 10px;
 }
 
 @media only screen and (min-width: 992px) and (max-width: 1199px), (max-width: 767px) {
-  .about-style-3 .about-content-wrapper .counter-up-wrapper .single-counter h4 {
+  .numone_style .numone-content-wrapper .counter-up-wrapper .single-counter h4 {
     font-size: 24px;
   }
 }
 
-.about-style-3 .about-content-wrapper .counter-up-wrapper .single-counter h6 {
+.numone_style .numone-content-wrapper .counter-up-wrapper .single-counter h6 {
   color: #585978;
   font-weight: 500;
 }
 
 @media only screen and (min-width: 992px) and (max-width: 1199px), (max-width: 767px) {
-  .about-style-3 .about-content-wrapper .counter-up-wrapper .single-counter h6 {
+  .numone_style .numone-content-wrapper .counter-up-wrapper .single-counter h6 {
     font-size: 16px;
   }
 }

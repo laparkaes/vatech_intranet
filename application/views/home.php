@@ -46,36 +46,37 @@
 <section class="section_feature">
 	<div class="container">
 		<div class="row">
-		<div class="col-md-4">
-			<div class="single-feature wow fadeInUp" data-wow-delay=".2s">
-				<div class="icon">
-					<img src="<?= base_url() ?>resource/icon/x-ray.png" alt="icon" />
-				</div>
-				<div class="content">
-					<h5 class="mb-25">RADIOLOGÍA DENTAL</h5>
-					<p>Brindamos radiografía dental digital 2D y 3D<br/>de alta precisión.</p>
-				</div>
-			</div>
-		</div>
-		<div class="col-md-4">
-			<div class="single-feature wow fadeInUp" data-wow-delay=".4s">
-				<div class="icon">
-					<img src="<?= base_url() ?>resource/icon/ranking.png" alt="icon" />
-				</div>
-				<div class="content">
-					<h5 class="mb-25">EL LÍDER GLOBAL</h5>
-					<p>Lideramos el mercado global con presencia<br/>en más de 70 países.</p>
+			<div class="col-md-4">
+				<div class="single-feature wow fadeInUp" data-wow-delay=".2s">
+					<div class="icon">
+						<img src="<?= base_url() ?>resource/icon/x-ray.png" alt="icon" />
+					</div>
+					<div class="content">
+						<h5 class="mb-25">RADIOLOGÍA DENTAL</h5>
+						<p>Brindamos radiografía dental digital 2D y 3D<br/>de alta precisión.</p>
+					</div>
 				</div>
 			</div>
-		</div>
-		<div class="col-md-4">
-			<div class="single-feature wow fadeInUp" data-wow-delay=".6s">
-				<div class="icon">
-					<img src="<?= base_url() ?>resource/icon/korea-flag.png" alt="icon" />
+			<div class="col-md-4">
+				<div class="single-feature wow fadeInUp" data-wow-delay=".4s">
+					<div class="icon">
+						<img src="<?= base_url() ?>resource/icon/ranking.png" alt="icon" />
+					</div>
+					<div class="content">
+						<h5 class="mb-25">EL LÍDER GLOBAL</h5>
+						<p>Lideramos el mercado global con presencia<br/>en más de 100 países.</p>
+					</div>
 				</div>
-				<div class="content">
-					<h5 class="mb-25">TECNOLOGÍA COREANA</h5>
-					<p>Fabricamos todos los productos en Corea del Sur<br/>con la más alta tecnología innovadora.</p>
+			</div>
+			<div class="col-md-4">
+				<div class="single-feature wow fadeInUp" data-wow-delay=".6s">
+					<div class="icon">
+						<img src="<?= base_url() ?>resource/icon/korea-flag.png" alt="icon" />
+					</div>
+					<div class="content">
+						<h5 class="mb-25">TECNOLOGÍA COREANA</h5>
+						<p>Fabricamos todos los productos en Corea del Sur<br/>con la más alta tecnología innovadora.</p>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -165,7 +166,6 @@
 		</div>
 	</div>
 </section>
-
 <section class="section_feature bg_section">
 	<div class="container">
 		<div class="row justify-content-center">
