@@ -58,24 +58,14 @@
 			<div class="col-lg-6">
 				<div class="numone-content-wrapper">
 					<div class="section-title mb-40">
-						<h3 class="mb-25 wow fadeInUp" data-wow-delay=".2s">The future of designing starts here</h3>
-						<p class="wow fadeInUp" data-wow-delay=".4s">Stop wasting time and money designing and managing a website that doesn’t get results. Happiness guaranteed, Stop wasting time and money designing and managing a website that doesn’t get results. Happiness guaranteed,</p>
-						
-						No. 1 en cuota de mercado de rayos X dentales en Corea del Sur.
-
-No. 1 en ventas de equipos de diagnóstico dental 3D a nivel mundial.
-
-No. 1 en participación de mercado mundial de sensores intraorales.
-
-No. 1 en cuota de mercado de rayos X 3D en los Estados Unidos.
-
-No. 1 en preferencia mundial de software de diagnóstico por imágenes dentales.
-
-No. 1 en cuota de mercado de rayos X dentales en el Sudeste Asiático.
-
-No. 1 en cuota de mercado de equipos de rayos X 2D en China.
-						
-						
+						<h3 class="mb-25 wow fadeInUp" data-wow-delay=".2s">Nos identificamos como el líder del mercado global</h3>
+						<p class="wow fadeInUp" data-wow-delay=".4s"><strong>No. 1</strong> en preferencia mundial de software de diagnóstico.</p>
+						<p class="wow fadeInUp" data-wow-delay=".4s"><strong>No. 1</strong> en participación de mercado de rayos X dentales en Corea del Sur.</p>
+						<p class="wow fadeInUp" data-wow-delay=".4s"><strong>No. 1</strong> en participación de mercado de rayos X 3D en los Estados Unidos.</p>
+						<p class="wow fadeInUp" data-wow-delay=".4s"><strong>No. 1</strong> en participación de mercado de rayos X 3D en México.</p>
+						<p class="wow fadeInUp" data-wow-delay=".4s"><strong>No. 1</strong> en participación de mercado de equipos de rayos X 2D en China.</p>
+						<p class="wow fadeInUp" data-wow-delay=".4s"><strong>No. 1</strong> en participación de mercado mundial de sensores intraorales.</p>
+						<p class="wow fadeInUp" data-wow-delay=".4s"><strong>No. 1</strong> en ventas de equipos de diagnóstico dental 3D a nivel mundial.</p>
 					</div>
 					<div class="counter-up-wrapper mb-40 wow fadeInUp" data-wow-delay=".6s">
 						<div class="single-counter">
