@@ -52,7 +52,7 @@
         <div class="row align-items-center">
           <div class="col-lg-6">
             <div class="numone-image wow fadeInLeft" data-wow-delay=".2s">
-              <img src="assets/img/about/about-3/about-img.jpg" alt="">
+              <img src="<?= base_url() ?>resource/image/numberone.png" alt="number one" />
             </div>
           </div>
           <div class="col-lg-6">
