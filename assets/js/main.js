@@ -15,7 +15,7 @@
 
 
     window.onscroll = function () {
-        var header_navbar = document.querySelector(".hero-section-wrapper-2 .header");
+        var header_navbar = document.querySelector(".vpe_section .vpe_header");
         var sticky = header_navbar.offsetTop;
 
         if (window.pageYOffset > sticky) {

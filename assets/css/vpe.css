@@ -375,7 +375,6 @@ p {
 }
 
 .vpe_header .navbar {
-  padding: 20px 0;
   border-radius: 0px;
   position: relative;
   transition: all 0.3s ease-out 0s;
@@ -927,28 +926,27 @@ p {
   max-width: 100%;
 }
 
-/* ============================= 
-    TEAM-1 CSS
-================================ */
-.team-style-1 {
+/* distributor */
+
+.section_distributor {
   padding: 100px 0 70px;
-  background: #e5e5e5;
 }
 
-.team-style-1 .single-team {
+.section_distributor .item_distributor {
   background: #ffffff;
   border-radius: 10px;
   padding: 30px;
   text-align: center;
   margin-bottom: 30px;
   transition: all 0.3s ease-out 0s;
+  border: 1px solid #d90c30;
 }
 
-.team-style-1 .single-team:hover {
-  box-shadow: 0px 5px 25px rgba(47, 128, 237, 0.3);
+.section_distributor .item_distributor:hover {
+  box-shadow: 0px 5px 25px rgb(226, 72, 99, 0.3);
 }
 
-.team-style-1 .single-team .image {
+.section_distributor .item_distributor .image {
   max-width: 300px;
   width: 100%;
   border-radius: 50%;
@@ -957,17 +955,17 @@ p {
   margin-bottom: 25px;
 }
 
-.team-style-1 .single-team .image img {
+.section_distributor .item_distributor .image img {
   width: 100%;
 }
 
-.team-style-1 .single-team .info h6 {
+.section_distributor .item_distributor .info h6 {
   font-weight: 600;
   margin-bottom: 10px;
 }
 
-.team-style-1 .single-team .info p {
-  margin-bottom: 20px;
+.section_distributor .item_distributor .info p {
+  margin-bottom: 10px;
 }
 
 /* product_portfolio */
@@ -1533,7 +1531,8 @@ p {
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  color: #ffffff;
+  color: #fff;
+  background-color: #d90c30;
   display: flex;
   justify-content: center;
   align-items: center;

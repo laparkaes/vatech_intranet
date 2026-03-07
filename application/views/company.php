@@ -69,16 +69,12 @@
 					</div>
 					<div class="counter-up-wrapper mb-40 wow fadeInUp" data-wow-delay=".6s">
 						<div class="single-counter">
-							<h4 class="countup" id="secondo1" cup-end="123" cup-append="M">123 M</h4>
-							<h6>Happy Client</h6>
+							<h4 class="countup" id="secondo1" cup-end="100" cup-append="">219</h4>
+							<h6>Distribuidores en el mundo</h6>
 						</div>
 						<div class="single-counter">
-							<h4 class="countup" id="secondo2" cup-end="1434" cup-append="K">1434 K</h4>
-							<h6>Project Done</h6>
-						</div>
-						<div class="single-counter">
-							<h4 class="countup" id="secondo3" cup-end="134" cup-append="K">134 K</h4>
-							<h6>Award Win</h6>
+							<h4 class="countup" id="secondo2" cup-end="18" cup-append="">18</h4>
+							<h6>Sedes Internacionales</h6>
 						</div>
 					</div>
 				</div>
@@ -86,14 +82,6 @@
 		</div>
 	</div>
 </section>
-
-<section id="about" class="about-section about-style-3">
-      <div class="container">
-      </div>
-    </section>
-
-
-
 
 <section class="section_feature">
 	<div class="container">

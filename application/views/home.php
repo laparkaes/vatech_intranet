@@ -110,9 +110,9 @@
 					</div>
 					<h5>Sistema de imagen 3D</h5>
 					<ul>
-						<li> <i class="lni lni-checkmark-circle"></i> Tecnología de vanguardia</li>
-						<li> <i class="lni lni-checkmark-circle"></i> Gran campo de visión</li>
-						<li> <i class="lni lni-checkmark-circle"></i> Proceso de reconstrucción rápido</li>
+						<li> <i class="bi bi-check-circle"></i> Tecnología de vanguardia</li>
+						<li> <i class="bi bi-check-circle"></i> Gran campo de visión</li>
+						<li> <i class="bi bi-check-circle"></i> Proceso de reconstrucción rápido</li>
 					</ul>
 					<a href="#0" class="button radius-30">Ver más</a>
 				</div>
