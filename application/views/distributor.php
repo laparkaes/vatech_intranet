@@ -17,7 +17,7 @@
 				<p class="text-start mt-3"><i class="bi bi-telephone"></i> +51 1 476 2236</p>
 				<p class="text-start"><i class="bi bi-envelope"></i> teo@htdent.com</p>
 				<p class="text-start"><i class="bi bi-envelope"></i> ventas@digident.com.pe</p>
-				<p class="text-start"><i class="bi bi-geo-alt"></i> Av. fulanito 234, Lima, Peru</p>
+				<p class="text-start"><i class="bi bi-geo-alt"></i> Cl. Pablo Usandizaga 683, San Borja, Lima</p>
                 <ul class="socials mt-3">
                   <li>
                     <a href="https://www.htdent.com" target="_blank"> <i class="bi bi-house"></i> </a>
