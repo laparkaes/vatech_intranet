@@ -1335,7 +1335,7 @@ p {
 /* ============================= 
     CONTACT-6 CSS
 ================================ */
-.contact-style-6 {
+.section_contact {
   background: #F3F3F3;
   padding: 100px 0 70px;
   position: relative;
@@ -1343,19 +1343,19 @@ p {
   overflow: hidden;
 }
 
-.contact-style-6 .contact-form-wrapper form .single-input {
+.section_contact .contact-form-wrapper form .single-input {
   position: relative;
   margin-bottom: 20px;
 }
 
-.contact-style-6 .contact-form-wrapper form .single-input label {
+.section_contact .contact-form-wrapper form .single-input label {
   display: block;
   width: 100%;
   margin-bottom: 10px;
 }
 
-.contact-style-6 .contact-form-wrapper form .single-input textarea,
-.contact-style-6 .contact-form-wrapper form .single-input input {
+.section_contact .contact-form-wrapper form .single-input textarea,
+.section_contact .contact-form-wrapper form .single-input input {
   background: transparent;
   border-radius: 10px;
   position: relative;
@@ -1367,68 +1367,68 @@ p {
   transition: all 0.3s ease-out 0s;
 }
 
-.contact-style-6 .contact-form-wrapper form .single-input textarea::placeholder,
-.contact-style-6 .contact-form-wrapper form .single-input input::placeholder {
+.section_contact .contact-form-wrapper form .single-input textarea::placeholder,
+.section_contact .contact-form-wrapper form .single-input input::placeholder {
   font-weight: 300;
   opacity: 1;
   color: 585978;
 }
 
-.contact-style-6 .contact-form-wrapper form .single-input textarea:focus,
-.contact-style-6 .contact-form-wrapper form .single-input input:focus {
+.section_contact .contact-form-wrapper form .single-input textarea:focus,
+.section_contact .contact-form-wrapper form .single-input input:focus {
   border-color: #d90c30;
 }
 
-.contact-style-6 .contact-form-wrapper form .single-input input {
+.section_contact .contact-form-wrapper form .single-input input {
   height: 56px;
 }
 
-.contact-style-6 .contact-form-wrapper form .single-input textarea {
+.section_contact .contact-form-wrapper form .single-input textarea {
   padding: 15px 20px;
   padding-right: 50px;
   resize: none;
 }
 
-.contact-style-6 .contact-form-wrapper form .single-input i {
+.section_contact .contact-form-wrapper form .single-input i {
   position: absolute;
   right: 21px;
   top: 53.5px;
 }
 
-.contact-style-6 .contact-form-wrapper form .form-button {
+.section_contact .contact-form-wrapper form .form-button {
   padding-top: 10px;
 }
 
-.contact-style-6 .contact-form-wrapper form .form-button button {
+.section_contact .contact-form-wrapper form .form-button button {
   height: 56px;
 }
 
 @media only screen and (min-width: 1400px) {
-  .contact-style-6 .left-wrapper {
-    margin-left: 50px;
+  .section_contact .general_info {
+    margin-right: 50px;
   }
 }
 
 @media only screen and (min-width: 1200px) and (max-width: 1399px) {
-  .contact-style-6 .left-wrapper {
-    margin-left: 40px;
+  .section_contact .general_info {
+    margin-right: 40px;
   }
 }
 
 @media only screen and (min-width: 768px) and (max-width: 991px), (max-width: 767px) {
-  .contact-style-6 .left-wrapper {
+  .section_contact .general_info {
     margin-bottom: 50px;
   }
 }
 
-.contact-style-6 .left-wrapper .single-item {
+.section_contact .general_info .single-item {
   margin-bottom: 20px;
   display: flex;
   align-items: center;
   transition: all 0.3s ease-out 0s;
 }
 
-.contact-style-6 .left-wrapper .single-item .icon {
+.section_contact .general_info .single-item .icon {
   max-width: 54px;
   width: 100%;
   height: 54px;

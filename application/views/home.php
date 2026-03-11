@@ -172,7 +172,7 @@
 			<div class="col">
 				<div class="text-center mb-60">
 					<h3 class="text-color mb-15 wow fadeInUp" data-wow-delay=".2s">Vatech, expandiéndose por el mundo</h3>
-					<p class="wow fadeInUp" data-wow-delay=".4s">Llevamos soluciones de diagnóstico dental de alta precisión a más de 70 países, creciendo junto a nuestros clientes!</p>
+					<p class="wow fadeInUp" data-wow-delay=".4s">Llevamos soluciones de diagnóstico dental de alta precisión a más de 100 países, creciendo junto a nuestros clientes!</p>
 				</div>
 			</div>
 		</div>
