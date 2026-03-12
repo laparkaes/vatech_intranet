@@ -12,4 +12,9 @@ class Contact extends CI_Controller {
 		
 		$this->load->view('layout', $data);
 	}
+	
+	public function send_mail(){
+		echo "<div>Correo enviado</div>";
+		echo "<a href=".base_url()."contact>Regresar</a>";
+	}
 }

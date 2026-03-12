@@ -1332,11 +1332,9 @@ p {
   font-size: 14px;
 }
 
-/* ============================= 
-    CONTACT-6 CSS
-================================ */
+/* section_contact */
+
 .section_contact {
-  background: #F3F3F3;
   padding: 100px 0 70px;
   position: relative;
   z-index: 1;
