@@ -972,7 +972,6 @@ p {
 
 .product_portfolio {
   padding: 100px 0 60px;
-  background: #F3F3F3;
 }
 
 .product_portfolio .single_portfolio {
@@ -2654,4 +2653,32 @@ input:focus, textarea:focus, button:focus {
 /* common */
 .bg_section{
   background-color: #fcfcfc;
+}
+
+.nav-link{
+	color: #54595F;
+}
+
+.nav-pills .nav-link {
+  border-radius: 30px;
+}
+
+.nav-pills .nav-link.active, .nav-pills .show > .nav-link {
+	height: 40px;
+	font-weight: 500;
+	box-sizing: border-box;
+	line-height: 1;
+	display: inline-flex;
+	justify-content: center;
+	align-items: center;
+	background: #d90c30;
+	color: #ffffff;
+	border: 0;
+	position: relative;
+	z-index: 1;
+	overflow: hidden;
+}
+
+.nav-link:focus, .nav-link:hover{
+	color: #d90c30;
 }
