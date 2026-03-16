@@ -31,30 +31,14 @@
 							<div class="col-lg-4 col-md-8 col-sm-10">
 								<div class="single_portfolio">
 									<div class="image">
-										<img src="assets/img/pricing/pricing-1/pricing-1.svg" alt="">
+										<img src="<?= base_url() ?>resource/image/product/3d_green_x.png" alt="">
 									</div>
-									<h5>Basic Design</h5>
+									<h5>Green X Series</h5>
 									<ul>
-										<li> <i class="lni lni-checkmark-circle"></i> Carefully crafted components</li>
-										<li> <i class="lni lni-checkmark-circle"></i> Amazing page examples</li>
-										<li> <i class="lni lni-checkmark-circle"></i> Super friendly support team</li>
-										<li> <i class="lni lni-checkmark-circle"></i> Awesome Support</li>
-									</ul>
-									<a href="#0" class="button radius-30">Get Started</a>
-								</div>
-							</div>
-							<div class="col-lg-4 col-md-8 col-sm-10">
-								<div class="single_portfolio">
-									<span class="button button-sm radius-30 popular-badge">Best Seller</span>
-									<div class="image">
-										<img src="assets/img/pricing/pricing-1/pricing-2.svg" alt="">
-									</div>
-									<h5>Standard Design</h5>
-									<ul>
-										<li> <i class="lni lni-checkmark-circle"></i> Carefully crafted components</li>
-										<li> <i class="lni lni-checkmark-circle"></i> Amazing page examples</li>
-										<li> <i class="lni lni-checkmark-circle"></i> Super friendly support team</li>
-										<li> <i class="lni lni-checkmark-circle"></i> Awesome Support</li>
+										<li> <i class="lni lni-checkmark-circle"></i> <span><strong>Sistema Digital 4 en 1:</strong> Solución integrada de Pano, Ceph, CBCT y Escaneo de Modelos 3D</span></li>
+										<li> <i class="lni lni-checkmark-circle"></i> <span><strong>Modo Endo (0.049mm):</strong> Resolución de ultra alta definición para diagnósticos precisos en endodoncia</span></li>
+										<li> <i class="lni lni-checkmark-circle"></i> <span><strong>Tiempo de escaneo Green:</strong> Captura ultra rápida que minimiza el movimiento del paciente y los artefactos</span></li>
+										<li> <i class="lni lni-checkmark-circle"></i> <span><strong>Tecnología Insight 2.0:</strong> Imágenes panorámicas multicapa con profundidad de datos y función Free FOV</span></li>
 									</ul>
 									<a href="#0" class="button radius-30">Get Started</a>
 								</div>
@@ -62,14 +46,29 @@
 							<div class="col-lg-4 col-md-8 col-sm-10">
 								<div class="single_portfolio">
 									<div class="image">
-										<img src="assets/img/pricing/pricing-1/pricing-3.svg" alt="">
+										<img src="<?= base_url() ?>resource/image/product/3d_smart_plus.png" alt="">
 									</div>
-									<h5>Pro Design</h5>
+									<h5>Smart Plus</h5>
 									<ul>
-										<li> <i class="lni lni-checkmark-circle"></i> Carefully crafted components</li>
-										<li> <i class="lni lni-checkmark-circle"></i> Amazing page examples</li>
-										<li> <i class="lni lni-checkmark-circle"></i> Super friendly support team</li>
-										<li> <i class="lni lni-checkmark-circle"></i> Awesome Support</li>
+										<li> <i class="lni lni-checkmark-circle"></i> <span><strong>Dos imágenes por un escaneo:</strong> Obtención simultánea de imágenes CBCT y Auto Pano con una sola captura</span></li>
+										<li> <i class="lni lni-checkmark-circle"></i> <span><strong>FOV Anatómico (12x9):</strong> Campo de visión optimizado en forma de arco para cubrir áreas ocultas</span></li>
+										<li> <i class="lni lni-checkmark-circle"></i> <span><strong>Tecnología CST:</strong> Algoritmo avanzado de reconstrucción que reduce drásticamente el ruido y artefactos metálicos</span></li>
+										<li> <i class="lni lni-checkmark-circle"></i> <span><strong>Escaneo 3D de modelos:</strong> Conversión de modelos de yeso a datos digitales de alta precisión mediante soporte dedicado</span></li>
+									</ul>
+									<a href="#0" class="button radius-30">Get Started</a>
+								</div>
+							</div>
+							<div class="col-lg-4 col-md-8 col-sm-10">
+								<div class="single_portfolio">
+									<div class="image">
+										<img src="<?= base_url() ?>resource/image/product/3d_a9.png" alt="">
+									</div>
+									<h5>Vatech A9</h5>
+									<ul>
+										<li> <i class="lni lni-checkmark-circle"></i> <span><strong>FOV Integral 8x8:</strong> Cobertura de áreas de diagnóstico esenciales desde el sector anterior hasta el posterior</span></li>
+										<li> <i class="lni lni-checkmark-circle"></i> <span><strong>Magic Pan:</strong> Tecnología de IA que selecciona y reconstruye automáticamente la imagen con el mejor enfoque</span></li>
+										<li> <i class="lni lni-checkmark-circle"></i> <span><strong>Cefalometría Rápida:</strong> Escaneo rápido en 1.9 segundos para evitar distorsiones y agilizar el diagnóstico ortodóntico</span></li>
+										<li> <i class="lni lni-checkmark-circle"></i> <span><strong>Sensores dedicados duales:</strong> Sensores independientes para Pano y Ceph que optimizan la vida útil y el flujo de trabajo</span></li>
 									</ul>
 									<a href="#0" class="button radius-30">Get Started</a>
 								</div>
@@ -185,4 +184,4 @@
 	
 	
 
-   
+  

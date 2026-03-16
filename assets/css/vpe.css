@@ -668,7 +668,7 @@ p {
   top: 0;
   left: 0;
   width: 100%;
-  z-index: 2;
+  z-index: 9999;
   background: #ffffff;
   box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
 }
@@ -1053,10 +1053,11 @@ p {
 
 .product_portfolio .single_portfolio ul li {
   display: flex;
-  align-items: center;
+  align-items: baseline;
   font-size: 16px;
   line-height: 34px;
   margin-bottom: 12px;
+  text-align: left;
 }
 
 .product_portfolio .single_portfolio ul li i {
@@ -2675,7 +2676,6 @@ input:focus, textarea:focus, button:focus {
 	color: #ffffff;
 	border: 0;
 	position: relative;
-	z-index: 1;
 	overflow: hidden;
 }
 
