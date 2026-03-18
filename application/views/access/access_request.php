@@ -1,68 +1,62 @@
-<h2>Solicitud de Acceso al Sistema</h2>
-<p>Por favor, seleccione los módulos a los que desea solicitar acceso y proporcione una justificación.</p>
+<h2>Nueva Solicitud de Acceso</h2>
 
-<?php if($this->session->flashdata('success')): ?>
-    <p><strong>Éxito:</strong> <?php echo $this->session->flashdata('success'); ?></p>
-<?php endif; ?>
+<p>Seleccione todos los tipos de acceso que requiere y proporcione un motivo para su evaluación.</p>
 
-<?php if($this->session->flashdata('error')): ?>
-    <p><strong>Error:</strong> <?php echo $this->session->flashdata('error'); ?></p>
-<?php endif; ?>
+<form action="<?php echo base_url('access/submit_request'); ?>" method="post">
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Seleccionar</th>
+                <th>Nombre del Acceso</th>
+                <th>Descripción</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php if(!empty($available_access)): ?>
+                <?php foreach($available_access as $access): ?>
+                <tr>
+                    <td align="center">
+                        <?php if(in_array($access->id, $approved_access_ids)): ?>
+                            <input type="checkbox" disabled checked>
+                        <?php else: ?>
+                            <input type="checkbox" name="access_ids[]" value="<?php echo $access->id; ?>">
+                        <?php endif; ?>
+                    </td>
+                    <td>
+                        <strong><?php echo $access->access_name; ?></strong>
+                        <?php if(in_array($access->id, $approved_access_ids)): ?>
+                            <span>(Ya aprobado)</span>
+                        <?php endif; ?>
+                    </td>
+                    <td><?php echo $access->description; ?></td>
+                </tr>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <tr>
+                    <td colspan="3" align="center">No hay accesos disponibles.</td>
+                </tr>
+            <?php endif; ?>
+        </tbody>
+    </table>
 
-<form action="<?php echo base_url('access/request_access_process'); ?>" method="post">
-    <div>
-        <label><strong>Módulos Disponibles:</strong></label><br><br>
-        
-        <input type="checkbox" id="select_all">
-        <label for="select_all"><strong>Seleccionar todo</strong></label>
-        <hr>
+    <br>
 
-        <?php 
-        // Listado de módulos del sistema VPR
-        $modules_list = array(
-            'purchase'    => 'Compras',
-            'vendor'      => 'Vendedores',
-            'sales'       => 'Ventas',
-            'distributor' => 'Distribuidores',
-            'products'    => 'Gestión de Productos',
-            'accounts'    => 'Gestión de Cuentas',
-            'access'      => 'Gestión de Accesos',
-            'system'      => 'Configuración del Sistema',
-            'reports'     => 'Reportes'
-        );
+    <table border="1">
+        <tr>
+            <th>Motivo de la Solicitud</th>
+        </tr>
+        <tr>
+            <td>
+                <textarea name="reason" rows="5" cols="60" placeholder="Indique la razón por la cual solicita estos permisos..." required></textarea>
+            </td>
+        </tr>
+    </table>
 
-        foreach($modules_list as $key => $label): ?>
-            <input type="checkbox" name="modules[]" value="<?php echo $key; ?>" class="module_checkbox" id="mod_<?php echo $key; ?>">
-            <label for="mod_<?php echo $key; ?>"><?php echo $label; ?></label><br>
-        <?php endforeach; ?>
-    </div>
+    <br>
     
-    <br>
-    <div>
-        <label>Justificación de la Solicitud:</label><br>
-        <textarea name="reason" rows="5" cols="50" required placeholder="Explique por qué necesita acceso..."></textarea>
-    </div>
-    <br>
     <button type="submit">Enviar Solicitudes</button>
 </form>
 
-<script>
-$(document).ready(function() {
-    // Manejar el checkbox de "Seleccionar todo"
-    $('#select_all').on('click', function() {
-        $('.module_checkbox').prop('checked', this.checked);
-    });
+<br>
 
-    // Desmarcar "Seleccionar todo" si un módulo individual es desmarcado
-    $('.module_checkbox').on('click', function() {
-        if (!$(this).is(':checked')) {
-            $('#select_all').prop('checked', false);
-        }
-        
-        // Si todos están marcados, marcar también el de "Seleccionar todo"
-        if ($('.module_checkbox:checked').length == $('.module_checkbox').length) {
-            $('#select_all').prop('checked', true);
-        }
-    });
-});
-</script>
+<a href="<?php echo base_url('dashboard'); ?>">Volver al Dashboard</a>

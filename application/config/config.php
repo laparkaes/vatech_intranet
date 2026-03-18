@@ -23,7 +23,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | a PHP script and you can easily do that on your own.
 |
 */
-$config['base_url'] = '/vatech_intranet/';
+$config['base_url'] = '/vatech_erp/';
 
 /*
 |--------------------------------------------------------------------------
@@ -485,6 +485,9 @@ $config['csrf_exclude_uris'] = array();
 |
 */
 $config['compress_output'] = FALSE;
+
+/* Establecer la zona horaria de Perú de forma global */
+date_default_timezone_set('America/Lima');
 
 /*
 |--------------------------------------------------------------------------

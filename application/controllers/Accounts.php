@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Accounts extends CI_Controller {
+class Accounts extends MY_Controller {
 
     public function __construct() {
         parent::__construct();
@@ -26,80 +26,87 @@ class Accounts extends CI_Controller {
      * Lista todos los usuarios registrados en el sistema
      */
     public function index() {
-        $data['users'] = $this->user_model->get_all_users();
-        $data['main'] = 'accounts/user_list';
-        $this->load->view('layout', $data);
-    }
-
-	/**
-	 * Cambia el rol de un usuario específico.
-	 * Solo los administradores pueden realizar esta acción y no pueden cambiarse su propio rol.
-	 */
-	public function change_role() {
-		// 1. Verificación de seguridad: solo ADMIN puede ejecutar este método
-		// (Aunque el constructor ya lo valida, es una buena práctica de seguridad)
-		if ($this->session->userdata('role') !== 'admin') {
-			$this->session->set_flashdata('error', 'No tiene permisos para realizar esta operación.');
-			redirect('dashboard');
-			return;
-		}
-
-		$user_id = $this->input->post('user_id');
-		$new_role = $this->input->post('new_role');
-		$current_admin_id = $this->session->userdata('user_id');
-
-		// 2. Restricción: No permitir que el admin se cambie su propio rol
-		if ($user_id == $current_admin_id) {
-			$this->session->set_flashdata('error', 'No puede cambiar su propio rol por razones de seguridad.');
-			redirect('accounts');
-			return;
-		}
-
-		// 3. Proceder con la actualización si supera las validaciones
-		$data = array('role' => $new_role);
+		$users = $this->user_model->get_all_users();
 		
-		if ($this->user_model->update_user($user_id, $data)) {
-			$this->session->set_flashdata('success', 'Rol de usuario actualizado correctamente.');
-		} else {
-			$this->session->set_flashdata('error', 'Error al intentar actualizar el rol.');
+		// Calcular la antigüedad para cada usuario antes de enviar a la vista
+		foreach ($users as $user) {
+			$user->tenure = $this->user_model->calculate_tenure($user->hire_date);
 		}
 
+		$data['users'] = $users;
+		$this->load->model('division_model');
+		$data['divisions'] = $this->division_model->get_active_divisions();
+		
+		$data['main'] = 'accounts/index';
+		$this->load->view('layout', $data);
+	}
+	
+	/**
+	 * Muestra el formulario de edición para un usuario específico.
+	 */
+	public function edit($id) {
+		if ($this->session->userdata('role') !== 'admin') redirect('dashboard');
+
+		$this->load->model('division_model');
+		
+		$data['user'] = $this->user_model->get_user_by_id($id); // Método a crear en el modelo
+		$data['divisions'] = $this->division_model->get_active_divisions();
+		
+		$data['main'] = 'accounts/edit';
+		$this->load->view('layout', $data);
+	}
+
+	/**
+	 * Procesa la actualización (Con Fecha de Ingreso)
+	 */
+	public function update() {
+		if ($this->session->userdata('role') !== 'admin') redirect('dashboard');
+
+		$user_id = $this->input->post('user_id');
+		$data = array(
+			'full_name'   => $this->input->post('full_name'),
+			'division_id' => $this->input->post('division_id') ? $this->input->post('division_id') : NULL,
+			'hire_date'   => $this->input->post('hire_date'), // Nuevo campo
+			'role'        => $this->input->post('role'),
+			'status'      => $this->input->post('status')
+		);
+
+		// ... (비밀번호 업데이트 로직은 기존과 동일) ...
+
+		$this->user_model->update_user($user_id, $data);
 		redirect('accounts');
 	}
 	
 	/**
-	 * Alterna el estado activo/inactivo del usuario.
-	 * Restringe la posibilidad de que un administrador se desactive a sí mismo.
+	 * Muestra el formulario para registrar un nuevo usuario.
 	 */
-	public function toggle_status() {
-		// 1. Verificación de seguridad básica (Solo administradores)
-		if ($this->session->userdata('role') !== 'admin') {
-			$this->session->set_flashdata('error', 'Acceso denegado.');
-			redirect('dashboard');
-			return;
-		}
+	public function create() {
+		if ($this->session->userdata('role') !== 'admin') redirect('dashboard');
 
-		$user_id = $this->input->post('user_id');
-		$current_status = $this->input->post('current_status');
-		$current_admin_id = $this->session->userdata('user_id');
+		$this->load->model('division_model');
+		$data['divisions'] = $this->division_model->get_active_divisions();
+		
+		$data['main'] = 'accounts/create'; // Nueva vista
+		$this->load->view('layout', $data);
+	}
 
-		// 2. Restricción: No permitir que el admin desactive su propia cuenta
-		if ($user_id == $current_admin_id) {
-			$this->session->set_flashdata('error', 'No puede desactivar su propia cuenta por seguridad del sistema.');
-			redirect('accounts');
-			return;
-		}
+	/**
+	 * Procesa la inserción del nuevo usuario (Con Fecha de Ingreso)
+	 */
+	public function add() {
+		if ($this->session->userdata('role') !== 'admin') redirect('dashboard');
 
-		// 3. Proceder con el cambio de estado (1 a 0 / 0 a 1)
-		$new_status = ($current_status == 1) ? 0 : 1;
+		$data = array(
+			'full_name'   => $this->input->post('full_name'),
+			'email'       => $this->input->post('email'),
+			'password'    => password_hash($this->input->post('password'), PASSWORD_BCRYPT),
+			'division_id' => $this->input->post('division_id') ? $this->input->post('division_id') : NULL,
+			'hire_date'   => $this->input->post('hire_date'), // Nuevo campo
+			'role'        => $this->input->post('role'),
+			'status'      => 1
+		);
 
-		if ($this->user_model->update_user($user_id, array('status' => $new_status))) {
-			$this->session->set_flashdata('success', 'Estado del usuario actualizado correctamente.');
-		} else {
-			$this->session->set_flashdata('error', 'Error al intentar actualizar el estado del usuario.');
-		}
-
+		$this->user_model->insert_user($data);
 		redirect('accounts');
 	}
-	
 }

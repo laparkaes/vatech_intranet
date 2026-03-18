@@ -5,7 +5,12 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * Modelo encargado de la gestión de datos de usuarios (VPR ERP)
  */
 class User_model extends CI_Model {
-
+	
+	public function get_user_by_id($id) {
+		$this->db->where('id', $id);
+		return $this->db->get('users')->row();
+	}
+	
     /**
      * Busca un usuario activo por su dirección de correo electrónico
      * @param string $email
@@ -21,14 +26,16 @@ class User_model extends CI_Model {
     }
 	
 	/**
-	 * Obtiene la lista de todos los usuarios registrados en el sistema.
-	 * Se utiliza principalmente en el panel de administración de cuentas.
+	 * Obtiene todos los usuarios con el nombre de su división correspondiente.
 	 */
 	public function get_all_users() {
-		// Seleccionar todos los registros de la tabla 'users'
-		$query = $this->db->get('users');
+		$this->db->select('u.*, d.division_name');
+		$this->db->from('users u');
+		// Unir con la tabla de divisiones (LEFT JOIN para no excluir usuarios sin división)
+		$this->db->join('divisions d', 'u.division_id = d.id', 'left');
+		$this->db->order_by('u.created_at', 'DESC');
 		
-		// Retornar el resultado como un array de objetos
+		$query = $this->db->get();
 		return $query->result();
 	}
 
@@ -87,5 +94,23 @@ class User_model extends CI_Model {
 		return $this->db->update('users', array(
 			'last_login' => date('Y-m-d H:i:s')
 		));
+	}
+	
+	/**
+	 * Calcula la antigüedad del empleado en formato "XY ZM"
+	 * @param string $hire_date
+	 * @return string
+	 */
+	public function calculate_tenure($hire_date) {
+		if (!$hire_date) return "N/A";
+
+		$today = new DateTime();
+		$start_date = new DateTime($hire_date);
+		$interval = $start_date->diff($today);
+
+		$years = $interval->y;
+		$months = $interval->m;
+
+		return "{$years}Y {$months}M";
 	}
 }

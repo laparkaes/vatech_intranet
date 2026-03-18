@@ -1,1 +1,1 @@
-<?php $this->load->view('access/access_request'); ?>
+Solicite acceso en menu de izquierda
