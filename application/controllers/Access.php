@@ -7,7 +7,7 @@ class Access extends MY_Controller {
         parent::__construct();
         /* Verificar si el usuario está autenticado */
         if (!$this->session->userdata('user_id')) {
-            redirect('login');
+            redirect('auth');
         }
         /* Cargar el modelo de accesos para todo el controlador */
         $this->load->model('access_model');
