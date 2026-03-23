@@ -10,7 +10,7 @@ class MY_Controller extends CI_Controller {
 
         /* 1. Verificar sesión global */
         if (!$this->session->userdata('user_id')) {
-            redirect('login');
+            redirect('/');
         }
 
         /* 2. Cargar permisos del usuario */
