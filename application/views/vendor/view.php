@@ -2,9 +2,7 @@
 
 <div>
     <a href="<?php echo base_url('vendor'); ?>"><button type="button">Volver al Listado</button></a>
-    
     <a href="<?php echo base_url('vendor/edit/'.$vendor->id); ?>"><button type="button">Editar Información</button></a>
-    
     <a href="<?php echo base_url('vendor/contacts/'.$vendor->id); ?>"><button type="button">Gestionar Contactos</button></a>
 </div>
 
@@ -12,8 +10,8 @@
 
 <table border="1">
     <tr>
-        <th>ID</th>
-        <td><?php echo $vendor->id; ?></td>
+        <th>Tax ID / RUC</th>
+        <td><?php echo $vendor->tax_id; ?></td>
         <th>Status</th>
         <td><?php echo ($vendor->status == 1) ? 'ACTIVO' : 'INACTIVO'; ?></td>
     </tr>
@@ -23,9 +21,7 @@
     </tr>
     <tr>
         <th>Country</th>
-        <td><?php echo $vendor->country; ?></td>
-        <th>Tax ID / RUC</th>
-        <td><?php echo $vendor->tax_id; ?></td>
+        <td colspan="3"><?php echo $vendor->country; ?></td>
     </tr>
     <tr>
         <th>Phone</th>
@@ -36,11 +32,7 @@
     <tr>
         <th>Website</th>
         <td colspan="3">
-            <?php if($vendor->website): ?>
-                <a href="<?php echo $vendor->website; ?>" target="_blank"><?php echo $vendor->website; ?></a>
-            <?php else: ?>
-                -
-            <?php endif; ?>
+            <?php echo $vendor->website ? $vendor->website : '-'; ?>
         </td>
     </tr>
     <tr>
@@ -56,9 +48,8 @@
 </table>
 
 <p>
-    <small>Created at: <?php echo $vendor->created_at; ?></small><br>
-    <small>Vendor ID: <?php echo $vendor->id; ?></small>
-</p>
+    <small>Created at: <?php echo $vendor->created_at; ?></small>
+    </p>
 
 <br>
 
@@ -93,5 +84,3 @@
         <?php endif; ?>
     </tbody>
 </table>
-
-<p><small>Created at: <?php echo $vendor->created_at; ?></small></p>

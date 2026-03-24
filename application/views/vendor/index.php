@@ -19,12 +19,11 @@
 <table border="1">
     <thead>
         <tr>
-            <th>ID</th>
+            <th>Tax ID / RUC</th>
             <th>Nombre de la Empresa</th>
             <th>País de Origen</th>
-            <th>Tax ID / RUC</th>
             <th>Contacto Corporativo</th>
-            <th>Sitio Web y Notas</th>
+            <th>Sitio Web</th>
             <th>Estado</th>
             <th>Acciones</th>
         </tr>
@@ -33,13 +32,11 @@
         <?php if(!empty($vendors)): ?>
             <?php foreach($vendors as $v): ?>
             <tr>
-                <td><?php echo $v->id; ?></td>
+                <td><?php echo $v->tax_id; ?></td>
                 
                 <td><strong><?php echo $v->vendor_name; ?></strong></td>
                 
                 <td><?php echo $v->country; ?></td>
-                
-                <td><?php echo $v->tax_id; ?></td>
                 
                 <td>
                     <?php if($v->phone): ?>
@@ -48,16 +45,18 @@
                     <?php if($v->mobile): ?>
                         Cel: <?php echo $v->mobile; ?>
                     <?php endif; ?>
+                    
                     <?php if(!$v->phone && !$v->mobile): ?>
-                        <span>Sin teléfono</span>
+                        -
                     <?php endif; ?>
                 </td>
                 
                 <td>
                     <?php if($v->website): ?>
-                        <a href="<?php echo $v->website; ?>" target="_blank">Visitar Sitio</a><br>
+                        <?php echo $v->website; ?>
+                    <?php else: ?>
+                        -
                     <?php endif; ?>
-                    <small><?php echo $v->description; ?></small>
                 </td>
                 
                 <td>
@@ -73,7 +72,7 @@
             <?php endforeach; ?>
         <?php else: ?>
             <tr>
-                <td colspan="8">No se han encontrado proveedores registrados.</td>
+                <td colspan="7">No se han encontrado proveedores registrados.</td>
             </tr>
         <?php endif; ?>
     </tbody>
