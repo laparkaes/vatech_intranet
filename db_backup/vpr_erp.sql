@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- 생성 시간: 26-03-23 17:17
+-- 생성 시간: 26-03-25 01:17
 -- 서버 버전: 10.4.24-MariaDB
 -- PHP 버전: 7.4.29
 
@@ -130,6 +130,38 @@ INSERT INTO `divisions` (`id`, `division_name`, `description`, `status`, `create
 -- --------------------------------------------------------
 
 --
+-- 테이블 구조 `entities`
+--
+
+CREATE TABLE `entities` (
+  `id` int(11) UNSIGNED NOT NULL,
+  `vendor_name` varchar(150) NOT NULL COMMENT 'Nombre de la empresa',
+  `country_id` int(11) UNSIGNED NOT NULL,
+  `tax_id` varchar(50) DEFAULT NULL COMMENT 'RUC o Tax ID internacional',
+  `is_vendor` tinyint(1) DEFAULT 1,
+  `is_dealer` tinyint(1) DEFAULT 0,
+  `address` text DEFAULT NULL COMMENT 'Dirección de la oficina principal',
+  `website` varchar(255) DEFAULT NULL COMMENT 'Sitio web oficial',
+  `phone` varchar(50) DEFAULT NULL,
+  `mobile` varchar(50) DEFAULT NULL,
+  `description` text DEFAULT NULL COMMENT 'Descripción de la empresa y productos',
+  `status` tinyint(1) DEFAULT 1 COMMENT '1: Activo, 0: Inactivo',
+  `created_by` int(11) NOT NULL,
+  `created_at` datetime DEFAULT current_timestamp(),
+  `updated_at` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- 테이블의 덤프 데이터 `entities`
+--
+
+INSERT INTO `entities` (`id`, `vendor_name`, `country_id`, `tax_id`, `is_vendor`, `is_dealer`, `address`, `website`, `phone`, `mobile`, `description`, `status`, `created_by`, `created_at`, `updated_at`) VALUES
+(1, 'Vatech Co., Ltd.', 0, '294723489', 1, 0, NULL, '', '', '', '', 1, 1, '2026-03-18 17:23:10', '2026-03-18 17:49:40'),
+(2, 'asfdsflk sdflk j', 3, '23482349', 1, 0, NULL, 'www.holamundo.com', '123 131 312', '234 2423 423', 'isadl kfjasdfk jsalfk saj flksa;j fsd\r\nsa df\r\nsa fsad\r\nfsad fsad fsa f', 1, 1, '2026-03-18 18:27:48', '2026-03-18 18:27:48');
+
+-- --------------------------------------------------------
+
+--
 -- 테이블 구조 `users`
 --
 
@@ -152,38 +184,8 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `email`, `division_id`, `hire_date`, `role`, `password`, `full_name`, `status`, `created_at`, `updated_at`, `last_login`) VALUES
-(1, 'jeongwoo.park@vatechglobal.com', 1, '2026-01-05', 'admin', '$2y$10$s.K.pjGB2piiUtav53Hv9ej7IPmkLKt/O703aKmD7P9BPfo88fY1u', 'Jeong Woo Park', 1, '2026-03-16 13:37:00', '2026-03-18 16:03:05', '2026-03-18 16:03:05'),
+(1, 'jeongwoo.park@vatechglobal.com', 1, '2026-01-05', 'admin', '$2y$10$s.K.pjGB2piiUtav53Hv9ej7IPmkLKt/O703aKmD7P9BPfo88fY1u', 'Jeong Woo Park', 1, '2026-03-16 13:37:00', '2026-03-24 19:15:19', '2026-03-24 19:15:19'),
 (3, 'dsfasf@sdafdsa.com', 2, '2026-03-26', 'user', '$2y$10$XT9RxlEQVwpjGohGsO7irebVKLF0q94laU7Tgf.zZBbSUW4i5G0R.', 'sdfsadf', 1, '2026-03-17 13:20:44', '2026-03-17 18:57:36', '2026-03-17 18:57:36');
-
--- --------------------------------------------------------
-
---
--- 테이블 구조 `vendors`
---
-
-CREATE TABLE `vendors` (
-  `id` int(11) UNSIGNED NOT NULL,
-  `vendor_name` varchar(150) NOT NULL COMMENT 'Nombre de la empresa',
-  `country_id` int(11) UNSIGNED NOT NULL,
-  `tax_id` varchar(50) DEFAULT NULL COMMENT 'RUC o Tax ID internacional',
-  `address` text DEFAULT NULL COMMENT 'Dirección de la oficina principal',
-  `website` varchar(255) DEFAULT NULL COMMENT 'Sitio web oficial',
-  `phone` varchar(50) DEFAULT NULL,
-  `mobile` varchar(50) DEFAULT NULL,
-  `description` text DEFAULT NULL COMMENT 'Descripción de la empresa y productos',
-  `status` tinyint(1) DEFAULT 1 COMMENT '1: Activo, 0: Inactivo',
-  `created_by` int(11) NOT NULL,
-  `created_at` datetime DEFAULT current_timestamp(),
-  `updated_at` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- 테이블의 덤프 데이터 `vendors`
---
-
-INSERT INTO `vendors` (`id`, `vendor_name`, `country_id`, `tax_id`, `address`, `website`, `phone`, `mobile`, `description`, `status`, `created_by`, `created_at`, `updated_at`) VALUES
-(1, 'Vatech Co., Ltd.', 0, '294723489', NULL, '', '', '', '', 1, 1, '2026-03-18 17:23:10', '2026-03-18 17:49:40'),
-(2, 'asfdsflk sdflk j', 3, '23482349', NULL, 'www.holamundo.com', '123 131 312', '234 2423 423', 'isadl kfjasdfk jsalfk saj flksa;j fsd\r\nsa df\r\nsa fsad\r\nfsad fsad fsa f', 1, 1, '2026-03-18 18:27:48', '2026-03-18 18:27:48');
 
 -- --------------------------------------------------------
 
@@ -247,18 +249,18 @@ ALTER TABLE `divisions`
   ADD PRIMARY KEY (`id`);
 
 --
+-- 테이블의 인덱스 `entities`
+--
+ALTER TABLE `entities`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- 테이블의 인덱스 `users`
 --
 ALTER TABLE `users`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `idx_email_unique` (`email`),
   ADD KEY `fk_user_division` (`division_id`);
-
---
--- 테이블의 인덱스 `vendors`
---
-ALTER TABLE `vendors`
-  ADD PRIMARY KEY (`id`);
 
 --
 -- 테이블의 인덱스 `vendor_contacts`
@@ -296,16 +298,16 @@ ALTER TABLE `divisions`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
+-- 테이블의 AUTO_INCREMENT `entities`
+--
+ALTER TABLE `entities`
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
 -- 테이블의 AUTO_INCREMENT `users`
 --
 ALTER TABLE `users`
   MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
-
---
--- 테이블의 AUTO_INCREMENT `vendors`
---
-ALTER TABLE `vendors`
-  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- 테이블의 AUTO_INCREMENT `vendor_contacts`
@@ -342,7 +344,7 @@ ALTER TABLE `users`
 -- 테이블의 제약사항 `vendor_contacts`
 --
 ALTER TABLE `vendor_contacts`
-  ADD CONSTRAINT `vendor_contacts_ibfk_1` FOREIGN KEY (`vendor_id`) REFERENCES `vendors` (`id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `vendor_contacts_ibfk_1` FOREIGN KEY (`vendor_id`) REFERENCES `entities` (`id`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
