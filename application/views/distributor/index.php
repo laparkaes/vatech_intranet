@@ -1,4 +1,4 @@
-<h2>Lista de Proveedores</h2>
+<h2>Lista de Distribuidores</h2>
 
 <?php if($this->session->flashdata('success')): ?>
     <p><strong><?php echo $this->session->flashdata('success'); ?></strong></p>
@@ -9,16 +9,18 @@
 <?php endif; ?>
 
 <div>
-    <a href="<?php echo base_url('vendor/create'); ?>">
-        <button type="button">Registrar Nuevo Proveedor</button>
+    <a href="<?php echo base_url('distributor/create'); ?>">
+        <button type="button">Registrar Nuevo Distribuidor</button>
     </a>
 </div>
+
+<br>
 
 <table border="1">
     <thead>
         <tr>
             <th>Tax ID / RUC</th>
-            <th>Nombre del Proveedor</th>
+            <th>Nombre del Distribuidor</th>
             <th>Rol</th>
             <th>País</th>
             <th>Contacto Corporativo</th>
@@ -28,41 +30,41 @@
         </tr>
     </thead>
     <tbody>
-        <?php if(!empty($vendors)): ?>
-            <?php foreach($vendors as $v): ?>
+        <?php if(!empty($distributors)): ?>
+            <?php foreach($distributors as $d): ?>
                 <tr>
-                    <td><?php echo $v->tax_id; ?></td>
-                    <td><strong><?php echo $v->name; ?></strong></td>
+                    <td><?php echo $d->tax_id; ?></td>
+                    <td><strong><?php echo $d->name; ?></strong></td>
                     <td>
-                        <?php if($v->is_vendor) echo "[V]"; ?>
-                        <?php if($v->is_dealer) echo "[D]"; ?>
+                        <?php if($d->is_vendor) echo "[V]"; ?>
+                        <?php if($d->is_dealer) echo "[D]"; ?>
                     </td>
-                    <td><?php echo $v->country; ?></td>
+                    <td><?php echo $d->country; ?></td>
                     <td>
-                        <?php if($v->phone): ?>
-                            Telf: <?php echo $v->phone; ?><br>
+                        <?php if($d->phone): ?>
+                            Telf: <?php echo $d->phone; ?><br>
                         <?php endif; ?>
                         
-                        <?php if($v->mobile): ?>
-                            Cel: <?php echo $v->mobile; ?>
+                        <?php if($d->mobile): ?>
+                            Cel: <?php echo $d->mobile; ?>
                         <?php endif; ?>
 
-                        <?php if(!$v->phone && !$v->mobile): ?>
+                        <?php if(!$d->phone && !$d->mobile): ?>
                             -
                         <?php endif; ?>
                     </td>
                     <td>
-                        <?php if($v->website): ?>
-                            <?php echo $v->website; ?>
+                        <?php if($d->website): ?>
+                            <a href="<?php echo $d->website; ?>" target="_blank"><?php echo $d->website; ?></a>
                         <?php else: ?>
                             -
                         <?php endif; ?>
                     </td>
                     <td>
-                        <?php echo ($v->status == 1) ? 'ACTIVO' : 'INACTIVO'; ?>
+                        <?php echo ($d->status == 1) ? 'ACTIVO' : 'INACTIVO'; ?>
                     </td>
                     <td>
-                        <a href="<?php echo base_url('vendor/view/'.$v->id); ?>">
+                        <a href="<?php echo base_url('distributor/view/'.$d->id); ?>">
                             <button type="button">Gestionar</button>
                         </a>
                     </td>
@@ -70,7 +72,7 @@
             <?php endforeach; ?>
         <?php else: ?>
             <tr>
-                <td colspan="8">No se encontraron registros de proveedores.</td>
+                <td colspan="8">No se encontraron registros de distribuidores.</td>
             </tr>
         <?php endif; ?>
     </tbody>

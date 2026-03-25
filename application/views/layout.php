@@ -5,7 +5,7 @@
     <title>VPR ERP</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
-        /* Solo Estructura de Diseño (CSS de Posicionamiento) */
+        /* 레이아웃 구조 (Positioning) */
         body { 
             margin: 0; 
             padding: 0; 
@@ -15,7 +15,6 @@
             overflow: hidden; 
         }
         
-        /* Header: Altura fija de 80px */
         header { 
             height: 80px; 
             display: flex; 
@@ -23,26 +22,25 @@
             align-items: center; 
             padding: 0 20px; 
             box-sizing: border-box;
-            border-bottom: 1px solid; /* Solo línea divisoria básica */
+            flex-shrink: 0;
+            border-bottom: 1px solid; /* 최소한의 구분선 */
         }
 
-        /* Contenedor Principal */
         .wrapper { 
             display: flex; 
             flex: 1; 
             overflow: hidden; 
         }
 
-        /* Sidebar: Ancho fijo de 200px */
         nav { 
             width: 200px; 
             padding: 20px; 
             box-sizing: border-box;
             overflow-y: auto;
-            border-right: 1px solid; /* Solo línea divisoria básica */
+            flex-shrink: 0;
+            border-right: 1px solid; /* 최소한의 구분선 */
         }
 
-        /* Main Content Area */
         main { 
             flex: 1; 
             padding: 20px; 
@@ -50,7 +48,7 @@
             box-sizing: border-box;
         }
 
-        /* Estructura básica de listas de menú */
+        /* 메뉴 리스트 구조 */
         nav ul { list-style: none; padding: 0; margin: 0; }
         nav ul li { margin-bottom: 10px; }
         nav ul ul { padding-left: 15px; }
@@ -69,58 +67,59 @@
     </header>
 
     <div class="wrapper">
-		<nav>
-			<ul>
-				<li><a href="<?php echo base_url('dashboard'); ?>">Dashboard</a></li>
-				
-				<?php if ($user_role === 'admin' || in_array('Compras', $my_access)): ?>
-				<li>
-					<strong>Compras</strong>
-					<ul>
-						<li><a href="<?php echo base_url('purchase'); ?>">Lista de Compras</a></li>
-						<li><a href="<?php echo base_url('vendor'); ?>">Proveedores</a></li>
-					</ul>
-				</li>
-				<?php endif; ?>
+        <nav>
+            <ul>
+                <li><a href="<?php echo base_url('dashboard'); ?>">Dashboard</a></li>
+                
+                <?php if ($user_role === 'admin' || in_array('Compras', $my_access)): ?>
+                <li>
+                    <strong>Compras</strong>
+                    <ul>
+                        <li><a href="<?php echo base_url('purchase'); ?>">Lista de Compras</a></li>
+                        <li><a href="<?php echo base_url('vendor'); ?>">Proveedores</a></li>
+                    </ul>
+                </li>
+                <?php endif; ?>
 
-				<?php if ($user_role === 'admin' || in_array('Ventas', $my_access)): ?>
-				<li>
-					<strong>Ventas</strong>
-					<ul>
-						<li><a href="<?php echo base_url('sales'); ?>">Lista de Ventas</a></li>
-						<li><a href="<?php echo base_url('distributor'); ?>">Distribuidores</a></li>
-					</ul>
-				</li>
-				<?php endif; ?>
+                <?php if ($user_role === 'admin' || in_array('Ventas', $my_access)): ?>
+                <li>
+                    <strong>Ventas</strong>
+                    <ul>
+                        <li><a href="<?php echo base_url('sales'); ?>">Lista de Ventas</a></li>
+                        <li><a href="<?php echo base_url('distributor'); ?>">Distribuidores</a></li>
+                    </ul>
+                </li>
+                <?php endif; ?>
 
-				<?php if ($user_role === 'admin' || in_array('Maestro', $my_access)): ?>
-				<li>
-					<strong>Maestro</strong>
-					<ul>
-						<li><a href="<?php echo base_url('products'); ?>">Productos</a></li>
-						<li><a href="<?php echo base_url('division'); ?>">Divisiones</a></li>
-					</ul>
-				</li>
-				<?php endif; ?>
+                <?php if ($user_role === 'admin' || in_array('Maestro', $my_access)): ?>
+                <li>
+                    <strong>Maestro</strong>
+                    <ul>
+                        <li><a href="<?php echo base_url('products'); ?>">Productos</a></li>
+                        <li><a href="<?php echo base_url('division'); ?>">Divisiones</a></li>
+                        <li><a href="<?php echo base_url('entity'); ?>">Entidades</a></li>
+                    </ul>
+                </li>
+                <?php endif; ?>
 
-				<?php if ($user_role === 'admin' || in_array('Sistema', $my_access)): ?>
-				<li>
-					<strong>Sistema</strong>
-					<ul>
-						<li><a href="<?php echo base_url('accounts'); ?>">Usuarios</a></li>
-						<li>
-							<a href="<?php echo base_url('access'); ?>">Accesos</a>
-							<ul>
-								<li><a href="<?php echo base_url('access/requests'); ?>">Solicitudes</a></li>
-							</ul>
-						</li>
-					</ul>
-				</li>
-				<?php endif; ?>
+                <?php if ($user_role === 'admin' || in_array('Sistema', $my_access)): ?>
+                <li>
+                    <strong>Sistema</strong>
+                    <ul>
+                        <li><a href="<?php echo base_url('accounts'); ?>">Usuarios</a></li>
+                        <li>
+                            <a href="<?php echo base_url('access'); ?>">Accesos</a>
+                            <ul>
+                                <li><a href="<?php echo base_url('access/requests'); ?>">Solicitudes</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <?php endif; ?>
 
-				<li><a href="<?php echo base_url('access/access_request'); ?>">Solicitud de Acceso</a></li>
-			</ul>
-		</nav>
+                <li><a href="<?php echo base_url('access/access_request'); ?>">Solicitud de Acceso</a></li>
+            </ul>
+        </nav>
 
         <main>
             <?php if($this->session->flashdata('error')): ?>
