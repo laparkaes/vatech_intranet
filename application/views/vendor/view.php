@@ -1,4 +1,4 @@
-<h2>Detalles del Proveedor: <?php echo $vendor->vendor_name; ?></h2>
+<h2><?php echo $vendor->vendor_name; ?></h2>
 
 <div>
     <a href="<?php echo base_url('vendor'); ?>"><button type="button">Volver al Listado</button></a>
@@ -10,30 +10,24 @@
 
 <table border="1">
     <tr>
-        <th>Tax ID / RUC</th>
-        <td><?php echo $vendor->tax_id; ?></td>
-        <th>Status</th>
-        <td><?php echo ($vendor->status == 1) ? 'ACTIVO' : 'INACTIVO'; ?></td>
-    </tr>
-    <tr>
-        <th>Vendor Name</th>
-        <td colspan="3"><strong><?php echo $vendor->vendor_name; ?></strong></td>
-    </tr>
-    <tr>
-        <th>Country</th>
-        <td colspan="3"><?php echo $vendor->country; ?></td>
-    </tr>
-    <tr>
-        <th>Phone</th>
-        <td><?php echo $vendor->phone; ?></td>
-        <th>Mobile</th>
-        <td><?php echo $vendor->mobile; ?></td>
-    </tr>
-    <tr>
-        <th>Website</th>
-        <td colspan="3">
-            <?php echo $vendor->website ? $vendor->website : '-'; ?>
+        <th>Tax ID / RUC</th><td><?php echo $vendor->tax_id; ?></td>
+        <th>Roles</th>
+        <td>
+            <?php if($vendor->is_vendor) echo "PROVEEDOR "; ?>
+            <?php if($vendor->is_dealer) echo "DISTRIBUIDOR"; ?>
         </td>
+        <th>Estado</th><td><?php echo ($vendor->status == 1) ? 'ACTIVO' : 'INACTIVO'; ?></td>
+    </tr>
+    <tr>
+        <th>Nombre</th><td colspan="5"><strong><?php echo $vendor->vendor_name; ?></strong></td>
+    </tr>
+    <tr>
+        <th>País</th><td><?php echo $vendor->country; ?></td>
+        <th>Telf.</th><td><?php echo $vendor->phone ? $vendor->phone : "-"; ?></td>
+        <th>Cel.</th><td><?php echo $vendor->mobile ? $vendor->mobile : "-"; ?></td>
+    </tr>
+    <tr>
+        <th>Website</th><td colspan="5"><?php echo $vendor->website ? $vendor->website : "-"; ?></td>
     </tr>
     <tr>
         <th>Description</th>
@@ -51,7 +45,9 @@
     <small>Created at: <?php echo $vendor->created_at; ?></small>
     </p>
 
+
 <br>
+
 
 <h3>Contactos Registrados</h3>
 <table border="1">

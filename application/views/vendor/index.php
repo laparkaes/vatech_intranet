@@ -1,81 +1,49 @@
-<h2>Maestro de Proveedores (Vendors)</h2>
+<h2>Maestro de Entidades</h2>
 
 <?php if($this->session->flashdata('success')): ?>
-    <p><strong><?php echo $this->session->flashdata('success'); ?></strong></p>
-<?php endif; ?>
-
-<?php if($this->session->flashdata('error')): ?>
-    <p><strong><?php echo $this->session->flashdata('error'); ?></strong></p>
+    <p style="color: green;"><strong><?php echo $this->session->flashdata('success'); ?></strong></p>
 <?php endif; ?>
 
 <div>
-    <a href="<?php echo base_url('vendor/create'); ?>">
-        <button type="button">Registrar Nuevo Proveedor</button>
-    </a>
-</div>
-
-<br>
+    <a href="<?php echo base_url('vendor/create'); ?>"><button type="button">Registrar Nuevo Socio</button></a>
+</div><br>
 
 <table border="1">
     <thead>
         <tr>
             <th>Tax ID / RUC</th>
-            <th>Nombre de la Empresa</th>
-            <th>País de Origen</th>
-            <th>Contacto Corporativo</th>
+            <th>Nombre de la Entidad</th>
+            <th>Rol</th>
+            <th>País</th>
+            <th>Contacto</th>
             <th>Sitio Web</th>
             <th>Estado</th>
             <th>Acciones</th>
         </tr>
     </thead>
     <tbody>
-        <?php if(!empty($vendors)): ?>
-            <?php foreach($vendors as $v): ?>
+        <?php if(!empty($vendors)): foreach($vendors as $v): ?>
             <tr>
                 <td><?php echo $v->tax_id; ?></td>
-                
                 <td><strong><?php echo $v->vendor_name; ?></strong></td>
-                
+                <td align="center">
+                    <?php if($v->is_vendor) echo "[V]"; ?>
+                    <?php if($v->is_dealer) echo "[D]"; ?>
+                </td>
                 <td><?php echo $v->country; ?></td>
-                
                 <td>
-                    <?php if($v->phone): ?>
-                        Telf: <?php echo $v->phone; ?><br>
-                    <?php endif; ?>
-                    <?php if($v->mobile): ?>
-                        Cel: <?php echo $v->mobile; ?>
-                    <?php endif; ?>
-                    
-                    <?php if(!$v->phone && !$v->mobile): ?>
-                        -
-                    <?php endif; ?>
+                    <?php if($v->phone) echo "Telf: ".$v->phone."<br>"; ?>
+                    <?php if($v->mobile) echo "Cel: ".$v->mobile; ?>
+                    <?php if(!$v->phone && !$v->mobile) echo "-"; ?>
                 </td>
-                
+                <td><?php echo $v->website ? $v->website : "-"; ?></td>
+                <td><?php echo ($v->status == 1) ? 'ACTIVO' : 'INACTIVO'; ?></td>
                 <td>
-                    <?php if($v->website): ?>
-                        <?php echo $v->website; ?>
-                    <?php else: ?>
-                        -
-                    <?php endif; ?>
-                </td>
-                
-                <td>
-                    <?php echo ($v->status == 1) ? 'ACTIVO' : 'INACTIVO'; ?>
-                </td>
-                
-                <td>
-                    <a href="<?php echo base_url('vendor/view/'.$v->id); ?>">
-                        <button type="button">Gestionar</button>
-                    </a>
+                    <a href="<?php echo base_url('vendor/view/'.$v->id); ?>"><button type="button">Gestionar</button></a>
                 </td>
             </tr>
-            <?php endforeach; ?>
-        <?php else: ?>
-            <tr>
-                <td colspan="7">No se han encontrado proveedores registrados.</td>
-            </tr>
+        <?php endforeach; else: ?>
+            <tr><td colspan="8">No se encontraron registros.</td></tr>
         <?php endif; ?>
     </tbody>
 </table>
-
-<p><small>* Los proveedores se ordenan alfabéticamente.</small></p>
