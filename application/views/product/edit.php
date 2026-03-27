@@ -1,3 +1,10 @@
+<?php if($this->session->flashdata('error')): ?>
+    <div>
+        <strong>Error:</strong> 
+        <?php echo $this->session->flashdata('error'); ?>
+    </div>
+<?php endif; ?>
+
 <?php 
     /**
      * Obtener la tasa de cambio más reciente de la tabla 'exchange_rates'
