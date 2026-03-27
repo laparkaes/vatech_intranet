@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>VPR ERP</title>
@@ -85,7 +85,7 @@
                 <li>
                     <strong>Ventas</strong>
                     <ul>
-                        <li><a href="<?php echo base_url('sales'); ?>">Lista de Ventas</a></li>
+                        <li><a href="<?php echo base_url('sale'); ?>">Lista de Ventas</a></li>
                         <li><a href="<?php echo base_url('distributor'); ?>">Distribuidores</a></li>
                     </ul>
                 </li>
@@ -93,13 +93,14 @@
 
                 <?php if ($user_role === 'admin' || in_array('Maestro', $my_access)): ?>
                 <li>
-                    <strong>Maestro</strong>
-                    <ul>
-                        <li><a href="<?php echo base_url('products'); ?>">Productos</a></li>
-                        <li><a href="<?php echo base_url('division'); ?>">Divisiones</a></li>
-                        <li><a href="<?php echo base_url('entity'); ?>">Entidades</a></li>
-                    </ul>
-                </li>
+					<strong>Maestro</strong>
+					<ul>
+						<li><a href="<?php echo base_url('product'); ?>">Productos</a></li>
+						<li><a href="<?php echo base_url('division'); ?>">Divisiones</a></li>
+						<li><a href="<?php echo base_url('entity'); ?>">Entidades</a></li>
+						<li><a href="<?php echo base_url('exchange'); ?>">Tipos de Cambio</a></li>
+					</ul>
+				</li>
                 <?php endif; ?>
 
                 <?php if ($user_role === 'admin' || in_array('Sistema', $my_access)): ?>
