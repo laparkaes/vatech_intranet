@@ -161,77 +161,113 @@ class Product_model extends CI_Model {
     }
 
 	/**
-	 * Obtiene la lista de productos con sus categorías, editores y todas sus variantes con el último precio.
-	 * * @param string|null $keyword Palabra clave para buscar en el nombre del producto.
-	 * @param int|null $category_id ID de la categoría para filtrar.
-	 * @param string|null $type Tipo de producto (GOODS/SERVICE).
-	 * @return array Lista de objetos de productos con una propiedad 'items' que contiene sus variantes.
-	 */
-	public function get_products_with_items($keyword = null, $category_id = null, $type = null) {
-		// 1. Configurar la consulta principal para la tabla 'products'
+     * Obtiene la lista de productos con sus categorías, editores y todas sus variantes con el último precio.
+     * * @param string|null $keyword Palabra clave para buscar en el nombre del producto.
+     * @param int|null $category_id ID de la categoría para filtrar.
+     * @param string|null $type Tipo de producto (GOODS/SERVICE).
+     * @return array Lista de objetos de productos con una propiedad 'items' que contiene sus variantes.
+     */
+    public function get_products_with_items($keyword = null, $category_id = null, $type = null) {
+        // 1. Configurar la consulta principal para la tabla 'products'
+        $this->db->select('p.*, c.category_name, u.full_name as editor_name');
+        $this->db->from('products p');
+        
+        // Joins para obtener el nombre de la categoría y el nombre completo del editor (usuario)
+        $this->db->join('product_categories c', 'p.category_id = c.id', 'left');
+        $this->db->join('users u', 'p.updated_by = u.id', 'left');
+
+        // Aplicar filtros si existen
+        if (!empty($keyword)) {
+            $this->db->like('p.name', $keyword);
+        }
+        if (!empty($category_id)) {
+            $this->db->where('p.category_id', $category_id);
+        }
+        if (!empty($type)) {
+            $this->db->where('p.type', $type);
+        }
+
+        // Ordenar por ID de forma descendente (los más recientes primero)
+        $this->db->order_by('p.id', 'DESC');
+        
+        $query = $this->db->get();
+        $products = $query->result();
+
+        // 2. Para cada producto encontrado, buscar sus ítems (variantes) y sus precios actuales
+        foreach ($products as &$p) {
+            /**
+             * MODIFICACIÓN: Se eliminaron 'sku_code' y 'option_value'.
+             * 'option_name' se cambió por 'option' según la nueva estructura de la tabla.
+             */
+            $this->db->select('
+                pi.id as item_id,
+                pi.option,
+                ph.purchase_price_usd,
+                ph.purchase_price_pen,
+                ph.sale_price_usd,
+                ph.sale_price_pen,
+                ph.applied_rate
+            ');
+            $this->db->from('product_items pi');
+            
+            /**
+             * Se une con la tabla de historial de precios.
+             * Usamos un INNER JOIN para obtener la información de precios vinculada.
+             */
+            $this->db->join('product_price_history ph', 'ph.item_id = pi.id', 'inner');
+            $this->db->where('pi.product_id', $p->id);
+            
+            // Aseguramos que traemos los registros más recientes del historial por cada ítem
+            $this->db->order_by('ph.id', 'DESC');
+            
+            /**
+             * Para evitar que un ítem aparezca múltiples veces si tiene historial de precios,
+             * agrupamos por el ID del ítem. SQL tomará el registro según el order_by definido.
+             */
+            $this->db->group_by('pi.id'); 
+
+            $p->items = $this->db->get()->result();
+        }
+
+        return $products;
+    }
+
+	// Función para contar el total (necesario para la paginación)
+	public function count_all_products($keyword = null, $category_id = null, $type = null) {
+		if (!empty($keyword)) $this->db->like('name', $keyword);
+		if (!empty($category_id)) $this->db->where('category_id', $category_id);
+		if (!empty($type)) $this->db->where('type', $type);
+		return $this->db->count_all_results('products');
+	}
+
+	// Función para obtener productos con límite y desplazamiento (offset)
+	public function get_products_paged($limit, $start, $keyword = null, $category_id = null, $type = null) {
 		$this->db->select('p.*, c.category_name, u.full_name as editor_name');
 		$this->db->from('products p');
-		
-		// Joins para obtener el nombre de la categoría y el nombre completo del editor (usuario)
 		$this->db->join('product_categories c', 'p.category_id = c.id', 'left');
 		$this->db->join('users u', 'p.updated_by = u.id', 'left');
 
-		// Aplicar filtros si existen
-		if (!empty($keyword)) {
-			$this->db->like('p.name', $keyword);
-		}
-		if (!empty($category_id)) {
-			$this->db->where('p.category_id', $category_id);
-		}
-		if (!empty($type)) {
-			$this->db->where('p.type', $type);
-		}
+		if (!empty($keyword)) $this->db->like('p.name', $keyword);
+		if (!empty($category_id)) $this->db->where('p.category_id', $category_id);
+		if (!empty($type)) $this->db->where('p.type', $type);
 
-		// Ordenar por ID de forma descendente (los más recientes primero)
 		$this->db->order_by('p.id', 'DESC');
+		$this->db->limit($limit, $start); // AQUÍ se aplica el límite de 30
 		
 		$query = $this->db->get();
 		$products = $query->result();
 
-		// 2. Para cada producto encontrado, buscar sus ítems (variantes) y sus precios actuales
+		// Obtener ítems para estos 30 productos
 		foreach ($products as &$p) {
-			/**
-			 * Seleccionamos los campos necesarios de 'product_items' y los precios de 'product_price_history'.
-			 * Usamos un JOIN para traer la información de precios vinculada a cada ítem.
-			 */
-			$this->db->select('
-				pi.id as item_id,
-				pi.sku_code,
-				pi.option_name,
-				pi.option_value,
-				ph.purchase_price_usd,
-				ph.purchase_price_pen,
-				ph.sale_price_usd,
-				ph.sale_price_pen,
-				ph.applied_rate
-			');
+			$this->db->select('pi.id as item_id, pi.option, ph.purchase_price_usd, ph.purchase_price_pen, ph.sale_price_usd, ph.sale_price_pen, ph.applied_rate');
 			$this->db->from('product_items pi');
-			
-			/**
-			 * Se une con la tabla de historial de precios.
-			 * Nota: Si un ítem tiene múltiples registros de historial, se requiere una lógica adicional 
-			 * para traer 'solo el último'. En este caso, ordenamos por ph.id DESC.
-			 */
 			$this->db->join('product_price_history ph', 'ph.item_id = pi.id', 'inner');
 			$this->db->where('pi.product_id', $p->id);
-			
-			// Aseguramos que traemos los registros más recientes del historial
 			$this->db->order_by('ph.id', 'DESC');
-			
-			/**
-			 * Si desea evitar duplicados de variantes cuando hay muchos historiales, 
-			 * puede habilitar un agrupamiento por pi.id.
-			 */
-			// $this->db->group_by('pi.id'); 
-
+			$this->db->group_by('pi.id'); 
 			$p->items = $this->db->get()->result();
 		}
-
 		return $products;
 	}
+
 }

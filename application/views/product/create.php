@@ -1,5 +1,5 @@
 <?php 
-    // Recuperar datos previos en caso de error de validación (배열 형태)
+    // Recuperar datos previos en caso de error de validación
     $old = $this->session->flashdata('old_input'); 
     // Obtener la tasa de cambio (Valor por defecto 3.80)
     $tasa_cambio = $current_rate->rate ?? 3.80;
@@ -75,10 +75,7 @@
         <table border="1" id="variant_table" width="100%">
             <thead>
                 <tr>
-                    <th>SKU Code</th>
-                    <th>Nombre Opción</th>
-                    <th>Valor Opción</th>
-                    <th>Peso (Kg)</th>
+                    <th>Opción / Descripción</th> <th>Dimensiones (LxWxH)</th> <th>Peso (Kg)</th>
                     <th>P. Compra (USD)</th>
                     <th>P. Compra (PEN)</th>
                     <th>P. Venta (USD)</th>
@@ -88,15 +85,14 @@
             </thead>
             <tbody>
                 <?php 
-                // Si existen datos previos (error de validación), reconstruir las filas
-                $num_filas = isset($old['sku_code']) ? count($old['sku_code']) : 1;
+                // 컬럼명이 변경되었으므로 'option' 배열을 기준으로 체크
+                $num_filas = isset($old['option']) ? count($old['option']) : 1;
                 for($i=0; $i < $num_filas; $i++): 
                 ?>
                 <tr>
-                    <td><input type="text" name="sku_code[]" value="<?php echo $old['sku_code'][$i] ?? ''; ?>" required></td>
-                    <td><input type="text" name="option_name[]" value="<?php echo $old['option_name'][$i] ?? ''; ?>" placeholder="Ej: Voltaje"></td>
-                    <td><input type="text" name="option_value[]" value="<?php echo $old['option_value'][$i] ?? ''; ?>" placeholder="Ej: 220V"></td>
-                    <td><input type="number" step="0.01" name="weight[]" value="<?php echo $old['weight'][$i] ?? ''; ?>" size="5"></td>
+                    <td><input type="text" name="option[]" value="<?php echo $old['option'][$i] ?? ''; ?>" placeholder="Ej: 220V / Licencia 1 año" required></td>
+                    <td><input type="text" name="dimensions[]" value="<?php echo $old['dimensions'][$i] ?? ''; ?>" placeholder="0x0x0 cm"></td>
+                    <td><input type="number" step="0.01" name="weight[]" value="<?php echo $old['weight'][$i] ?? ''; ?>" style="width: 60px;"></td>
                     <td><input type="number" step="0.01" name="purchase_price_usd[]" class="price_input usd_input p_usd" value="<?php echo $old['purchase_price_usd'][$i] ?? ''; ?>"></td>
                     <td><input type="number" step="0.01" name="purchase_price_pen[]" class="price_input pen_input p_pen" value="<?php echo $old['purchase_price_pen'][$i] ?? ''; ?>"></td>
                     <td><input type="number" step="0.01" name="sale_price_usd[]" class="price_input usd_input s_usd" value="<?php echo $old['sale_price_usd'][$i] ?? ''; ?>"></td>
@@ -130,74 +126,42 @@
 $(document).ready(function() {
     const TASA = <?php echo $tasa_cambio; ?>;
 
-    /**
-	 * Manejo de eventos para el cálculo automático de precios.
-	 * Se utiliza 'blur' (focusout) para evitar saltos de cursor mientras el usuario escribe.
-	 */
-	$(document).on('blur', '.price_input', function() {
-		// Si la tasa de cambio es 0 o negativa, no realizar cálculos.
-		if (TASA <= 0) return;
+    // 가격 자동 계산 로직 (기존과 동일)
+    $(document).on('blur', '.price_input', function() {
+        if (TASA <= 0) return;
+        let valorRaw = $(this).val();
+        if (valorRaw === "") return;
+        let valor = parseFloat(valorRaw);
+        let $fila = $(this).closest('tr');
+        if (isNaN(valor)) valor = 0;
 
-		let valorRaw = $(this).val();
-		
-		// Si el campo está vacío al salir, no realizar ninguna acción.
-		if (valorRaw === "") return;
+        if ($(this).hasClass('usd_input')) {
+            let resultadoPen = (valor * TASA).toFixed(2);
+            if ($(this).hasClass('p_usd')) {
+                let $p_pen = $fila.find('.p_pen');
+                if ($p_pen.val() === "") $p_pen.val(resultadoPen);
+            } else {
+                let $s_pen = $fila.find('.s_pen');
+                if ($s_pen.val() === "") $s_pen.val(resultadoPen);
+            }
+        } else if ($(this).hasClass('pen_input')) {
+            let resultadoUsd = (valor / TASA).toFixed(2);
+            if ($(this).hasClass('p_pen')) {
+                let $p_usd = $fila.find('.p_usd');
+                if ($p_usd.val() === "") $p_usd.val(resultadoUsd);
+            } else {
+                let $s_usd = $fila.find('.s_usd');
+                if ($s_usd.val() === "") $s_usd.val(resultadoUsd);
+            }
+        }
+    });
 
-		let valor = parseFloat(valorRaw);
-		let $fila = $(this).closest('tr');
-
-		// Si el valor no es un número válido, asignar 0.
-		if (isNaN(valor)) valor = 0;
-
-		/**
-		 * Lógica para campos en Dólares (USD)
-		 */
-		if ($(this).hasClass('usd_input')) {
-			let resultadoPen = (valor * TASA).toFixed(2);
-			
-			if ($(this).hasClass('p_usd')) {
-				// Actualizar Precio de Compra en Soles (PEN) solo si está vacío.
-				let $p_pen = $fila.find('.p_pen');
-				if ($p_pen.val() === "") {
-					$p_pen.val(resultadoPen);
-				}
-			} else {
-				// Actualizar Precio de Venta en Soles (PEN) solo si está vacío.
-				let $s_pen = $fila.find('.s_pen');
-				if ($s_pen.val() === "") {
-					$s_pen.val(resultadoPen);
-				}
-			}
-
-		/**
-		 * Lógica para campos en Soles (PEN)
-		 */
-		} else if ($(this).hasClass('pen_input')) {
-			let resultadoUsd = (valor / TASA).toFixed(2);
-			
-			if ($(this).hasClass('p_pen')) {
-				// Actualizar Precio de Compra en Dólares (USD) solo si está vacío.
-				let $p_usd = $fila.find('.p_usd');
-				if ($p_usd.val() === "") {
-					$p_usd.val(resultadoUsd);
-				}
-			} else {
-				// Actualizar Precio de Venta en Dólares (USD) solo si está vacío.
-				let $s_usd = $fila.find('.s_usd');
-				if ($s_usd.val() === "") {
-					$s_usd.val(resultadoUsd);
-				}
-			}
-		}
-	});
-
-    // Agregar nueva fila de variante dinámicamente
+    // 행 추가 시 변경된 구조 반영 (dimensions 추가, option 통합)
     $('#add_row').click(function() {
         let filaHtml = `<tr>
-            <td><input type="text" name="sku_code[]" required></td>
-            <td><input type="text" name="option_name[]"></td>
-            <td><input type="text" name="option_value[]"></td>
-            <td><input type="number" step="0.01" name="weight[]"></td>
+            <td><input type="text" name="option[]" required placeholder="Ej: 220V"></td>
+            <td><input type="text" name="dimensions[]" placeholder="0x0x0 cm"></td>
+            <td><input type="number" step="0.01" name="weight[]" style="width: 60px;"></td>
             <td><input type="number" step="0.01" name="purchase_price_usd[]" class="price_input usd_input p_usd"></td>
             <td><input type="number" step="0.01" name="purchase_price_pen[]" class="price_input pen_input p_pen"></td>
             <td><input type="number" step="0.01" name="sale_price_usd[]" class="price_input usd_input s_usd"></td>

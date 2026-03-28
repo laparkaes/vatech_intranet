@@ -91,6 +91,20 @@
                 </li>
                 <?php endif; ?>
 
+				<?php if ($user_role === 'admin' || in_array('Logistics', $my_access)): ?>
+                <li>
+                    <strong>Logística</strong> <ul>
+                        <li><a href="<?php echo base_url('warehouse'); ?>">Almacenes</a></li>
+                        
+                        <li><a href="<?php echo base_url('inventory'); ?>">Inventario</a></li>
+                        
+                        <li><a href="<?php echo base_url('inbound'); ?>">Ingresos</a></li>
+                        
+                        <li><a href="<?php echo base_url('outbound'); ?>">Salidas</a></li>
+                    </ul>
+                </li>
+                <?php endif; ?>
+				
                 <?php if ($user_role === 'admin' || in_array('Maestro', $my_access)): ?>
                 <li>
 					<strong>Maestro</strong>

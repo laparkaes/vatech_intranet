@@ -12,9 +12,7 @@
                 <th>Tipo</th>
                 <th>Categoría</th>
                 <th>Producto</th>
-                <th>SKU / Variante</th>
-                <th>Opción</th>
-                <th>P. Venta USD</th>
+                <th>Opción</th> <th>P. Venta USD</th>
                 <th>P. Venta PEN</th>
                 <th>Estado</th>
                 <th>Acciones</th>
@@ -32,11 +30,8 @@
                             <td><?php echo $p->category_name; ?></td>
                             <td><b><?php echo $p->name; ?></b></td>
                             
-                            <td><?php echo $item->sku_code; ?></td>
-                            <td>
-                                <?php echo !empty($item->option_name) ? $item->option_name . ': ' : ''; ?>
-                                <?php echo $item->option_value; ?>
-                            </td>
+                            <td><?php echo $item->option; ?></td>
+                            
                             <td><?php echo number_format($item->sale_price_usd, 2); ?></td>
                             <td><?php echo number_format($item->sale_price_pen, 2); ?></td>
 
@@ -52,7 +47,7 @@
                             <td><?php echo $p->category_name; ?></td>
                             <td><b><?php echo $p->name; ?></b></td>
                             
-                            <td></td> <td></td> <td></td> <td></td> <td><?php echo ($p->is_active == 1) ? 'Activo' : 'Inactivo'; ?></td>
+                            <td></td> <td></td> <td></td> <td><?php echo ($p->is_active == 1) ? 'Activo' : 'Inactivo'; ?></td>
                             <td>
                                 <a href="<?php echo base_url('product/view/'.$p->id); ?>">Ver</a>
                             </td>
@@ -61,9 +56,16 @@
                 <?php endforeach; ?>
             <?php else: ?>
                 <tr>
-                    <td colspan="9">No se encontraron registros.</td>
+                    <td colspan="8">No se encontraron registros.</td>
                 </tr>
             <?php endif; ?>
         </tbody>
     </table>
+
+    <?php if(!empty($pagination_links)): ?>
+        <br>
+        <div class="pagination-links">
+            <?php echo $pagination_links; ?>
+        </div>
+    <?php endif; ?>
 </div>

@@ -53,17 +53,18 @@
 
 <br>
 
+<br>
+
 <table border="1">
     <thead>
         <tr>
-            <th>SKU</th>
-            <th>Variante</th>
-            <th>Peso</th>
+            <th>Opción</th>
+            <th>Dimensiones (LxWxH)</th> <th>Peso (kg)</th>
             <th>Compra USD</th>
             <th>Compra PEN</th>
             <th>Venta USD</th>
             <th>Venta PEN</th>
-            <th>T.C.</th>
+            <th>T.C. Aplicado</th>
             <th>Estado</th>
         </tr>
     </thead>
@@ -71,21 +72,20 @@
         <?php if(!empty($product->items)): ?>
             <?php foreach($product->items as $item): ?>
                 <tr>
-                    <td><?php echo $item->sku_code; ?></td>
-                    <td><?php echo $item->option_name; ?>: <?php echo $item->option_value; ?></td>
-                    <td><?php echo $item->weight; ?></td>
-                    <td><?php echo $item->purchase_price_usd; ?></td>
-                    <td><?php echo $item->purchase_price_pen; ?></td>
-                    <td><?php echo $item->sale_price_usd; ?></td>
-                    <td><?php echo $item->sale_price_pen; ?></td>
-                    <td><?php echo $item->applied_rate; ?></td>
+                    <td><?php echo $item->option; ?></td>
+                    <td><?php echo !empty($item->dimensions) ? $item->dimensions : '-'; ?></td>
+                    <td><?php echo number_format($item->weight, 2); ?></td>
+                    <td><?php echo number_format($item->purchase_price_usd, 2); ?></td>
+                    <td><?php echo number_format($item->purchase_price_pen, 2); ?></td>
+                    <td><?php echo number_format($item->sale_price_usd, 2); ?></td>
+                    <td><?php echo number_format($item->sale_price_pen, 2); ?></td>
+                    <td><?php echo number_format($item->applied_rate, 3); ?></td>
                     <td><?php echo ($item->status == 1) ? 'Disponible' : 'Inactivo'; ?></td>
                 </tr>
             <?php endforeach; ?>
         <?php else: ?>
             <tr>
-                <td colspan="9">Sin variantes registradas.</td>
-            </tr>
+                <td colspan="9">Sin variantes registradas.</td> </tr>
         <?php endif; ?>
     </tbody>
 </table>
