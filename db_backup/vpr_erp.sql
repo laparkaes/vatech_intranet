@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- 생성 시간: 26-03-29 04:05
+-- 생성 시간: 26-03-29 01:35
 -- 서버 버전: 10.4.24-MariaDB
 -- PHP 버전: 7.4.29
 
@@ -242,6 +242,45 @@ INSERT INTO `exchange_rates` (`id`, `base_currency`, `target_currency`, `rate`, 
 (31, 'USD', 'PEN', '3.7272', '2026-03-25', 1, '2026-03-26 21:17:12'),
 (32, 'USD', 'PEN', '3.7683', '2026-03-26', 1, '2026-03-26 21:17:12'),
 (34, 'USD', 'PEN', '3.3000', '2026-03-28', 1, '2026-03-28 06:25:48');
+
+-- --------------------------------------------------------
+
+--
+-- 테이블 구조 `inventario`
+--
+
+CREATE TABLE `inventario` (
+  `id` int(11) UNSIGNED NOT NULL,
+  `warehouse_id` int(11) UNSIGNED NOT NULL COMMENT 'Referencia al almacén (Relacionado con warehouses.id)',
+  `product_id` int(11) UNSIGNED NOT NULL COMMENT 'Referencia al producto',
+  `stock_status` enum('Available','Damaged','Quarantine','Sample') DEFAULT 'Available' COMMENT 'Estado lógico del inventario',
+  `bin_location` varchar(50) DEFAULT NULL COMMENT 'Ubicación específica dentro del almacén',
+  `quantity` int(11) DEFAULT 0 COMMENT 'Cantidad actual en stock',
+  `min_stock_level` int(11) DEFAULT 0 COMMENT 'Nivel mínimo para alertas de reposición',
+  `updated_at` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `updated_by` int(11) DEFAULT NULL COMMENT 'ID del usuario que realizó la última actualización'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- 테이블 구조 `inventario_logs`
+--
+
+CREATE TABLE `inventario_logs` (
+  `id` int(11) UNSIGNED NOT NULL,
+  `warehouse_id` int(11) UNSIGNED NOT NULL COMMENT 'ID del almacén donde ocurrió el movimiento',
+  `product_id` int(11) UNSIGNED NOT NULL COMMENT 'ID del producto afectado',
+  `stock_status` enum('Available','Damaged','Quarantine','Sample') NOT NULL COMMENT 'Estado del stock afectado',
+  `type` enum('Ingreso','Salida','Ajuste','Transferencia') NOT NULL COMMENT 'Tipo de movimiento de inventario',
+  `reference_id` int(11) DEFAULT NULL COMMENT 'ID del documento de referencia (Orden, Factura, etc.)',
+  `qty_before` int(11) NOT NULL COMMENT 'Cantidad antes del movimiento',
+  `qty_change` int(11) NOT NULL COMMENT 'Cantidad cambiada (+ o -)',
+  `qty_after` int(11) NOT NULL COMMENT 'Cantidad después del movimiento',
+  `reason` varchar(255) DEFAULT NULL COMMENT 'Motivo o comentario del movimiento',
+  `created_at` datetime DEFAULT current_timestamp() COMMENT 'Fecha de registro',
+  `created_by` int(11) NOT NULL COMMENT 'ID del usuario que registró el movimiento'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -9615,7 +9654,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `email`, `division_id`, `hire_date`, `role`, `password`, `full_name`, `status`, `created_at`, `updated_at`, `last_login`) VALUES
-(1, 'jeongwoo.park@vatechglobal.com', 1, '2026-01-05', 'admin', '$2y$10$s.K.pjGB2piiUtav53Hv9ej7IPmkLKt/O703aKmD7P9BPfo88fY1u', 'Jeong Woo Park', 1, '2026-03-16 13:37:00', '2026-03-28 15:53:42', '2026-03-28 15:53:42'),
+(1, 'jeongwoo.park@vatechglobal.com', 1, '2026-01-05', 'admin', '$2y$10$s.K.pjGB2piiUtav53Hv9ej7IPmkLKt/O703aKmD7P9BPfo88fY1u', 'Jeong Woo Park', 1, '2026-03-16 13:37:00', '2026-03-28 23:27:08', '2026-03-28 23:27:08'),
 (3, 'dsfasf@sdafdsa.com', 2, '2026-03-26', 'user', '$2y$10$XT9RxlEQVwpjGohGsO7irebVKLF0q94laU7Tgf.zZBbSUW4i5G0R.', 'sdfsadf', 1, '2026-03-17 13:20:44', '2026-03-17 18:57:36', '2026-03-17 18:57:36'),
 (4, 'admin@vatech.pe', NULL, NULL, 'admin', '1234', 'Admin User', 1, '2026-03-27 11:56:24', '2026-03-27 11:56:24', NULL);
 
@@ -9732,12 +9771,12 @@ INSERT INTO `warehouses` (`id`, `name`, `address`, `location_info`, `contractor_
 (88, 'Almacén 088', 'Dirección de prueba 88', 'Ref 88', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
 (89, 'Almacén 089', 'Dirección de prueba 89', 'Ref 89', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
 (90, 'Almacén 090', 'Dirección de prueba 90', 'Ref 90', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
-(91, 'Almacén 091', 'Dirección de prueba 91', 'Ref 91', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(91, 'Almacén 091', 'Dirección de prueba 91', 'Ref 91', 4, 0, '2026-03-28 13:04:29', '2026-03-28 23:27:48', 1),
 (92, 'Almacén 092', 'Dirección de prueba 92', 'Ref 92', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
-(93, 'Almacén 093', 'Dirección de prueba 93', 'Ref 93', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
-(95, 'Almacén 095', 'Dirección de prueba 95', 'Ref 95', NULL, 0, '2026-03-28 13:04:29', '2026-03-28 16:06:26', 1),
+(93, 'Almacén 093', 'Dirección de prueba 93', 'Ref 93', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 23:27:23', 1),
+(95, 'Almacén 095', 'Dirección de prueba 95', 'Ref 95', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 21:06:06', 1),
 (96, 'Almacén 096', 'Dirección de prueba 96', 'Ref 96', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 16:08:52', 1),
-(97, 'Almacén 097', 'Dirección de prueba 97', 'Ref 97', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(97, 'Almacén 097', 'Dirección de prueba 97', 'Ref 97', 2, 1, '2026-03-28 13:04:29', '2026-03-28 23:27:35', 1),
 (98, 'Almacén 098', 'Dirección de prueba 98', 'Ref 98', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
 (99, 'Almacén 099', 'Dirección de prueba 99', 'Ref 99', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
 (100, 'Almacén 100', 'Dirección de prueba 100', 'Ref 100', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
@@ -9771,6 +9810,19 @@ ALTER TABLE `entities`
   ADD PRIMARY KEY (`id`);
 
 --
+-- 테이블의 인덱스 `inventario`
+--
+ALTER TABLE `inventario`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `idx_warehouse_product_status` (`warehouse_id`,`product_id`,`stock_status`);
+
+--
+-- 테이블의 인덱스 `inventario_logs`
+--
+ALTER TABLE `inventario_logs`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- 테이블의 인덱스 `warehouses`
 --
 ALTER TABLE `warehouses`
@@ -9783,6 +9835,18 @@ ALTER TABLE `warehouses`
 --
 
 --
+-- 테이블의 AUTO_INCREMENT `inventario`
+--
+ALTER TABLE `inventario`
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- 테이블의 AUTO_INCREMENT `inventario_logs`
+--
+ALTER TABLE `inventario_logs`
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
 -- 테이블의 AUTO_INCREMENT `warehouses`
 --
 ALTER TABLE `warehouses`
@@ -9791,6 +9855,12 @@ ALTER TABLE `warehouses`
 --
 -- 덤프된 테이블의 제약사항
 --
+
+--
+-- 테이블의 제약사항 `inventario`
+--
+ALTER TABLE `inventario`
+  ADD CONSTRAINT `fk_inventario_warehouse` FOREIGN KEY (`warehouse_id`) REFERENCES `warehouses` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- 테이블의 제약사항 `warehouses`
