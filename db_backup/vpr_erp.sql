@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- 생성 시간: 26-03-28 01:52
+-- 생성 시간: 26-03-29 04:05
 -- 서버 버전: 10.4.24-MariaDB
 -- PHP 버전: 7.4.29
 
@@ -20,90 +20,6 @@ SET time_zone = "+00:00";
 --
 -- 데이터베이스: `vpr_erp`
 --
-
-DELIMITER $$
---
--- 프로시저
---
-CREATE DEFINER=`root`@`localhost` PROCEDURE `PopulateRandomItems` ()   BEGIN
-    DECLARE i INT DEFAULT 1;
-    DECLARE v_user_id INT;
-    DECLARE v_prod_id INT;
-    DECLARE v_items_to_create INT;
-    DECLARE j INT;
-    DECLARE v_base_price_usd DECIMAL(12,2);
-
-    -- 1. 관리자 사용자 ID 확인
-    SELECT id INTO v_user_id FROM users LIMIT 1;
-    IF v_user_id IS NULL THEN
-        INSERT INTO users (email, password, full_name, role) VALUES ('admin@vatech.pe', '1234', 'Admin User', 'admin');
-        SET v_user_id = LAST_INSERT_ID();
-    END IF;
-
-    -- 2. 제품 1,000개 생성 루프 시작
-    WHILE i <= 1000 DO
-        -- 제품 마스터 생성
-        INSERT INTO products (type, category_id, code, name, brand, origin_country, unit, is_active, updated_by)
-        VALUES (
-            IF(MOD(i, 5) = 0, 'SERVICE', 'GOODS'),
-            (SELECT id FROM product_categories ORDER BY RAND() LIMIT 1),
-            CONCAT('VPR-', LPAD(i, 5, '0')),
-            CONCAT('Producto Modelo ', i),
-            'Vatech',
-            'South Korea',
-            'EA',
-            1,
-            v_user_id
-        );
-
-        SET v_prod_id = LAST_INSERT_ID();
-        -- 제품당 1~4개 사이의 랜덤한 옵션 개수 결정
-        SET v_items_to_create = FLOOR(1 + (RAND() * 4));
-        SET j = 1;
-
-        -- 3. 옵션(Items) 생성 루프
-        WHILE j <= v_items_to_create DO
-            SET @opt_val = CASE j 
-                WHEN 1 THEN 'Standard' 
-                WHEN 2 THEN 'Premium' 
-                WHEN 3 THEN 'Basic' 
-                ELSE 'Eco' 
-            END;
-
-            INSERT INTO product_items (product_id, sku_code, option_name, option_value, weight, status, updated_by)
-            VALUES (
-                v_prod_id,
-                CONCAT('SKU-', LPAD(i, 5, '0'), '-', j),
-                'Variante',
-                @opt_val,
-                RAND() * 20,
-                1,
-                v_user_id
-            );
-
-            SET @last_item_id = LAST_INSERT_ID();
-
-            -- 4. 가격 데이터 생성
-            SET v_base_price_usd = (RAND() * 3000) + 500;
-            INSERT INTO product_price_history (item_id, purchase_price_usd, purchase_price_pen, sale_price_usd, sale_price_pen, applied_rate, created_by)
-            VALUES (
-                @last_item_id,
-                v_base_price_usd * 0.65,
-                (v_base_price_usd * 0.65) * 3.78,
-                v_base_price_usd,
-                v_base_price_usd * 3.78,
-                3.7800,
-                v_user_id
-            );
-
-            SET j = j + 1;
-        END WHILE;
-
-        SET i = i + 1;
-    END WHILE;
-END$$
-
-DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -9699,9 +9615,133 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `email`, `division_id`, `hire_date`, `role`, `password`, `full_name`, `status`, `created_at`, `updated_at`, `last_login`) VALUES
-(1, 'jeongwoo.park@vatechglobal.com', 1, '2026-01-05', 'admin', '$2y$10$s.K.pjGB2piiUtav53Hv9ej7IPmkLKt/O703aKmD7P9BPfo88fY1u', 'Jeong Woo Park', 1, '2026-03-16 13:37:00', '2026-03-28 00:17:39', '2026-03-28 00:17:39'),
+(1, 'jeongwoo.park@vatechglobal.com', 1, '2026-01-05', 'admin', '$2y$10$s.K.pjGB2piiUtav53Hv9ej7IPmkLKt/O703aKmD7P9BPfo88fY1u', 'Jeong Woo Park', 1, '2026-03-16 13:37:00', '2026-03-28 15:53:42', '2026-03-28 15:53:42'),
 (3, 'dsfasf@sdafdsa.com', 2, '2026-03-26', 'user', '$2y$10$XT9RxlEQVwpjGohGsO7irebVKLF0q94laU7Tgf.zZBbSUW4i5G0R.', 'sdfsadf', 1, '2026-03-17 13:20:44', '2026-03-17 18:57:36', '2026-03-17 18:57:36'),
 (4, 'admin@vatech.pe', NULL, NULL, 'admin', '1234', 'Admin User', 1, '2026-03-27 11:56:24', '2026-03-27 11:56:24', NULL);
+
+-- --------------------------------------------------------
+
+--
+-- 테이블 구조 `warehouses`
+--
+
+CREATE TABLE `warehouses` (
+  `id` int(11) UNSIGNED NOT NULL,
+  `name` varchar(100) NOT NULL COMMENT 'Nombre del almacén o bodega',
+  `address` varchar(255) DEFAULT NULL COMMENT 'Dirección física completa',
+  `location_info` varchar(255) DEFAULT NULL COMMENT 'Referencias adicionales de ubicación',
+  `contractor_entity_id` int(11) UNSIGNED DEFAULT NULL COMMENT 'Referencia a la empresa administradora',
+  `is_active` tinyint(1) DEFAULT 1 COMMENT 'Estado: 1=Activo, 0=Inactivo',
+  `created_at` datetime DEFAULT current_timestamp(),
+  `updated_at` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `updated_by` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- 테이블의 덤프 데이터 `warehouses`
+--
+
+INSERT INTO `warehouses` (`id`, `name`, `address`, `location_info`, `contractor_entity_id`, `is_active`, `created_at`, `updated_at`, `updated_by`) VALUES
+(1, 'Almacén Central 001', 'Av. Argentina 1500, Callao', 'Cerca al puerto', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(2, 'Almacén Norte 002', 'Panamericana Norte Km 25, Los Olivos', 'Referencia: Grifo Primax', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(3, 'Bodega Sur 003', 'Av. El Sol 450, Chorrillos', 'Frente a la playa', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(4, 'Depósito Este 004', 'Av. Nicolas Ayllón 1200, Ate', 'Zona industrial', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(5, 'Centro Logístico 005', 'Calle Las Begonias 300, San Isidro', 'Edificio VPR', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(6, 'Almacén 006', 'Jr. Cusco 456, Cercado de Lima', 'Sector A', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(7, 'Almacén 007', 'Av. Aviación 2200, San Borja', 'Cerca al tren', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(8, 'Almacén 008', 'Calle 7 de Junio, Miraflores', 'Miraflores Centro', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(9, 'Almacén 009', 'Av. La Marina 1800, San Miguel', 'Límite con Magdalena', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(10, 'Almacén 010', 'Av. Huaylas 900, Chorrillos', 'Sector Sur', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(11, 'Almacén 011', 'Lurín Lote 5, Lurín', 'Parque Industrial', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(12, 'Almacén 012', 'Av. Universitaria 3400, SMP', 'Cerca a la UNI', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(13, 'Almacén 013', 'Calle Alcanfores 123, Miraflores', 'Edificio B', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(14, 'Almacén 014', 'Av. Javier Prado Este 1500, La Victoria', 'Límite San Borja', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(15, 'Almacén 015', 'Av. Elmer Faucett 400, Callao', 'Cerca al aeropuerto', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(16, 'Almacén 016', 'Av. Benavides 2500, Santiago de Surco', 'Ovalos Higuereta', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(17, 'Almacén 017', 'Calle Manuel Olguin 300, Surco', 'Frente al Jockey', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(18, 'Almacén 018', 'Av. Petit Thouars 4500, Miraflores', 'Cerca a la Alianza', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(19, 'Almacén 019', 'Av. Brasil 2200, Jesús María', 'Límite Pueblo Libre', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(20, 'Almacén 020', 'Av. Arequipa 3500, San Isidro', 'Sector Financiero', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(21, 'Almacén 021', 'Dirección de prueba 21', 'Ref 21', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(22, 'Almacén 022', 'Dirección de prueba 22', 'Ref 22', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(23, 'Almacén 023', 'Dirección de prueba 23', 'Ref 23', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(24, 'Almacén 024', 'Dirección de prueba 24', 'Ref 24', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(25, 'Almacén 025', 'Dirección de prueba 25', 'Ref 25', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(26, 'Almacén 026', 'Dirección de prueba 26', 'Ref 26', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(27, 'Almacén 027', 'Dirección de prueba 27', 'Ref 27', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(28, 'Almacén 028', 'Dirección de prueba 28', 'Ref 28', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(29, 'Almacén 029', 'Dirección de prueba 29', 'Ref 29', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(30, 'Almacén 030', 'Dirección de prueba 30', 'Ref 30', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(31, 'Almacén 031', 'Dirección de prueba 31', 'Ref 31', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(32, 'Almacén 032', 'Dirección de prueba 32', 'Ref 32', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(33, 'Almacén 033', 'Dirección de prueba 33', 'Ref 33', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(34, 'Almacén 034', 'Dirección de prueba 34', 'Ref 34', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(35, 'Almacén 035', 'Dirección de prueba 35', 'Ref 35', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(36, 'Almacén 036', 'Dirección de prueba 36', 'Ref 36', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(37, 'Almacén 037', 'Dirección de prueba 37', 'Ref 37', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(38, 'Almacén 038', 'Dirección de prueba 38', 'Ref 38', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(39, 'Almacén 039', 'Dirección de prueba 39', 'Ref 39', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(40, 'Almacén 040', 'Dirección de prueba 40', 'Ref 40', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(41, 'Almacén 041', 'Dirección de prueba 41', 'Ref 41', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(42, 'Almacén 042', 'Dirección de prueba 42', 'Ref 42', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(43, 'Almacén 043', 'Dirección de prueba 43', 'Ref 43', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(44, 'Almacén 044', 'Dirección de prueba 44', 'Ref 44', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(45, 'Almacén 045', 'Dirección de prueba 45', 'Ref 45', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(46, 'Almacén 046', 'Dirección de prueba 46', 'Ref 46', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(47, 'Almacén 047', 'Dirección de prueba 47', 'Ref 47', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(48, 'Almacén 048', 'Dirección de prueba 48', 'Ref 48', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(49, 'Almacén 049', 'Dirección de prueba 49', 'Ref 49', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(50, 'Almacén 050', 'Dirección de prueba 50', 'Ref 50', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(51, 'Almacén 051', 'Dirección de prueba 51', 'Ref 51', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(52, 'Almacén 052', 'Dirección de prueba 52', 'Ref 52', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(53, 'Almacén 053', 'Dirección de prueba 53', 'Ref 53', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(54, 'Almacén 054', 'Dirección de prueba 54', 'Ref 54', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(55, 'Almacén 055', 'Dirección de prueba 55', 'Ref 55', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(56, 'Almacén 056', 'Dirección de prueba 56', 'Ref 56', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(57, 'Almacén 057', 'Dirección de prueba 57', 'Ref 57', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(58, 'Almacén 058', 'Dirección de prueba 58', 'Ref 58', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(59, 'Almacén 059', 'Dirección de prueba 59', 'Ref 59', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(60, 'Almacén 060', 'Dirección de prueba 60', 'Ref 60', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(61, 'Almacén 061', 'Dirección de prueba 61', 'Ref 61', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(62, 'Almacén 062', 'Dirección de prueba 62', 'Ref 62', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(63, 'Almacén 063', 'Dirección de prueba 63', 'Ref 63', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(64, 'Almacén 064', 'Dirección de prueba 64', 'Ref 64', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(65, 'Almacén 065', 'Dirección de prueba 65', 'Ref 65', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(66, 'Almacén 066', 'Dirección de prueba 66', 'Ref 66', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(67, 'Almacén 067', 'Dirección de prueba 67', 'Ref 67', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(68, 'Almacén 068', 'Dirección de prueba 68', 'Ref 68', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(69, 'Almacén 069', 'Dirección de prueba 69', 'Ref 69', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(70, 'Almacén 070', 'Dirección de prueba 70', 'Ref 70', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(71, 'Almacén 071', 'Dirección de prueba 71', 'Ref 71', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(72, 'Almacén 072', 'Dirección de prueba 72', 'Ref 72', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(73, 'Almacén 073', 'Dirección de prueba 73', 'Ref 73', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(74, 'Almacén 074', 'Dirección de prueba 74', 'Ref 74', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(75, 'Almacén 075', 'Dirección de prueba 75', 'Ref 75', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(76, 'Almacén 076', 'Dirección de prueba 76', 'Ref 76', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(77, 'Almacén 077', 'Dirección de prueba 77', 'Ref 77', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(78, 'Almacén 078', 'Dirección de prueba 78', 'Ref 78', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(79, 'Almacén 079', 'Dirección de prueba 79', 'Ref 79', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(80, 'Almacén 080', 'Dirección de prueba 80', 'Ref 80', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(81, 'Almacén 081', 'Dirección de prueba 81', 'Ref 81', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(82, 'Almacén 082', 'Dirección de prueba 82', 'Ref 82', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(83, 'Almacén 083', 'Dirección de prueba 83', 'Ref 83', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(84, 'Almacén 084', 'Dirección de prueba 84', 'Ref 84', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(85, 'Almacén 085', 'Dirección de prueba 85', 'Ref 85', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(86, 'Almacén 086', 'Dirección de prueba 86', 'Ref 86', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(87, 'Almacén 087', 'Dirección de prueba 87', 'Ref 87', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(88, 'Almacén 088', 'Dirección de prueba 88', 'Ref 88', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(89, 'Almacén 089', 'Dirección de prueba 89', 'Ref 89', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(90, 'Almacén 090', 'Dirección de prueba 90', 'Ref 90', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(91, 'Almacén 091', 'Dirección de prueba 91', 'Ref 91', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(92, 'Almacén 092', 'Dirección de prueba 92', 'Ref 92', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(93, 'Almacén 093', 'Dirección de prueba 93', 'Ref 93', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(95, 'Almacén 095', 'Dirección de prueba 95', 'Ref 95', NULL, 0, '2026-03-28 13:04:29', '2026-03-28 16:06:26', 1),
+(96, 'Almacén 096', 'Dirección de prueba 96', 'Ref 96', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 16:08:52', 1),
+(97, 'Almacén 097', 'Dirección de prueba 97', 'Ref 97', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(98, 'Almacén 098', 'Dirección de prueba 98', 'Ref 98', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(99, 'Almacén 099', 'Dirección de prueba 99', 'Ref 99', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(100, 'Almacén 100', 'Dirección de prueba 100', 'Ref 100', NULL, 1, '2026-03-28 13:04:29', '2026-03-28 13:04:29', 1),
+(101, 'mi almacen 1111', 'av firulay 1111', 'https://maps.app.goo.gl/pcmVemHHY79PQQ9Z7', 4, 1, '2026-03-28 16:56:59', '2026-03-28 17:01:51', 1);
 
 --
 -- 덤프된 테이블의 인덱스
@@ -9725,203 +9765,38 @@ ALTER TABLE `access_requests`
   ADD KEY `fk_requests_updated_by` (`updated_by`);
 
 --
--- 테이블의 인덱스 `countries`
---
-ALTER TABLE `countries`
-  ADD PRIMARY KEY (`id`);
-
---
--- 테이블의 인덱스 `divisions`
---
-ALTER TABLE `divisions`
-  ADD PRIMARY KEY (`id`);
-
---
 -- 테이블의 인덱스 `entities`
 --
 ALTER TABLE `entities`
   ADD PRIMARY KEY (`id`);
 
 --
--- 테이블의 인덱스 `entity_contacts`
+-- 테이블의 인덱스 `warehouses`
 --
-ALTER TABLE `entity_contacts`
+ALTER TABLE `warehouses`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `idx_entity_id` (`entity_id`);
-
---
--- 테이블의 인덱스 `exchange_rates`
---
-ALTER TABLE `exchange_rates`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `unique_exchange_date` (`base_currency`,`target_currency`,`effective_date`),
-  ADD UNIQUE KEY `idx_unique_exchange` (`base_currency`,`target_currency`,`effective_date`),
-  ADD KEY `effective_date` (`effective_date`);
-
---
--- 테이블의 인덱스 `products`
---
-ALTER TABLE `products`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `code` (`code`),
-  ADD KEY `fk_product_category` (`category_id`),
-  ADD KEY `fk_product_updated_by` (`updated_by`);
-
---
--- 테이블의 인덱스 `product_categories`
---
-ALTER TABLE `product_categories`
-  ADD PRIMARY KEY (`id`);
-
---
--- 테이블의 인덱스 `product_items`
---
-ALTER TABLE `product_items`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `idx_product_id` (`product_id`),
-  ADD KEY `fk_item_updated_by` (`updated_by`);
-
---
--- 테이블의 인덱스 `product_price_history`
---
-ALTER TABLE `product_price_history`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `fk_product_item_price` (`item_id`);
-
---
--- 테이블의 인덱스 `users`
---
-ALTER TABLE `users`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `idx_email_unique` (`email`),
-  ADD KEY `fk_user_division` (`division_id`);
+  ADD UNIQUE KEY `idx_warehouse_name_unique` (`name`),
+  ADD KEY `fk_warehouses_entities` (`contractor_entity_id`);
 
 --
 -- 덤프된 테이블의 AUTO_INCREMENT
 --
 
 --
--- 테이블의 AUTO_INCREMENT `access`
+-- 테이블의 AUTO_INCREMENT `warehouses`
 --
-ALTER TABLE `access`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
-
---
--- 테이블의 AUTO_INCREMENT `access_requests`
---
-ALTER TABLE `access_requests`
-  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
-
---
--- 테이블의 AUTO_INCREMENT `countries`
---
-ALTER TABLE `countries`
-  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
-
---
--- 테이블의 AUTO_INCREMENT `divisions`
---
-ALTER TABLE `divisions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
-
---
--- 테이블의 AUTO_INCREMENT `entities`
---
-ALTER TABLE `entities`
-  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
-
---
--- 테이블의 AUTO_INCREMENT `entity_contacts`
---
-ALTER TABLE `entity_contacts`
-  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
-
---
--- 테이블의 AUTO_INCREMENT `exchange_rates`
---
-ALTER TABLE `exchange_rates`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
-
---
--- 테이블의 AUTO_INCREMENT `products`
---
-ALTER TABLE `products`
-  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2111;
-
---
--- 테이블의 AUTO_INCREMENT `product_categories`
---
-ALTER TABLE `product_categories`
-  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
-
---
--- 테이블의 AUTO_INCREMENT `product_items`
---
-ALTER TABLE `product_items`
-  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3640;
-
---
--- 테이블의 AUTO_INCREMENT `product_price_history`
---
-ALTER TABLE `product_price_history`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3517;
-
---
--- 테이블의 AUTO_INCREMENT `users`
---
-ALTER TABLE `users`
-  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+ALTER TABLE `warehouses`
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=102;
 
 --
 -- 덤프된 테이블의 제약사항
 --
 
 --
--- 테이블의 제약사항 `access`
+-- 테이블의 제약사항 `warehouses`
 --
-ALTER TABLE `access`
-  ADD CONSTRAINT `fk_access_updated_by` FOREIGN KEY (`updated_by`) REFERENCES `users` (`id`);
-
---
--- 테이블의 제약사항 `access_requests`
---
-ALTER TABLE `access_requests`
-  ADD CONSTRAINT `fk_processed_by` FOREIGN KEY (`processed_by_id`) REFERENCES `users` (`id`),
-  ADD CONSTRAINT `fk_requests_access` FOREIGN KEY (`access_id`) REFERENCES `access` (`id`),
-  ADD CONSTRAINT `fk_requests_updated_by` FOREIGN KEY (`updated_by`) REFERENCES `users` (`id`),
-  ADD CONSTRAINT `fk_user_request` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
-
---
--- 테이블의 제약사항 `entity_contacts`
---
-ALTER TABLE `entity_contacts`
-  ADD CONSTRAINT `fk_entity_contacts_entity` FOREIGN KEY (`entity_id`) REFERENCES `entities` (`id`) ON DELETE CASCADE;
-
---
--- 테이블의 제약사항 `products`
---
-ALTER TABLE `products`
-  ADD CONSTRAINT `fk_product_category` FOREIGN KEY (`category_id`) REFERENCES `product_categories` (`id`) ON DELETE SET NULL,
-  ADD CONSTRAINT `fk_product_updated_by` FOREIGN KEY (`updated_by`) REFERENCES `users` (`id`) ON DELETE SET NULL;
-
---
--- 테이블의 제약사항 `product_items`
---
-ALTER TABLE `product_items`
-  ADD CONSTRAINT `fk_item_product` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `fk_item_updated_by` FOREIGN KEY (`updated_by`) REFERENCES `users` (`id`) ON DELETE SET NULL;
-
---
--- 테이블의 제약사항 `product_price_history`
---
-ALTER TABLE `product_price_history`
-  ADD CONSTRAINT `fk_product_item_price` FOREIGN KEY (`item_id`) REFERENCES `product_items` (`id`) ON DELETE CASCADE;
-
---
--- 테이블의 제약사항 `users`
---
-ALTER TABLE `users`
-  ADD CONSTRAINT `fk_user_division` FOREIGN KEY (`division_id`) REFERENCES `divisions` (`id`) ON DELETE SET NULL;
+ALTER TABLE `warehouses`
+  ADD CONSTRAINT `fk_warehouses_entities` FOREIGN KEY (`contractor_entity_id`) REFERENCES `entities` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
