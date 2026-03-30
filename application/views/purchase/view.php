@@ -1,20 +1,7 @@
 <?php
 /**
- * Vista de Detalle de Orden de Compra (PO)
- * 로직과 데이터만 남긴 순수 HTML 구조
+ * Vista de Detalle de Orden de Compra (PO) - Minimal
  */
-
-$status_map = [
-    'Borrador'   => 'BORRADOR',
-    'Aprobado'   => 'APROBADO',
-    'Rechazado'  => 'RECHAZADO',
-    'Cancelado'  => 'ANULADO / CANCELADO',
-    'Parcial'    => 'RECEPCIÓN PARCIAL',
-    'Completado' => 'COMPLETADO'
-];
-
-$display_status = isset($status_map[$po->status]) ? $status_map[$po->status] : strtoupper($po->status);
-
 $current_user_id = $this->session->userdata('user_id');
 $user_role = $this->session->userdata('role');
 
@@ -37,23 +24,23 @@ $is_creator = ($po->created_by == $current_user_id);
             <th>Proveedor</th>
             <td><?= htmlspecialchars($po->supplier_name) ?> (<?= htmlspecialchars($po->supplier_tax_id) ?>)</td>
             <th>Estado</th>
-            <td><strong><?= $display_status ?></strong></td>
+            <td><strong><?= strtoupper($po->status_name) ?></strong></td>
         </tr>
         <tr>
             <th>Tipo de Orden</th>
-            <td><?= $po->po_type ?></td>
+            <td><?= $po->po_type_name ?></td>
             <th>Moneda</th>
-            <td><?= $po->currency ?> (TC: <?= number_format($po->exchange_rate, 4) ?>)</td>
+            <td><?= $po->currency_name ?></td>
         </tr>
         <tr>
             <th>Incoterms</th>
-            <td><?= $po->incoterms ? $po->incoterms : 'N/A' ?></td>
+            <td><?= $po->incoterms_name ? $po->incoterms_name : 'N/A' ?></td>
             <th>Método de Envío</th>
-            <td><?= $po->shipping_method ?></td>
+            <td><?= $po->shipping_name ?></td>
         </tr>
         <tr>
             <th>Términos de Pago</th>
-            <td><?= $po->payment_terms ?></td>
+            <td><?= $po->payment_name ?></td>
             <th>Fecha de Emisión</th>
             <td><?= $po->issue_date ?></td>
         </tr>
@@ -62,6 +49,10 @@ $is_creator = ($po->created_by == $current_user_id);
             <td><?= $po->expected_date ?></td>
             <th>Creado por</th>
             <td><?= htmlspecialchars($po->creator_name) ?></td>
+        </tr>
+        <tr>
+            <th>Notas</th>
+            <td colspan="3"><?= nl2br(htmlspecialchars($po->notes)) ?></td>
         </tr>
     </table>
 </fieldset>
@@ -76,8 +67,8 @@ $is_creator = ($po->created_by == $current_user_id);
                 <th>N°</th>
                 <th>Producto / Descripción</th>
                 <th>Cantidad</th>
-                <th>Precio Unit. (<?= $po->currency ?>)</th>
-                <th>Subtotal (<?= $po->currency ?>)</th>
+                <th>Precio Unit.</th>
+                <th>Subtotal</th>
                 <th>Fecha Entrega</th>
             </tr>
         </thead>
@@ -94,7 +85,7 @@ $is_creator = ($po->created_by == $current_user_id);
                     <td><?= htmlspecialchars($item->product_name) ?> - <?= htmlspecialchars($item->product_option) ?></td>
                     <td><?= number_format($item->quantity, 2) ?></td>
                     <td><?= number_format($item->unit_price, 2) ?></td>
-                    <td><?= number_format($subtotal, 2) ?></td>
+                    <td><strong><?= number_format($subtotal, 2) ?></strong></td>
                     <td><?= $item->delivery_date ?></td>
                 </tr>
             <?php 
@@ -104,9 +95,9 @@ $is_creator = ($po->created_by == $current_user_id);
         </tbody>
         <tfoot>
             <tr>
-                <th colspan="4">TOTAL ORDEN:</th>
+                <th colspan="4">TOTAL ORDEN (<?= $po->currency_name ?>):</th>
                 <th><?= number_format($total_calc, 2) ?></th>
-                <th><?= $po->currency ?></th>
+                <th></th>
             </tr>
         </tfoot>
     </table>
@@ -117,37 +108,58 @@ $is_creator = ($po->created_by == $current_user_id);
 <fieldset>
     <legend>Gestión de la Orden</legend>
     
-    <?php if ($po->status === 'Borrador'): ?>
-        <table>
-            <tr>
+    <?php if ($po->status_code === 'Registrado'): ?>
+        <form method="post" action="<?= base_url('purchase/update_status/'.$po->id) ?>">
+            <div>
+                <label><strong>Observaciones / Comentarios:</strong></label><br>
+                <textarea name="comment" rows="2" placeholder="Ingrese el motivo de su decisión..."></textarea>
+            </div>
+
+            <div>
                 <?php if ($is_admin || ($is_logistics && !$is_creator)): ?>
-                    <td>
-                        <form method="post" action="<?= base_url('purchase/update_status/'.$po->id) ?>">
-                            <input type="hidden" name="status" value="Aprobado">
-                            <button type="submit" onclick="return confirm('¿Confirmar APROBACIÓN?')">Aprobar Orden</button>
-                        </form>
-                    </td>
-                    <td>
-                        <form method="post" action="<?= base_url('purchase/update_status/'.$po->id) ?>">
-                            <input type="hidden" name="status" value="Rechazado">
-                            <button type="submit" onclick="return confirm('¿Confirmar RECHAZO?')">Rechazar Orden</button>
-                        </form>
-                    </td>
+                    <button type="submit" name="status_code" value="Aprobado" onclick="return confirm('¿Está seguro de APROBAR esta orden?')">Aprobar Orden</button>
+                    <button type="submit" name="status_code" value="Rechazado" onclick="return confirm('¿Está seguro de RECHAZAR esta orden?')">Rechazar Orden</button>
                 <?php endif; ?>
 
                 <?php if ($is_creator || $is_admin): ?>
-                    <td>
-                        <form method="post" action="<?= base_url('purchase/cancel/'.$po->id) ?>">
-                            <button type="submit" onclick="return confirm('¿Confirmar ANULACIÓN?')">Anular Orden (Cancelado)</button>
-                        </form>
-                    </td>
+                    <button type="submit" name="status_code" value="Cancelado" onclick="return confirm('¿Está seguro de ANULAR esta orden?')">Anular Orden</button>
                 <?php endif; ?>
-            </tr>
-        </table>
+            </div>
+        </form>
+
+    <?php elseif ($po->status_code === 'Rechazado' || $po->status_code === 'Cancelado'): ?>
+        <div>
+            <p>Estado Actual: <?= $po->status_name ?></p>
+            
+            <?php if (!empty($po->approver_comment)): ?>
+                <div>
+                    <strong>Comentario del Revisor:</strong><br>
+                    <span><?= nl2br(htmlspecialchars($po->approver_comment)) ?></span>
+                </div>
+            <?php endif; ?>
+
+            <?php if ($is_creator || $is_admin): ?>
+                <div>
+                    <a href="<?= base_url('purchase/edit/'.$po->id) ?>">
+                        [ Editar y Re-enviar para Aprobación ]
+                    </a>
+                    <p>* Al editar, la orden volverá al estado "Registrado" para una nueva revisión.</p>
+                </div>
+            <?php endif; ?>
+        </div>
+
     <?php else: ?>
-        <p>Estado actual: <strong><?= $display_status ?></strong></p>
-        <?php if (!empty($po->approved_at)): ?>
-            <p>Procesado el: <?= $po->approved_at ?> por <?= htmlspecialchars($po->approver_name) ?></p>
-        <?php endif; ?>
+        <div>
+            <p><strong>Estado de la Orden:</strong> <?= strtoupper($po->status_name) ?></p>
+            <p>Procesado por: <strong><?= htmlspecialchars($po->approver_name) ?></strong></p>
+            <p>Fecha de proceso: <strong><?= $po->approved_at ?></strong></p>
+            
+            <?php if (!empty($po->approver_comment)): ?>
+                <div>
+                    <strong>Nota de aprobación:</strong><br>
+                    <?= nl2br(htmlspecialchars($po->approver_comment)) ?>
+                </div>
+            <?php endif; ?>
+        </div>
     <?php endif; ?>
 </fieldset>
