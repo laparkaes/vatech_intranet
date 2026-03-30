@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- 생성 시간: 26-03-29 01:35
+-- 생성 시간: 26-03-30 02:02
 -- 서버 버전: 10.4.24-MariaDB
 -- PHP 버전: 7.4.29
 
@@ -246,40 +246,39 @@ INSERT INTO `exchange_rates` (`id`, `base_currency`, `target_currency`, `rate`, 
 -- --------------------------------------------------------
 
 --
--- 테이블 구조 `inventario`
+-- 테이블 구조 `inventory`
 --
 
-CREATE TABLE `inventario` (
+CREATE TABLE `inventory` (
   `id` int(11) UNSIGNED NOT NULL,
-  `warehouse_id` int(11) UNSIGNED NOT NULL COMMENT 'Referencia al almacén (Relacionado con warehouses.id)',
-  `product_id` int(11) UNSIGNED NOT NULL COMMENT 'Referencia al producto',
-  `stock_status` enum('Available','Damaged','Quarantine','Sample') DEFAULT 'Available' COMMENT 'Estado lógico del inventario',
-  `bin_location` varchar(50) DEFAULT NULL COMMENT 'Ubicación específica dentro del almacén',
-  `quantity` int(11) DEFAULT 0 COMMENT 'Cantidad actual en stock',
-  `min_stock_level` int(11) DEFAULT 0 COMMENT 'Nivel mínimo para alertas de reposición',
+  `warehouse_id` int(11) UNSIGNED NOT NULL COMMENT 'FK from warehouses',
+  `item_id` int(11) UNSIGNED NOT NULL COMMENT 'FK from product_items',
+  `stock_status` enum('Available','Damaged','Quarantine','Sample') DEFAULT 'Available' COMMENT 'Logical status',
+  `bin_location` varchar(50) DEFAULT NULL COMMENT 'Specific location in warehouse',
+  `quantity` int(11) DEFAULT 0 COMMENT 'Current quantity',
   `updated_at` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  `updated_by` int(11) DEFAULT NULL COMMENT 'ID del usuario que realizó la última actualización'
+  `updated_by` int(11) UNSIGNED DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
 --
--- 테이블 구조 `inventario_logs`
+-- 테이블 구조 `inventory_logs`
 --
 
-CREATE TABLE `inventario_logs` (
+CREATE TABLE `inventory_logs` (
   `id` int(11) UNSIGNED NOT NULL,
-  `warehouse_id` int(11) UNSIGNED NOT NULL COMMENT 'ID del almacén donde ocurrió el movimiento',
-  `product_id` int(11) UNSIGNED NOT NULL COMMENT 'ID del producto afectado',
-  `stock_status` enum('Available','Damaged','Quarantine','Sample') NOT NULL COMMENT 'Estado del stock afectado',
-  `type` enum('Ingreso','Salida','Ajuste','Transferencia') NOT NULL COMMENT 'Tipo de movimiento de inventario',
-  `reference_id` int(11) DEFAULT NULL COMMENT 'ID del documento de referencia (Orden, Factura, etc.)',
-  `qty_before` int(11) NOT NULL COMMENT 'Cantidad antes del movimiento',
-  `qty_change` int(11) NOT NULL COMMENT 'Cantidad cambiada (+ o -)',
-  `qty_after` int(11) NOT NULL COMMENT 'Cantidad después del movimiento',
-  `reason` varchar(255) DEFAULT NULL COMMENT 'Motivo o comentario del movimiento',
-  `created_at` datetime DEFAULT current_timestamp() COMMENT 'Fecha de registro',
-  `created_by` int(11) NOT NULL COMMENT 'ID del usuario que registró el movimiento'
+  `warehouse_id` int(11) UNSIGNED NOT NULL COMMENT 'ID of the warehouse',
+  `item_id` int(11) UNSIGNED NOT NULL COMMENT 'ID of the affected product_item',
+  `stock_status` enum('Available','Damaged','Quarantine','Sample') NOT NULL,
+  `type` enum('Inbound','Outbound','Adjustment','Transfer') NOT NULL,
+  `reference_id` int(11) DEFAULT NULL COMMENT 'Reference document ID',
+  `qty_before` int(11) NOT NULL,
+  `qty_change` int(11) NOT NULL,
+  `qty_after` int(11) NOT NULL,
+  `reason` varchar(255) DEFAULT NULL,
+  `created_at` datetime DEFAULT current_timestamp(),
+  `created_by` int(11) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -9632,11 +9631,77 @@ INSERT INTO `product_price_history` (`id`, `item_id`, `purchase_price_usd`, `pur
 -- --------------------------------------------------------
 
 --
+-- 테이블 구조 `purchase_orders`
+--
+
+CREATE TABLE `purchase_orders` (
+  `id` int(11) UNSIGNED NOT NULL,
+  `po_number` varchar(50) NOT NULL COMMENT 'Ej: PO-2024-001',
+  `supplier_id` int(11) UNSIGNED NOT NULL,
+  `po_type` enum('IMPORTADO','LOCAL') DEFAULT 'LOCAL',
+  `status` enum('Borrador','Enviado','Parcial','Completado','Cancelado','Aprobado','Rechazado') NOT NULL DEFAULT 'Borrador',
+  `updated_at` datetime DEFAULT NULL,
+  `currency` enum('USD','PEN') DEFAULT 'USD',
+  `exchange_rate` decimal(10,4) DEFAULT 1.0000,
+  `incoterms` varchar(20) DEFAULT NULL,
+  `payment_terms` varchar(50) DEFAULT NULL COMMENT 'Ej: Net 30, Contado',
+  `shipping_method` enum('MARÍTIMO','AÉREO','TERRESTRE','COURIER') DEFAULT 'MARÍTIMO',
+  `total_amount` decimal(15,2) DEFAULT 0.00,
+  `issue_date` date NOT NULL,
+  `expected_date` date DEFAULT NULL,
+  `notes` text DEFAULT NULL,
+  `created_at` datetime DEFAULT current_timestamp(),
+  `created_by` int(11) UNSIGNED NOT NULL,
+  `approved_by` int(11) DEFAULT NULL,
+  `approved_at` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- 테이블의 덤프 데이터 `purchase_orders`
+--
+
+INSERT INTO `purchase_orders` (`id`, `po_number`, `supplier_id`, `po_type`, `status`, `updated_at`, `currency`, `exchange_rate`, `incoterms`, `payment_terms`, `shipping_method`, `total_amount`, `issue_date`, `expected_date`, `notes`, `created_at`, `created_by`, `approved_by`, `approved_at`) VALUES
+(1, 'VPR-PO-20260329-174150', 2, '', 'Rechazado', '2026-03-29 19:01:29', 'USD', '1.0000', 'FOB', 'Contado', '', '2500.00', '2026-03-29', '2026-03-31', 'tomar referencia de tales cosas', '2026-03-29 17:41:50', 1, 1, '2026-03-29 19:01:29'),
+(2, 'VPR-PO-20260329-180904', 2, 'LOCAL', 'Aprobado', '2026-03-29 19:01:06', 'PEN', '1.0000', NULL, 'Net 60', '', '15000.00', '2026-03-29', '2026-03-31', '', '2026-03-29 18:09:04', 1, 1, '2026-03-29 19:01:06'),
+(3, 'VPR-PO-20260329-183801', 2, 'IMPORTADO', '', NULL, 'USD', '1.0000', 'FOB', 'Contado', 'TERRESTRE', '110000.00', '2026-03-29', '2026-03-31', 'sadfsadfs fdsaf saf saf ', '2026-03-29 18:38:01', 1, NULL, NULL);
+
+-- --------------------------------------------------------
+
+--
+-- 테이블 구조 `purchase_order_items`
+--
+
+CREATE TABLE `purchase_order_items` (
+  `id` int(11) UNSIGNED NOT NULL,
+  `po_id` int(11) UNSIGNED NOT NULL,
+  `item_id` int(11) UNSIGNED NOT NULL COMMENT 'FK from product_items',
+  `unit_price` decimal(15,2) NOT NULL,
+  `quantity` int(11) NOT NULL,
+  `received_quantity` int(11) DEFAULT 0,
+  `total_price` decimal(15,2) GENERATED ALWAYS AS (`unit_price` * `quantity`) VIRTUAL,
+  `delivery_date` date DEFAULT NULL COMMENT 'Fecha de entrega específica para este ítem'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- 테이블의 덤프 데이터 `purchase_order_items`
+--
+
+INSERT INTO `purchase_order_items` (`id`, `po_id`, `item_id`, `unit_price`, `quantity`, `received_quantity`, `delivery_date`) VALUES
+(1, 1, 8, '100.00', 4, 0, '2026-03-31'),
+(2, 1, 36, '500.00', 1, 0, '2026-04-08'),
+(3, 1, 32, '1600.00', 1, 0, '2026-05-13'),
+(4, 2, 15, '1500.00', 10, 0, '2026-03-31'),
+(5, 3, 15, '5000.00', 6, 0, '2026-03-31'),
+(6, 3, 42, '16000.00', 5, 0, '2026-04-22');
+
+-- --------------------------------------------------------
+
+--
 -- 테이블 구조 `users`
 --
 
 CREATE TABLE `users` (
-  `id` int(11) UNSIGNED NOT NULL,
+  `id` int(11) NOT NULL,
   `email` varchar(100) NOT NULL,
   `division_id` int(11) DEFAULT NULL,
   `hire_date` date DEFAULT NULL,
@@ -9654,7 +9719,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `email`, `division_id`, `hire_date`, `role`, `password`, `full_name`, `status`, `created_at`, `updated_at`, `last_login`) VALUES
-(1, 'jeongwoo.park@vatechglobal.com', 1, '2026-01-05', 'admin', '$2y$10$s.K.pjGB2piiUtav53Hv9ej7IPmkLKt/O703aKmD7P9BPfo88fY1u', 'Jeong Woo Park', 1, '2026-03-16 13:37:00', '2026-03-28 23:27:08', '2026-03-28 23:27:08'),
+(1, 'jeongwoo.park@vatechglobal.com', 1, '2026-01-05', 'admin', '$2y$10$s.K.pjGB2piiUtav53Hv9ej7IPmkLKt/O703aKmD7P9BPfo88fY1u', 'Jeong Woo Park', 1, '2026-03-16 13:37:00', '2026-03-29 16:41:23', '2026-03-29 16:41:23'),
 (3, 'dsfasf@sdafdsa.com', 2, '2026-03-26', 'user', '$2y$10$XT9RxlEQVwpjGohGsO7irebVKLF0q94laU7Tgf.zZBbSUW4i5G0R.', 'sdfsadf', 1, '2026-03-17 13:20:44', '2026-03-17 18:57:36', '2026-03-17 18:57:36'),
 (4, 'admin@vatech.pe', NULL, NULL, 'admin', '1234', 'Admin User', 1, '2026-03-27 11:56:24', '2026-03-27 11:56:24', NULL);
 
@@ -9810,16 +9875,46 @@ ALTER TABLE `entities`
   ADD PRIMARY KEY (`id`);
 
 --
--- 테이블의 인덱스 `inventario`
+-- 테이블의 인덱스 `inventory`
 --
-ALTER TABLE `inventario`
+ALTER TABLE `inventory`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `idx_warehouse_product_status` (`warehouse_id`,`product_id`,`stock_status`);
+  ADD UNIQUE KEY `idx_warehouse_item_status` (`warehouse_id`,`item_id`,`stock_status`),
+  ADD KEY `idx_inventory_item` (`item_id`),
+  ADD KEY `idx_inventory_warehouse` (`warehouse_id`);
 
 --
--- 테이블의 인덱스 `inventario_logs`
+-- 테이블의 인덱스 `inventory_logs`
 --
-ALTER TABLE `inventario_logs`
+ALTER TABLE `inventory_logs`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_log_item` (`item_id`),
+  ADD KEY `idx_log_warehouse` (`warehouse_id`);
+
+--
+-- 테이블의 인덱스 `product_items`
+--
+ALTER TABLE `product_items`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- 테이블의 인덱스 `purchase_orders`
+--
+ALTER TABLE `purchase_orders`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `po_number` (`po_number`),
+  ADD KEY `fk_po_user_approved` (`approved_by`);
+
+--
+-- 테이블의 인덱스 `purchase_order_items`
+--
+ALTER TABLE `purchase_order_items`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- 테이블의 인덱스 `users`
+--
+ALTER TABLE `users`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -9835,16 +9930,40 @@ ALTER TABLE `warehouses`
 --
 
 --
--- 테이블의 AUTO_INCREMENT `inventario`
+-- 테이블의 AUTO_INCREMENT `inventory`
 --
-ALTER TABLE `inventario`
+ALTER TABLE `inventory`
   MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- 테이블의 AUTO_INCREMENT `inventario_logs`
+-- 테이블의 AUTO_INCREMENT `inventory_logs`
 --
-ALTER TABLE `inventario_logs`
+ALTER TABLE `inventory_logs`
   MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- 테이블의 AUTO_INCREMENT `product_items`
+--
+ALTER TABLE `product_items`
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3640;
+
+--
+-- 테이블의 AUTO_INCREMENT `purchase_orders`
+--
+ALTER TABLE `purchase_orders`
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- 테이블의 AUTO_INCREMENT `purchase_order_items`
+--
+ALTER TABLE `purchase_order_items`
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+--
+-- 테이블의 AUTO_INCREMENT `users`
+--
+ALTER TABLE `users`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- 테이블의 AUTO_INCREMENT `warehouses`
@@ -9857,10 +9976,17 @@ ALTER TABLE `warehouses`
 --
 
 --
--- 테이블의 제약사항 `inventario`
+-- 테이블의 제약사항 `inventory`
 --
-ALTER TABLE `inventario`
-  ADD CONSTRAINT `fk_inventario_warehouse` FOREIGN KEY (`warehouse_id`) REFERENCES `warehouses` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `inventory`
+  ADD CONSTRAINT `fk_inventory_item_ref` FOREIGN KEY (`item_id`) REFERENCES `product_items` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_inventory_warehouse_ref` FOREIGN KEY (`warehouse_id`) REFERENCES `warehouses` (`id`) ON DELETE CASCADE;
+
+--
+-- 테이블의 제약사항 `purchase_orders`
+--
+ALTER TABLE `purchase_orders`
+  ADD CONSTRAINT `fk_po_user_approved` FOREIGN KEY (`approved_by`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 --
 -- 테이블의 제약사항 `warehouses`
