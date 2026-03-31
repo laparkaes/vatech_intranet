@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- 생성 시간: 26-03-30 01:22
+-- 생성 시간: 26-04-01 01:12
 -- 서버 버전: 10.4.24-MariaDB
 -- PHP 버전: 7.4.29
 
@@ -246,6 +246,61 @@ INSERT INTO `exchange_rates` (`id`, `base_currency`, `target_currency`, `rate`, 
 -- --------------------------------------------------------
 
 --
+-- 테이블 구조 `inbounds`
+--
+
+CREATE TABLE `inbounds` (
+  `id` int(11) UNSIGNED NOT NULL,
+  `inbound_number` varchar(50) NOT NULL COMMENT 'Ej: INB-2026-001',
+  `source_type_id` int(11) UNSIGNED NOT NULL,
+  `status_id` int(11) UNSIGNED NOT NULL,
+  `source_id` int(11) UNSIGNED DEFAULT NULL COMMENT 'ID de PO, Transferencia, etc.',
+  `warehouse_id` int(11) UNSIGNED NOT NULL COMMENT 'Almacén de destino',
+  `expected_date` date DEFAULT NULL COMMENT 'Fecha estimada de llegada',
+  `arrival_date` datetime DEFAULT NULL COMMENT 'Fecha real de ingreso',
+  `notes` text DEFAULT NULL,
+  `created_by` int(11) UNSIGNED NOT NULL,
+  `created_at` datetime DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- 테이블의 덤프 데이터 `inbounds`
+--
+
+INSERT INTO `inbounds` (`id`, `inbound_number`, `source_type_id`, `status_id`, `source_id`, `warehouse_id`, `expected_date`, `arrival_date`, `notes`, `created_by`, `created_at`) VALUES
+(1, 'INB-20260331-0006', 22, 26, 6, 1, '2026-04-15', NULL, NULL, 1, '2026-03-31 17:34:30'),
+(2, 'INB-20260331-0008', 22, 26, 8, 5, '2027-05-01', NULL, 'Generado automáticamente desde PO: VPR-PO-20260331-181149', 1, '2026-03-31 18:11:58');
+
+-- --------------------------------------------------------
+
+--
+-- 테이블 구조 `inbound_items`
+--
+
+CREATE TABLE `inbound_items` (
+  `id` int(11) UNSIGNED NOT NULL,
+  `inbound_id` int(11) UNSIGNED NOT NULL,
+  `item_id` int(11) UNSIGNED NOT NULL COMMENT 'FK: product_items.id',
+  `expected_qty` int(11) NOT NULL DEFAULT 0 COMMENT 'Cantidad planificada',
+  `received_qty` int(11) NOT NULL DEFAULT 0 COMMENT 'Cantidad real ingresada',
+  `damaged_qty` int(11) NOT NULL DEFAULT 0 COMMENT 'Cantidad dañada/rechazada',
+  `item_status_id` int(11) UNSIGNED NOT NULL,
+  `bin_location` varchar(50) DEFAULT NULL COMMENT 'Ubicación específica en almacén'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- 테이블의 덤프 데이터 `inbound_items`
+--
+
+INSERT INTO `inbound_items` (`id`, `inbound_id`, `item_id`, `expected_qty`, `received_qty`, `damaged_qty`, `item_status_id`, `bin_location`) VALUES
+(1, 1, 3, 100, 0, 0, 31, NULL),
+(2, 1, 17, 10, 0, 0, 31, NULL),
+(3, 1, 3, 156, 0, 0, 31, NULL),
+(4, 2, 4, 1, 0, 0, 31, NULL);
+
+-- --------------------------------------------------------
+
+--
 -- 테이블 구조 `inventory`
 --
 
@@ -321,7 +376,22 @@ INSERT INTO `mappings` (`id`, `category`, `code_value`, `display_name`, `sort_or
 (18, 'payment_terms', 'Contado', 'Contado / Efectivo', 1, 1),
 (19, 'payment_terms', 'Net 30', 'Crédito 30 días', 2, 1),
 (20, 'payment_terms', 'Net 60', 'Crédito 60 días', 3, 1),
-(21, 'payment_terms', 'Adelantado', 'Pago por Adelantado', 4, 1);
+(21, 'payment_terms', 'Adelantado', 'Pago por Adelantado', 4, 1),
+(22, 'inbound_source', 'PURCHASE_ORDER', 'Orden de Compra (PO)', 1, 1),
+(23, 'inbound_source', 'TRANSFER', 'Transferencia entre Almacenes', 2, 1),
+(24, 'inbound_source', 'RETURN', 'Devolución de Cliente', 3, 1),
+(25, 'inbound_source', 'ADJUSTMENT', 'Ajuste de Inventario', 4, 1),
+(26, 'inbound_status', 'PENDING', 'Pendiente (Esperando Arribo)', 1, 1),
+(27, 'inbound_status', 'ARRIVED', 'Arribado (En Almacén)', 2, 1),
+(28, 'inbound_status', 'IN_INSPECTION', 'En Inspección Técnica', 3, 1),
+(29, 'inbound_status', 'COMPLETED', 'Ingreso Finalizado', 4, 1),
+(30, 'inbound_status', 'CANCELLED', 'Anulado', 5, 1),
+(31, 'inbound_item_status', 'PENDING', 'Pendiente (대기)', 1, 1),
+(32, 'inbound_item_status', 'RECEIVED', 'Recibido (수령)', 2, 1),
+(33, 'inbound_item_status', 'PARTIAL', 'Parcial (부분 입고)', 3, 1),
+(34, 'inbound_item_status', 'EXCESS', 'Exceso (과입고)', 4, 1),
+(35, 'inbound_item_status', 'PENDING', 'Pendiente', 1, 1),
+(36, 'inbound_item_status', 'RECEIVED', 'Recibido', 2, 1);
 
 -- --------------------------------------------------------
 
@@ -7901,6 +7971,7 @@ CREATE TABLE `purchase_orders` (
   `id` int(11) UNSIGNED NOT NULL,
   `po_number` varchar(50) NOT NULL COMMENT 'Ej: PO-2024-001',
   `supplier_id` int(11) UNSIGNED NOT NULL,
+  `warehouse_id` int(11) UNSIGNED DEFAULT NULL,
   `po_type` int(11) UNSIGNED DEFAULT NULL,
   `status` int(11) UNSIGNED DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
@@ -7924,12 +7995,15 @@ CREATE TABLE `purchase_orders` (
 -- 테이블의 덤프 데이터 `purchase_orders`
 --
 
-INSERT INTO `purchase_orders` (`id`, `po_number`, `supplier_id`, `po_type`, `status`, `updated_at`, `currency`, `exchange_rate`, `incoterms`, `payment_terms`, `shipping_method`, `total_amount`, `issue_date`, `expected_date`, `notes`, `created_at`, `created_by`, `approved_by`, `approved_at`, `approver_comment`) VALUES
-(1, 'VPR-PO-20260329-174150', 2, 0, 7, '2026-03-29 19:01:29', 1, '1.0000', 0, 0, 0, '2500.00', '2026-03-29', '2026-03-31', 'tomar referencia de tales cosas', '2026-03-29 17:41:50', 1, 1, '2026-03-29 19:01:29', NULL),
-(2, 'VPR-PO-20260329-180904', 2, 2, 6, '2026-03-29 19:01:06', 2, '1.0000', NULL, 0, 0, '15000.00', '2026-03-29', '2026-03-31', '', '2026-03-29 18:09:04', 1, 1, '2026-03-29 19:01:06', NULL),
-(3, 'VPR-PO-20260329-183801', 2, 1, 0, NULL, 1, '1.0000', 0, 0, 3, '110000.00', '2026-03-29', '2026-03-31', 'sadfsadfs fdsaf saf saf ', '2026-03-29 18:38:01', 1, NULL, NULL, NULL),
-(4, 'VPR-PO-20260329-223538', 2, 5, 4, NULL, 7, '1.0000', 14, 18, 9, '10200.00', '2026-03-29', '2026-04-15', '', '2026-03-29 22:35:38', 1, 1, '2026-03-30 00:44:56', ''),
-(5, 'VPR-PO-20260329-233910', 1, 6, 3, NULL, 8, '1.0000', 0, 20, 11, '3000.00', '2026-03-29', '2026-04-30', '', '2026-03-29 23:39:10', 1, 1, '2026-03-30 01:15:46', '.');
+INSERT INTO `purchase_orders` (`id`, `po_number`, `supplier_id`, `warehouse_id`, `po_type`, `status`, `updated_at`, `currency`, `exchange_rate`, `incoterms`, `payment_terms`, `shipping_method`, `total_amount`, `issue_date`, `expected_date`, `notes`, `created_at`, `created_by`, `approved_by`, `approved_at`, `approver_comment`) VALUES
+(1, 'VPR-PO-20260329-174150', 2, NULL, 0, 7, '2026-03-29 19:01:29', 1, '1.0000', 0, 0, 0, '2500.00', '2026-03-29', '2026-03-31', 'tomar referencia de tales cosas', '2026-03-29 17:41:50', 1, 1, '2026-03-29 19:01:29', NULL),
+(2, 'VPR-PO-20260329-180904', 2, NULL, 2, 6, '2026-03-29 19:01:06', 2, '1.0000', NULL, 0, 0, '15000.00', '2026-03-29', '2026-03-31', '', '2026-03-29 18:09:04', 1, 1, '2026-03-29 19:01:06', NULL),
+(3, 'VPR-PO-20260329-183801', 2, NULL, 1, 0, NULL, 1, '1.0000', 0, 0, 3, '110000.00', '2026-03-29', '2026-03-31', 'sadfsadfs fdsaf saf saf ', '2026-03-29 18:38:01', 1, NULL, NULL, NULL),
+(4, 'VPR-PO-20260329-223538', 2, NULL, 5, 4, NULL, 7, '1.0000', 14, 18, 9, '10200.00', '2026-03-29', '2026-04-15', '', '2026-03-29 22:35:38', 1, 1, '2026-03-30 00:44:56', ''),
+(5, 'VPR-PO-20260329-233910', 1, NULL, 6, 3, NULL, 8, '1.0000', 0, 20, 11, '3000.00', '2026-03-29', '2026-04-30', '', '2026-03-29 23:39:10', 1, 1, '2026-03-30 01:15:46', '.'),
+(6, 'VPR-PO-20260331-172451', 2, 5, 6, 2, NULL, 7, '1.0000', 0, 18, 12, '12060.00', '2026-03-31', '2026-04-15', 'estoy creando PO para probar almacen de destino', '2026-03-31 17:24:51', 1, 1, '2026-03-31 17:34:30', 'ok'),
+(7, 'VPR-PO-20260331-181013', 2, NULL, 6, 1, NULL, 7, '1.0000', 0, 19, 11, '41000.00', '2026-03-31', '2026-05-05', 'con almacen', '2026-03-31 18:10:13', 1, NULL, NULL, NULL),
+(8, 'VPR-PO-20260331-181149', 2, 5, 5, 2, NULL, 7, '1.0000', 0, 18, 9, '100.00', '2026-03-31', '2027-05-01', 'almacen', '2026-03-31 18:11:49', 1, 1, '2026-03-31 18:11:58', 'ok');
 
 -- --------------------------------------------------------
 
@@ -7968,7 +8042,13 @@ INSERT INTO `purchase_order_items` (`id`, `po_id`, `item_id`, `unit_price`, `qua
 (18, 5, 81, '1000.00', 1, 0, '2026-04-17'),
 (19, 5, 3565, '0.00', 1, 0, '0000-00-00'),
 (20, 5, 3614, '0.00', 1, 0, '0000-00-00'),
-(21, 5, 3630, '0.00', 1, 0, '0000-00-00');
+(21, 5, 3630, '0.00', 1, 0, '0000-00-00'),
+(28, 6, 3, '100.00', 100, 0, '2026-04-15'),
+(29, 6, 17, '50.00', 10, 0, '2027-05-05'),
+(30, 6, 3, '10.00', 156, 0, '2026-04-03'),
+(31, 7, 13, '150.00', 100, 0, '2026-04-04'),
+(32, 7, 16, '130.00', 200, 0, '2026-04-06'),
+(33, 8, 4, '100.00', 1, 0, '2027-04-01');
 
 -- --------------------------------------------------------
 
@@ -8151,6 +8231,25 @@ ALTER TABLE `entities`
   ADD PRIMARY KEY (`id`);
 
 --
+-- 테이블의 인덱스 `inbounds`
+--
+ALTER TABLE `inbounds`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `idx_inbound_number` (`inbound_number`),
+  ADD KEY `fk_inbound_warehouse` (`warehouse_id`),
+  ADD KEY `fk_inbound_src_map_v2` (`source_type_id`),
+  ADD KEY `fk_inbound_sts_map_v2` (`status_id`);
+
+--
+-- 테이블의 인덱스 `inbound_items`
+--
+ALTER TABLE `inbound_items`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `fk_inbound_items_master` (`inbound_id`),
+  ADD KEY `fk_inbound_items_product` (`item_id`),
+  ADD KEY `fk_inb_items_status_map_v4` (`item_status_id`);
+
+--
 -- 테이블의 인덱스 `inventory`
 --
 ALTER TABLE `inventory`
@@ -8192,7 +8291,8 @@ ALTER TABLE `product_items`
 ALTER TABLE `purchase_orders`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `po_number` (`po_number`),
-  ADD KEY `fk_po_user_approved` (`approved_by`);
+  ADD KEY `fk_po_user_approved` (`approved_by`),
+  ADD KEY `fk_po_warehouse` (`warehouse_id`);
 
 --
 -- 테이블의 인덱스 `purchase_order_items`
@@ -8219,6 +8319,18 @@ ALTER TABLE `warehouses`
 --
 
 --
+-- 테이블의 AUTO_INCREMENT `inbounds`
+--
+ALTER TABLE `inbounds`
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- 테이블의 AUTO_INCREMENT `inbound_items`
+--
+ALTER TABLE `inbound_items`
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
 -- 테이블의 AUTO_INCREMENT `inventory`
 --
 ALTER TABLE `inventory`
@@ -8234,7 +8346,7 @@ ALTER TABLE `inventory_logs`
 -- 테이블의 AUTO_INCREMENT `mappings`
 --
 ALTER TABLE `mappings`
-  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
 
 --
 -- 테이블의 AUTO_INCREMENT `products`
@@ -8252,13 +8364,13 @@ ALTER TABLE `product_items`
 -- 테이블의 AUTO_INCREMENT `purchase_orders`
 --
 ALTER TABLE `purchase_orders`
-  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- 테이블의 AUTO_INCREMENT `purchase_order_items`
 --
 ALTER TABLE `purchase_order_items`
-  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
 
 --
 -- 테이블의 AUTO_INCREMENT `users`
@@ -8277,6 +8389,22 @@ ALTER TABLE `warehouses`
 --
 
 --
+-- 테이블의 제약사항 `inbounds`
+--
+ALTER TABLE `inbounds`
+  ADD CONSTRAINT `fk_inbound_src_map_v2` FOREIGN KEY (`source_type_id`) REFERENCES `mappings` (`id`),
+  ADD CONSTRAINT `fk_inbound_sts_map_v2` FOREIGN KEY (`status_id`) REFERENCES `mappings` (`id`),
+  ADD CONSTRAINT `fk_inbound_warehouse` FOREIGN KEY (`warehouse_id`) REFERENCES `warehouses` (`id`);
+
+--
+-- 테이블의 제약사항 `inbound_items`
+--
+ALTER TABLE `inbound_items`
+  ADD CONSTRAINT `fk_inb_items_status_map_v4` FOREIGN KEY (`item_status_id`) REFERENCES `mappings` (`id`),
+  ADD CONSTRAINT `fk_inbound_items_master` FOREIGN KEY (`inbound_id`) REFERENCES `inbounds` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_inbound_items_product` FOREIGN KEY (`item_id`) REFERENCES `product_items` (`id`);
+
+--
 -- 테이블의 제약사항 `inventory`
 --
 ALTER TABLE `inventory`
@@ -8287,7 +8415,8 @@ ALTER TABLE `inventory`
 -- 테이블의 제약사항 `purchase_orders`
 --
 ALTER TABLE `purchase_orders`
-  ADD CONSTRAINT `fk_po_user_approved` FOREIGN KEY (`approved_by`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_po_user_approved` FOREIGN KEY (`approved_by`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_po_warehouse` FOREIGN KEY (`warehouse_id`) REFERENCES `warehouses` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 --
 -- 테이블의 제약사항 `warehouses`

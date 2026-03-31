@@ -5,7 +5,7 @@
 
 <?php if (!empty($po->approver_comment)): ?>
 <div>
-    <h4>⚠️ Motivo de Rechazo / Observación:</h4>
+    <h4>Motivo de Rechazo / Observación:</h4>
     <p>
         <?= nl2br(htmlspecialchars($po->approver_comment)) ?>
     </p>
@@ -80,6 +80,21 @@
                 <td><input type="date" name="issue_date" value="<?= $po->issue_date ?>" required></td>
                 <th>Fecha Entrega Est.</th>
                 <td><input type="date" name="expected_date" value="<?= $po->expected_date ?>"></td>
+            </tr>
+			<tr>
+                <th>Almacén de Destino</th>
+                <td colspan="3">
+                    <select name="warehouse_id" required>
+                        <option value="">-- Seleccionar Almacén --</option>
+                        <?php foreach($warehouses as $w): ?>
+                            <option value="<?= $w->id ?>" <?= ($w->id == $po->warehouse_id) ? 'selected' : '' ?>>
+                                <?= htmlspecialchars($w->name) ?> (<?= htmlspecialchars($w->address) ?>)
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                    <br>
+                    <small style="color: blue;">* Indique el almacén donde se recibirá la mercadería.</small>
+                </td>
             </tr>
             <tr>
                 <th>Notas / Ajustes</th>

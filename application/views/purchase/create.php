@@ -71,6 +71,18 @@
                 <th>Fecha Entrega Est.</th>
                 <td><input type="date" name="expected_date"></td>
             </tr>
+			<tr>
+                <th>Almacén de Destino</th>
+                <td colspan="3">
+                    <select name="warehouse_id" required>
+                        <option value="">-- Seleccionar Almacén de Destino --</option>
+                        <?php foreach($warehouses as $w): ?>
+                            <option value="<?= $w->id ?>"><?= $w->name ?> (<?= $w->address ?>)</option>
+                        <?php endforeach; ?>
+                    </select>
+                    <small style="color: blue;">* Este será el almacén donde se generará el ingreso (Inbound) tras la aprobación.</small>
+                </td>
+            </tr>
             <tr>
                 <th>Notas</th>
                 <td colspan="3">

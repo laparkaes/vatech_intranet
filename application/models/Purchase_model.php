@@ -80,40 +80,44 @@ class Purchase_model extends CI_Model {
 
     /**
      * Obtiene la información completa de una PO específica mediante JOINs múltiples.
-     * @param int $id ID de la Orden de Compra.
-     * @return object Datos detallados del encabezado.
+     * 창고 정보(warehouse_name, warehouse_address)를 포함하도록 수정되었습니다.
      */
     public function get_po_header($id) {
-		$this->db->select('
-			po.*, 
-			e.name as supplier_name, 
-			e.tax_id as supplier_tax_id,
-			u.full_name as creator_name,
-			app.full_name as approver_name,
-			m_status.display_name as status_name,
-			m_status.code_value as status_code,
-			m_currency.display_name as currency_name,
-			m_type.display_name as po_type_name,
-			m_incoterms.display_name as incoterms_name,
-			m_shipping.display_name as shipping_name,
-			m_payment.display_name as payment_name
-		');
-		$this->db->from('purchase_orders po');
-		$this->db->join('entities e', 'po.supplier_id = e.id', 'left');
-		$this->db->join('users u', 'po.created_by = u.id', 'left');
-		$this->db->join('users app', 'po.approved_by = app.id', 'left');
-		
-		/* Mappings Join 세트 */
-		$this->db->join('mappings m_status', 'po.status = m_status.id', 'left');
-		$this->db->join('mappings m_currency', 'po.currency = m_currency.id', 'left');
-		$this->db->join('mappings m_type', 'po.po_type = m_type.id', 'left');
-		$this->db->join('mappings m_incoterms', 'po.incoterms = m_incoterms.id', 'left');
-		$this->db->join('mappings m_shipping', 'po.shipping_method = m_shipping.id', 'left');
-		$this->db->join('mappings m_payment', 'po.payment_terms = m_payment.id', 'left');
-		
-		$this->db->where('po.id', $id);
-		return $this->db->get()->row();
-	}
+        $this->db->select('
+            po.*, 
+            e.name as supplier_name, 
+            e.tax_id as supplier_tax_id,
+            u.full_name as creator_name,
+            app.full_name as approver_name,
+            w.name as warehouse_name,
+            w.address as warehouse_address,
+            m_status.display_name as status_name,
+            m_status.code_value as status_code,
+            m_currency.display_name as currency_name,
+            m_type.display_name as po_type_name,
+            m_incoterms.display_name as incoterms_name,
+            m_shipping.display_name as shipping_name,
+            m_payment.display_name as payment_name
+        ');
+        $this->db->from('purchase_orders po');
+        $this->db->join('entities e', 'po.supplier_id = e.id', 'left');
+        $this->db->join('users u', 'po.created_by = u.id', 'left');
+        $this->db->join('users app', 'po.approved_by = app.id', 'left');
+        
+        /* [추가] 창고 정보 조인 */
+        $this->db->join('warehouses w', 'po.warehouse_id = w.id', 'left');
+        
+        /* Mappings Join 세트 */
+        $this->db->join('mappings m_status', 'po.status = m_status.id', 'left');
+        $this->db->join('mappings m_currency', 'po.currency = m_currency.id', 'left');
+        $this->db->join('mappings m_type', 'po.po_type = m_type.id', 'left');
+        $this->db->join('mappings m_incoterms', 'po.incoterms = m_incoterms.id', 'left');
+        $this->db->join('mappings m_shipping', 'po.shipping_method = m_shipping.id', 'left');
+        $this->db->join('mappings m_payment', 'po.payment_terms = m_payment.id', 'left');
+        
+        $this->db->where('po.id', $id);
+        return $this->db->get()->row();
+    }
 	
     /**
      * Actualiza el estado de la PO y registra la auditoría si es aprobación o rechazo.

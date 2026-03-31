@@ -50,6 +50,12 @@ $is_creator = ($po->created_by == $current_user_id);
             <th>Creado por</th>
             <td><?= htmlspecialchars($po->creator_name) ?></td>
         </tr>
+		<tr>
+			<th>Almacén de Destino</th>
+			<td><?= $po->warehouse_name ?></td>
+			<th>Dirección de Entrega</th>
+			<td><?= $po->warehouse_address ?></td>
+		</tr>
         <tr>
             <th>Notas</th>
             <td colspan="3"><?= nl2br(htmlspecialchars($po->notes)) ?></td>
