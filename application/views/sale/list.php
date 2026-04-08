@@ -36,8 +36,8 @@
                                 </td>
                                 <td><?= $row->creator_name ?></td>
                                 <td class="text-center">
-                                    <a href="<?= site_url('sales/view/'.$row->id) ?>" class="btn btn-sm btn-info">
-                                        <i class="fas fa-eye"></i>
+                                    <a href="<?= site_url('sale/view/'.$row->id) ?>" class="btn btn-sm btn-info">
+                                        Ver
                                     </a>
                                 </td>
                             </tr>

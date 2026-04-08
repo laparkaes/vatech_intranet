@@ -57,7 +57,7 @@
                         <strong><?= $item->product_base_name ?></strong><br>
                         <small><?= $item->item_option ?></small>
                     </td>
-                    <td align="center"><?= $item->stock_status ?></td>
+                    <td><?php echo $item->status_name; ?></td>
                     <td align="center"><?= $item->bin_location ?: '-' ?></td>
                     <td align="right"><strong><?= number_format($item->quantity) ?></strong></td>
                     <td align="center"><?= $item->updated_at ?></td>

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- 생성 시간: 26-04-08 02:46
+-- 생성 시간: 26-04-09 00:50
 -- 서버 버전: 10.4.24-MariaDB
 -- PHP 버전: 7.4.29
 
@@ -190,7 +190,7 @@ CREATE TABLE `inventory` (
   `id` int(11) UNSIGNED NOT NULL,
   `warehouse_id` int(11) UNSIGNED NOT NULL COMMENT 'FK from warehouses',
   `item_id` int(11) UNSIGNED NOT NULL COMMENT 'FK from product_items',
-  `stock_status` enum('Available','Damaged','Quarantine','Sample') DEFAULT 'Available' COMMENT 'Logical status',
+  `stock_status_id` int(11) UNSIGNED NOT NULL,
   `bin_location` varchar(50) DEFAULT NULL COMMENT 'Specific location in warehouse',
   `quantity` int(11) DEFAULT 0 COMMENT 'Current quantity',
   `updated_at` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
@@ -207,7 +207,7 @@ CREATE TABLE `inventory_logs` (
   `id` int(11) UNSIGNED NOT NULL,
   `warehouse_id` int(11) UNSIGNED NOT NULL COMMENT 'ID of the warehouse',
   `item_id` int(11) UNSIGNED NOT NULL COMMENT 'ID of the affected product_item',
-  `stock_status` enum('Available','Damaged','Quarantine','Sample') NOT NULL,
+  `stock_status_id` int(11) UNSIGNED NOT NULL,
   `type` enum('Inbound','Outbound','Adjustment','Transfer') NOT NULL,
   `reference_id` int(11) DEFAULT NULL COMMENT 'Reference document ID',
   `qty_before` int(11) NOT NULL,
@@ -231,6 +231,38 @@ CREATE TABLE `mappings` (
   `display_name` varchar(100) NOT NULL COMMENT 'Nombre descriptivo que se muestra en la interfaz (UI)',
   `sort_order` int(11) DEFAULT 0 COMMENT 'Orden de visualización de los elementos',
   `is_active` tinyint(1) DEFAULT 1 COMMENT 'Estado del registro: 1 para Activo, 0 para Inactivo'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- 테이블 구조 `outbounds`
+--
+
+CREATE TABLE `outbounds` (
+  `id` int(11) UNSIGNED NOT NULL,
+  `outbound_number` varchar(50) NOT NULL COMMENT 'Ej: OUT-2026-001',
+  `status_id` int(11) UNSIGNED NOT NULL COMMENT 'FK: mappings.id (PENDING, SHIPPED, etc.)',
+  `sales_id` int(11) UNSIGNED DEFAULT NULL COMMENT 'FK: sales.id',
+  `warehouse_id` int(11) UNSIGNED NOT NULL COMMENT '출고 창고',
+  `shipment_date` datetime DEFAULT NULL COMMENT '실제 출고일',
+  `notes` text DEFAULT NULL,
+  `created_by` int(11) UNSIGNED NOT NULL,
+  `created_at` datetime DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- 테이블 구조 `outbound_items`
+--
+
+CREATE TABLE `outbound_items` (
+  `id` int(11) UNSIGNED NOT NULL,
+  `outbound_id` int(11) UNSIGNED NOT NULL,
+  `item_id` int(11) UNSIGNED NOT NULL COMMENT 'FK: product_items.id',
+  `quantity` int(11) NOT NULL DEFAULT 0,
+  `item_status_id` int(11) UNSIGNED NOT NULL COMMENT '출고 시점의 상태 (Available 등)'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -480,9 +512,10 @@ ALTER TABLE `inbound_items`
 --
 ALTER TABLE `inventory`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `idx_warehouse_item_status` (`warehouse_id`,`item_id`,`stock_status`),
+  ADD UNIQUE KEY `idx_warehouse_item_status_v2` (`warehouse_id`,`item_id`,`stock_status_id`),
   ADD KEY `idx_inventory_item` (`item_id`),
-  ADD KEY `idx_inventory_warehouse` (`warehouse_id`);
+  ADD KEY `idx_inventory_warehouse` (`warehouse_id`),
+  ADD KEY `fk_inventory_status_mapping` (`stock_status_id`);
 
 --
 -- 테이블의 인덱스 `inventory_logs`
@@ -490,7 +523,8 @@ ALTER TABLE `inventory`
 ALTER TABLE `inventory_logs`
   ADD PRIMARY KEY (`id`),
   ADD KEY `idx_log_item` (`item_id`),
-  ADD KEY `idx_log_warehouse` (`warehouse_id`);
+  ADD KEY `idx_log_warehouse` (`warehouse_id`),
+  ADD KEY `fk_inv_logs_status_mapping` (`stock_status_id`);
 
 --
 -- 테이블의 인덱스 `mappings`
@@ -498,6 +532,21 @@ ALTER TABLE `inventory_logs`
 ALTER TABLE `mappings`
   ADD PRIMARY KEY (`id`),
   ADD KEY `category` (`category`,`code_value`);
+
+--
+-- 테이블의 인덱스 `outbounds`
+--
+ALTER TABLE `outbounds`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `fk_outbound_sales` (`sales_id`),
+  ADD KEY `fk_outbound_warehouse` (`warehouse_id`);
+
+--
+-- 테이블의 인덱스 `outbound_items`
+--
+ALTER TABLE `outbound_items`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `fk_outbound_items_master` (`outbound_id`);
 
 --
 -- 테이블의 인덱스 `products`
@@ -595,6 +644,18 @@ ALTER TABLE `mappings`
   MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
+-- 테이블의 AUTO_INCREMENT `outbounds`
+--
+ALTER TABLE `outbounds`
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- 테이블의 AUTO_INCREMENT `outbound_items`
+--
+ALTER TABLE `outbound_items`
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
 -- 테이블의 AUTO_INCREMENT `products`
 --
 ALTER TABLE `products`
@@ -668,7 +729,27 @@ ALTER TABLE `inbound_items`
 --
 ALTER TABLE `inventory`
   ADD CONSTRAINT `fk_inventory_item_ref` FOREIGN KEY (`item_id`) REFERENCES `product_items` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_inventory_status_mapping` FOREIGN KEY (`stock_status_id`) REFERENCES `mappings` (`id`),
   ADD CONSTRAINT `fk_inventory_warehouse_ref` FOREIGN KEY (`warehouse_id`) REFERENCES `warehouses` (`id`) ON DELETE CASCADE;
+
+--
+-- 테이블의 제약사항 `inventory_logs`
+--
+ALTER TABLE `inventory_logs`
+  ADD CONSTRAINT `fk_inv_logs_status_mapping` FOREIGN KEY (`stock_status_id`) REFERENCES `mappings` (`id`);
+
+--
+-- 테이블의 제약사항 `outbounds`
+--
+ALTER TABLE `outbounds`
+  ADD CONSTRAINT `fk_outbound_sales` FOREIGN KEY (`sales_id`) REFERENCES `sales` (`id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `fk_outbound_warehouse` FOREIGN KEY (`warehouse_id`) REFERENCES `warehouses` (`id`);
+
+--
+-- 테이블의 제약사항 `outbound_items`
+--
+ALTER TABLE `outbound_items`
+  ADD CONSTRAINT `fk_outbound_items_master` FOREIGN KEY (`outbound_id`) REFERENCES `outbounds` (`id`) ON DELETE CASCADE;
 
 --
 -- 테이블의 제약사항 `purchase_orders`

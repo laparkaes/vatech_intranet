@@ -61,7 +61,7 @@
                         <small><?= $log->item_option ?></small>
                     </td>
                     <td align="center"><strong><?= $log->type ?></strong></td>
-                    <td align="center"><?= $log->stock_status ?></td>
+                    <td align="center"><?= $log->status_name ?></td>
                     <td align="right"><?= number_format($log->qty_before) ?></td>
                     <td align="right" style="color: <?= ($log->qty_change > 0) ? 'blue' : 'red' ?>;">
                         <?= ($log->qty_change > 0) ? '+' : '' ?><?= number_format($log->qty_change) ?>

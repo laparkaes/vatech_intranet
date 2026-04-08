@@ -126,7 +126,7 @@ function addRow() {
         <td><input type="number" name="items[${rowIdx}][unit_price]" class="form-control price" step="0.01" value="0.00" oninput="updateLineTotal(${rowIdx})"></td>
         <td><input type="number" name="items[${rowIdx}][qty]" class="form-control qty" value="1" oninput="updateLineTotal(${rowIdx})"></td>
         <td><span class="line_total">0.00</span></td>
-        <td><button type="button" class="btn btn-danger btn-sm" onclick="removeRow(${rowIdx})"><i class="fas fa-trash"></i></button></td>
+        <td><button type="button" class="btn btn-danger btn-sm" onclick="removeRow(${rowIdx})">Eliminar</button></td>
     </tr>`;
     document.querySelector('#itemsTable tbody').insertAdjacentHTML('beforeend', html);
     rowIdx++;

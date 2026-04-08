@@ -119,85 +119,84 @@ class Inbound extends MY_Controller {
         $data['main'] = 'inbound/edit';
         $this->load->view('layout', $data);
     }
+	
+	public function update_process() {
+		$inbound_id = $this->input->post('inbound_id');
+		
+		// 1. Obtener datos actuales del ingreso
+		$current = $this->inbound_model->get_inbound_full($inbound_id);
+		if (!$current) {
+			show_404();
+			return;
+		}
 
-    /**
-     * Procesar actualización: Asignación automática de estados según cantidad y verificación de finalización.
-     */
-    public function update_process() {
-        $inbound_id = $this->input->post('inbound_id');
-        
-        // 1. Reconfirmar estado actual (Seguridad y prevención de duplicados)
-        $current = $this->inbound_model->get_inbound_full($inbound_id);
-        if ($current['header']->status_id == 29) {
-            $this->session->set_flashdata('error', 'No se pueden realizar cambios en un ingreso ya finalizado.');
-            redirect('inbound/view/' . $inbound_id);
-            return;
-        }
+		// Bloqueo si ya está finalizado (Estado 29)
+		if ($current['header']->status_id == 29) {
+			$this->session->set_flashdata('error', 'No se pueden realizar cambios en un ingreso ya finalizado.');
+			redirect('inbound/view/' . $inbound_id);
+			return;
+		}
 
-        $items_post = $this->input->post('items');
-        $items_data = [];
-        $all_items_processed = true; // Flag para verificar si todos los ítems han sido procesados
+		$items_post = $this->input->post('items');
+		$items_data = [];
+		$all_items_processed = true;
 
-        // 2. Procesamiento de datos de ítems y determinación de estados
-        foreach ($items_post as $item) {
-            $expected = (int)$item['expected_qty'];
-            $received = (int)$item['received_qty'];
-            $damaged = (int)$item['damaged_qty'];
-            $processed_sum = $received + $damaged; // Suma de recibidos + dañados
+		// 2. Procesamiento de ítems
+		foreach ($items_post as $item) {
+			$expected = (int)$item['expected_qty'];
+			$received = (int)$item['received_qty'];
+			$damaged = (int)$item['damaged_qty'];
+			$processed_sum = $received + $damaged;
 
-            // Si alguna cantidad procesada es menor a la esperada, el proceso total no está completo
-            if ($processed_sum < $expected) {
-                $all_items_processed = false;
-            }
+			if ($processed_sum < $expected) {
+				$all_items_processed = false;
+			}
 
-            // Asignación de estados detallados por ítem
-            if ($received === 0 && $damaged === 0) {
-                $item_status = 31; // PENDING
-            } elseif ($received >= $expected) {
-                $item_status = 32; // RECEIVED (o EXCESS)
-            } elseif ($processed_sum > 0 && $processed_sum < $expected) {
-                $item_status = 33; // PARTIAL
-            } else {
-                $item_status = 32; // Recepción estándar
-            }
+			// Asignación de estados (Se recomienda usar constantes o mapping_model)
+			if ($received === 0 && $damaged === 0) {
+				$item_status = 31; // PENDING
+			} elseif ($received >= $expected) {
+				$item_status = 32; // RECEIVED
+			} else {
+				$item_status = 33; // PARTIAL
+			}
 
-            $items_data[] = [
-                'id'             => $item['id'],
-                'received_qty'   => $received,
-                'damaged_qty'    => $damaged,
-                'bin_location'   => $item['bin_location'],
-                'item_status_id' => $item_status
-            ];
-        }
+			$items_data[] = [
+				'id'             => $item['id'],
+				'received_qty'   => $received,
+				'damaged_qty'    => $damaged,
+				'bin_location'   => $item['bin_location'],
+				'item_status_id' => $item_status
+			];
+		}
 
-        // 3. Configuración de datos del encabezado
-        $header_data = [
-            'warehouse_id'  => $this->input->post('warehouse_id'),
-            'expected_date' => $this->input->post('expected_date'),
-            'notes'         => $this->input->post('notes'),
-            'updated_by'    => $this->session->userdata('user_id') // Registro de información del usuario
-        ];
+		// 3. Configuración del encabezado
+		$header_data = [
+			// Usamos el warehouse_id actual para garantizar consistencia en el inventario
+			'warehouse_id'  => $current['header']->warehouse_id, 
+			'expected_date' => $this->input->post('expected_date'),
+			'notes'         => $this->input->post('notes'),
+			'updated_by'    => $this->session->userdata('user_id')
+		];
 
-        // 4. Lógica de determinación de estado general
-        // Solo se marca como Finalizado (29) si la suma de (recibidos + dañados) de todos los ítems es igual o mayor a lo esperado.
-        if ($all_items_processed === true) {
-            $header_data['status_id'] = 29; // Ingreso Finalizado
-            $header_data['arrival_date'] = date('Y-m-d H:i:s');
-            $success_msg = 'Entrada confirmada y finalizada exitosamente.';
-        } else {
-            // Si falta algún ítem, se mantiene el estado de progreso (ej. 28 - In Progress)
-            $header_data['status_id'] = 28; 
-            $success_msg = 'Cantidades actualizadas, pero aún quedan ítems pendientes.';
-        }
+		// 4. Determinación de estado general
+		if ($all_items_processed) {
+			$header_data['status_id'] = 29; // Finalizado
+			$header_data['arrival_date'] = date('Y-m-d H:i:s');
+			$success_msg = 'Entrada confirmada y stock actualizado en inventario.';
+		} else {
+			$header_data['status_id'] = 28; // In Progress
+			$success_msg = 'Cantidades y stock actualizados correctamente.';
+		}
 
-        // 5. Ejecución de transacción en DB
-        if ($this->inbound_model->update_inbound_full($inbound_id, $header_data, $items_data)) {
-            $this->session->set_flashdata('success', $success_msg);
-        } else {
-            $this->session->set_flashdata('error', 'Error al procesar la entrada.');
-        }
+		// 5. Ejecución (El modelo ahora maneja la carga de Inventory_model y la transacción)
+		if ($this->inbound_model->update_inbound_full($inbound_id, $header_data, $items_data)) {
+			$this->session->set_flashdata('success', $success_msg);
+		} else {
+			$this->session->set_flashdata('error', 'Error crítico al procesar el inventario.');
+		}
 
-        redirect('inbound/view/' . $inbound_id);
-    }
-    
+		redirect('inbound/view/' . $inbound_id);
+	}
+	
 }

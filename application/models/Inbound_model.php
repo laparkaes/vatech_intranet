@@ -73,25 +73,63 @@ class Inbound_model extends CI_Model {
 		return ['header' => $header, 'items' => $items];
 	}
 	
-	public function update_inbound_full($id, $header, $items) {
-		$this->db->trans_start();
+	public function update_inbound_full($inbound_id, $header_data, $items_data) {
+        $this->load->model('inventory_model');
+        $this->load->model('mapping_model'); // 상태 ID 조회를 위해 로드
+        
+        // mappings 테이블에서 필요한 상태 ID 미리 정의
+        $status_available = $this->mapping_model->get_id_by_code('inventory_status', 'AVAILABLE');
+        $status_damaged   = $this->mapping_model->get_id_by_code('inventory_status', 'DAMAGED');
 
-		// 헤더 업데이트 (상태를 COMPLETED로 변경 포함)
-		$this->db->where('id', $id);
-		$this->db->update('inbounds', $header);
+        $this->db->trans_start();
 
-		// 각 아이템 업데이트 (계산된 상태 ID 반영)
-		foreach ($items as $item) {
-			$this->db->where('id', $item['id']);
-			$this->db->update('inbound_items', [
-				'received_qty'   => $item['received_qty'],
-				'damaged_qty'    => $item['damaged_qty'],
-				'bin_location'   => $item['bin_location'],
-				'item_status_id' => $item['item_status_id'] // 추가된 부분
-			]);
-		}
+        // 1. 헤더 업데이트
+        $this->db->where('id', $inbound_id);
+        $this->db->update('inbounds', $header_data);
 
-		$this->db->trans_complete();
-		return $this->db->trans_status();
-	}
+        // 2. 아이템별 처리
+        foreach ($items_data as $item) {
+            // 이전 데이터 확인 (차이량 계산용)
+            $old_item = $this->db->get_where('inbound_items', ['id' => $item['id']])->row();
+            
+            // 수량 변동폭 계산
+            $diff_received = (int)$item['received_qty'] - (int)$old_item->received_qty;
+            $diff_damaged  = (int)$item['damaged_qty']  - (int)$old_item->damaged_qty;
+
+            // 아이템 정보 업데이트 (inbound_items 테이블)
+            $this->db->where('id', $item['id']);
+            $this->db->update('inbound_items', $item);
+
+            // 3. 재고 반영 (ID 기반 호출)
+            
+            // 정상 제품 재고 반영
+            if ($diff_received !== 0) {
+                $this->inventory_model->sync_stock(
+                    $header_data['warehouse_id'], 
+                    $old_item->item_id, 
+                    $diff_received, 
+                    $status_available, // ID 값 전달
+                    $item['bin_location'], 
+                    'Inbound', 
+                    $inbound_id
+                );
+            }
+
+            // 불량 제품 재고 반영
+            if ($diff_damaged !== 0) {
+                $this->inventory_model->sync_stock(
+                    $header_data['warehouse_id'], 
+                    $old_item->item_id, 
+                    $diff_damaged, 
+                    $status_damaged, // ID 값 전달
+                    $item['bin_location'], 
+                    'Inbound', 
+                    $inbound_id
+                );
+            }
+        }
+
+        $this->db->trans_complete();
+        return $this->db->trans_status();
+    }
 }
