@@ -40,16 +40,18 @@ class Entity_model extends CI_Model {
 	}
 
     /**
-     * Obtiene la lista de entidades por rol (is_vendor o is_dealer)
-     */
-    public function get_entities_by_role($role_field) {
-        $this->db->select('e.*, c.country_name as country');
-        $this->db->from('entities e');
-        $this->db->join('countries c', 'e.country_id = c.id', 'left');
-        $this->db->where("e.$role_field", 1);
-        $this->db->order_by('e.name', 'ASC'); // Cambio a e.name
-        return $this->db->get()->result();
-    }
+	 * Obtiene la lista de entidades por rol (is_vendor o is_dealer)
+	 * + Activos solamente
+	 */
+	public function get_entities_by_role($role_field) {
+		$this->db->select('e.*, c.country_name as country');
+		$this->db->from('entities e');
+		$this->db->join('countries c', 'e.country_id = c.id', 'left');
+		$this->db->where("e.$role_field", 1);
+		$this->db->where("e.status", 1); // 활성 상태인 업체만 조회하도록 추가
+		$this->db->order_by('e.name', 'ASC');
+		return $this->db->get()->result();
+	}
 
     /**
      * Verifica duplicados por país y tax_id

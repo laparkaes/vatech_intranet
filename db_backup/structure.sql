@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- 생성 시간: 26-04-01 01:12
+-- 생성 시간: 26-04-08 02:46
 -- 서버 버전: 10.4.24-MariaDB
 -- PHP 버전: 7.4.29
 
@@ -158,6 +158,7 @@ CREATE TABLE `inbounds` (
   `expected_date` date DEFAULT NULL COMMENT 'Fecha estimada de llegada',
   `arrival_date` datetime DEFAULT NULL COMMENT 'Fecha real de ingreso',
   `notes` text DEFAULT NULL,
+  `updated_by` int(11) DEFAULT NULL,
   `created_by` int(11) UNSIGNED NOT NULL,
   `created_at` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -354,6 +355,44 @@ CREATE TABLE `purchase_order_items` (
 -- --------------------------------------------------------
 
 --
+-- 테이블 구조 `sales`
+--
+
+CREATE TABLE `sales` (
+  `id` int(11) UNSIGNED NOT NULL,
+  `sales_number` varchar(50) NOT NULL COMMENT 'Ej: SL-2026-001',
+  `customer_entity_id` int(11) UNSIGNED NOT NULL COMMENT 'FK: entities.id',
+  `warehouse_id` int(11) UNSIGNED NOT NULL COMMENT 'FK: warehouses.id',
+  `status_id` int(11) UNSIGNED NOT NULL COMMENT 'FK: mappings.id',
+  `currency_id` int(11) UNSIGNED NOT NULL COMMENT 'FK: mappings.id',
+  `exchange_rate` decimal(10,4) DEFAULT 1.0000,
+  `total_amount` decimal(15,2) DEFAULT 0.00,
+  `sales_date` date NOT NULL,
+  `notes` text DEFAULT NULL,
+  `created_by` int(11) NOT NULL COMMENT 'FK: users.id',
+  `created_at` datetime DEFAULT current_timestamp(),
+  `updated_by` int(11) DEFAULT NULL COMMENT 'FK: users.id',
+  `updated_at` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- 테이블 구조 `sales_items`
+--
+
+CREATE TABLE `sales_items` (
+  `id` int(11) UNSIGNED NOT NULL,
+  `sales_id` int(11) UNSIGNED NOT NULL,
+  `item_id` int(11) UNSIGNED NOT NULL,
+  `unit_price` decimal(15,2) NOT NULL DEFAULT 0.00,
+  `quantity` int(11) NOT NULL DEFAULT 0,
+  `total_price` decimal(15,2) GENERATED ALWAYS AS (`unit_price` * `quantity`) VIRTUAL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
 -- 테이블 구조 `users`
 --
 
@@ -424,7 +463,8 @@ ALTER TABLE `inbounds`
   ADD UNIQUE KEY `idx_inbound_number` (`inbound_number`),
   ADD KEY `fk_inbound_warehouse` (`warehouse_id`),
   ADD KEY `fk_inbound_src_map_v2` (`source_type_id`),
-  ADD KEY `fk_inbound_sts_map_v2` (`status_id`);
+  ADD KEY `fk_inbound_sts_map_v2` (`status_id`),
+  ADD KEY `fk_inbounds_updated_by` (`updated_by`);
 
 --
 -- 테이블의 인덱스 `inbound_items`
@@ -485,6 +525,26 @@ ALTER TABLE `purchase_orders`
 --
 ALTER TABLE `purchase_order_items`
   ADD PRIMARY KEY (`id`);
+
+--
+-- 테이블의 인덱스 `sales`
+--
+ALTER TABLE `sales`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `idx_sales_number` (`sales_number`),
+  ADD KEY `fk_sales_customer` (`customer_entity_id`),
+  ADD KEY `fk_sales_warehouse` (`warehouse_id`),
+  ADD KEY `fk_sales_status` (`status_id`),
+  ADD KEY `fk_sales_created_by` (`created_by`),
+  ADD KEY `fk_sales_updated_by` (`updated_by`);
+
+--
+-- 테이블의 인덱스 `sales_items`
+--
+ALTER TABLE `sales_items`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `fk_sales_items_master` (`sales_id`),
+  ADD KEY `fk_sales_items_product` (`item_id`);
 
 --
 -- 테이블의 인덱스 `users`
@@ -559,6 +619,18 @@ ALTER TABLE `purchase_order_items`
   MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
+-- 테이블의 AUTO_INCREMENT `sales`
+--
+ALTER TABLE `sales`
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- 테이블의 AUTO_INCREMENT `sales_items`
+--
+ALTER TABLE `sales_items`
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
 -- 테이블의 AUTO_INCREMENT `users`
 --
 ALTER TABLE `users`
@@ -580,7 +652,8 @@ ALTER TABLE `warehouses`
 ALTER TABLE `inbounds`
   ADD CONSTRAINT `fk_inbound_src_map_v2` FOREIGN KEY (`source_type_id`) REFERENCES `mappings` (`id`),
   ADD CONSTRAINT `fk_inbound_sts_map_v2` FOREIGN KEY (`status_id`) REFERENCES `mappings` (`id`),
-  ADD CONSTRAINT `fk_inbound_warehouse` FOREIGN KEY (`warehouse_id`) REFERENCES `warehouses` (`id`);
+  ADD CONSTRAINT `fk_inbound_warehouse` FOREIGN KEY (`warehouse_id`) REFERENCES `warehouses` (`id`),
+  ADD CONSTRAINT `fk_inbounds_updated_by` FOREIGN KEY (`updated_by`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 --
 -- 테이블의 제약사항 `inbound_items`
@@ -603,6 +676,23 @@ ALTER TABLE `inventory`
 ALTER TABLE `purchase_orders`
   ADD CONSTRAINT `fk_po_user_approved` FOREIGN KEY (`approved_by`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_po_warehouse` FOREIGN KEY (`warehouse_id`) REFERENCES `warehouses` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+--
+-- 테이블의 제약사항 `sales`
+--
+ALTER TABLE `sales`
+  ADD CONSTRAINT `fk_sales_created_by` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`),
+  ADD CONSTRAINT `fk_sales_customer` FOREIGN KEY (`customer_entity_id`) REFERENCES `entities` (`id`),
+  ADD CONSTRAINT `fk_sales_status` FOREIGN KEY (`status_id`) REFERENCES `mappings` (`id`),
+  ADD CONSTRAINT `fk_sales_updated_by` FOREIGN KEY (`updated_by`) REFERENCES `users` (`id`),
+  ADD CONSTRAINT `fk_sales_warehouse` FOREIGN KEY (`warehouse_id`) REFERENCES `warehouses` (`id`);
+
+--
+-- 테이블의 제약사항 `sales_items`
+--
+ALTER TABLE `sales_items`
+  ADD CONSTRAINT `fk_sales_items_master` FOREIGN KEY (`sales_id`) REFERENCES `sales` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_sales_items_product` FOREIGN KEY (`item_id`) REFERENCES `product_items` (`id`);
 
 --
 -- 테이블의 제약사항 `warehouses`

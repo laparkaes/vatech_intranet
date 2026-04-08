@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- 생성 시간: 26-04-01 01:12
+-- 생성 시간: 26-04-08 02:46
 -- 서버 버전: 10.4.24-MariaDB
 -- PHP 버전: 7.4.29
 
@@ -157,8 +157,8 @@ CREATE TABLE `entities` (
 
 INSERT INTO `entities` (`id`, `name`, `country_id`, `tax_id`, `is_vendor`, `is_dealer`, `address`, `website`, `phone`, `mobile`, `description`, `status`, `created_by`, `created_at`, `updated_at`) VALUES
 (1, 'Vatech Co., Ltd.', 0, '294723489', 1, 0, NULL, '', '', '', '', 1, 1, '2026-03-18 17:23:10', '2026-03-18 17:49:40'),
-(2, 'asfdsflk sdflk j', 3, '23482349', 1, 0, NULL, 'www.holamundo.com', '123 131 312', '234 2423 423', 'isadl kfjasdfk jsalfk saj flksa;j fsd\r\nsa df\r\nsa fsad\r\nfsad fsad fsa f', 1, 1, '2026-03-18 18:27:48', '2026-03-18 18:27:48'),
-(3, 'testeeeeeeetesteeeeeee', 1, 'testeeeeeee', 1, 1, 'testeeeeeeetesteeeeeee', 'testeeeeeeetesteeeeeee', 'testeeeeeeetesteeeeeee', 'testeeeeeeetesteeeeeee', 'testeeeeeeetesteeeeeee', 0, 1, '2026-03-25 12:09:20', '2026-03-25 12:11:03'),
+(2, 'asfdsflk sdflk j', 3, '23482349', 1, 1, '', 'www.holamundo.com', '123 131 312', '234 2423 423', 'isadl kfjasdfk jsalfk saj flksa;j fsd\r\nsa df\r\nsa fsad\r\nfsad fsad fsa f', 1, 1, '2026-03-18 18:27:48', '2026-04-07 18:19:11'),
+(3, 'testeeeeeeetesteeeeeee', 1, 'testeeeeeee', 1, 1, 'testeeeeeeetesteeeeeee', 'testeeeeeeetesteeeeeee', 'testeeeeeeetesteeeeeee', 'testeeeeeeetesteeeeeee', 'testeeeeeeetesteeeeeee', 1, 1, '2026-03-25 12:09:20', '2026-04-07 18:19:02'),
 (4, 'eeestedte', 4, 'eeestedte', 1, 0, 'eeestedte', 'eeestedte.co', 'eeestedte', 'eeestedte', 'eeestedte', 1, 1, '2026-03-25 12:11:33', '2026-03-25 12:11:33');
 
 -- --------------------------------------------------------
@@ -259,6 +259,7 @@ CREATE TABLE `inbounds` (
   `expected_date` date DEFAULT NULL COMMENT 'Fecha estimada de llegada',
   `arrival_date` datetime DEFAULT NULL COMMENT 'Fecha real de ingreso',
   `notes` text DEFAULT NULL,
+  `updated_by` int(11) DEFAULT NULL,
   `created_by` int(11) UNSIGNED NOT NULL,
   `created_at` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -267,9 +268,13 @@ CREATE TABLE `inbounds` (
 -- 테이블의 덤프 데이터 `inbounds`
 --
 
-INSERT INTO `inbounds` (`id`, `inbound_number`, `source_type_id`, `status_id`, `source_id`, `warehouse_id`, `expected_date`, `arrival_date`, `notes`, `created_by`, `created_at`) VALUES
-(1, 'INB-20260331-0006', 22, 26, 6, 1, '2026-04-15', NULL, NULL, 1, '2026-03-31 17:34:30'),
-(2, 'INB-20260331-0008', 22, 26, 8, 5, '2027-05-01', NULL, 'Generado automáticamente desde PO: VPR-PO-20260331-181149', 1, '2026-03-31 18:11:58');
+INSERT INTO `inbounds` (`id`, `inbound_number`, `source_type_id`, `status_id`, `source_id`, `warehouse_id`, `expected_date`, `arrival_date`, `notes`, `updated_by`, `created_by`, `created_at`) VALUES
+(1, 'INB-20260331-0006', 22, 28, 6, 1, '2026-04-15', NULL, '', 1, 1, '2026-03-31 17:34:30'),
+(2, 'INB-20260331-0008', 22, 29, 8, 5, '2027-05-01', '2026-04-07 16:53:50', 'Generado automáticamente desde PO: VPR-PO-20260331-181149', 1, 1, '2026-03-31 18:11:58'),
+(3, 'INB-20260407-0009', 22, 29, 9, 12, '2026-04-15', '2026-04-07 16:34:36', 'Generado automáticamente desde PO: VPR-PO-20260407-115650', NULL, 1, '2026-04-07 11:57:42'),
+(4, 'INB-20260407124616', 24, 29, NULL, 9, '2026-04-16', '2026-04-07 16:17:29', 'Devolucion de clinete fulano', NULL, 1, '2026-04-07 12:46:16'),
+(5, 'INB-20260407163932', 24, 29, NULL, 8, '2026-04-07', '2026-04-07 16:47:40', 'hola como estas?', NULL, 1, '2026-04-07 16:39:32'),
+(6, 'INB-20260407165550', 22, 28, NULL, 8, '2026-04-16', NULL, 'hola hola', 1, 1, '2026-04-07 16:55:50');
 
 -- --------------------------------------------------------
 
@@ -293,10 +298,22 @@ CREATE TABLE `inbound_items` (
 --
 
 INSERT INTO `inbound_items` (`id`, `inbound_id`, `item_id`, `expected_qty`, `received_qty`, `damaged_qty`, `item_status_id`, `bin_location`) VALUES
-(1, 1, 3, 100, 0, 0, 31, NULL),
-(2, 1, 17, 10, 0, 0, 31, NULL),
-(3, 1, 3, 156, 0, 0, 31, NULL),
-(4, 2, 4, 1, 0, 0, 31, NULL);
+(1, 1, 3, 100, 99, 1, 32, ''),
+(2, 1, 17, 10, 10, 0, 32, ''),
+(3, 1, 3, 156, 150, 0, 33, ''),
+(4, 2, 4, 1, 0, 1, 32, ''),
+(5, 3, 12, 3, 3, 0, 32, 'B1-1'),
+(6, 3, 14, 4, 4, 0, 32, 'B1-2'),
+(7, 3, 20, 1, 1, 0, 32, 'B1-3'),
+(8, 4, 320, 8, 8, 0, 32, 'A1'),
+(9, 4, 319, 6, 9, 3, 34, 'A2'),
+(10, 4, 332, 8, 5, 3, 33, 'A3'),
+(11, 5, 324, 13, 0, 0, 31, ''),
+(12, 5, 326, 115, 0, 0, 31, ''),
+(13, 5, 317, 12, 0, 0, 31, ''),
+(14, 5, 326, 15, 0, 0, 31, ''),
+(15, 6, 325, 100, 99, 1, 32, ''),
+(16, 6, 322, 140, 0, 0, 31, '');
 
 -- --------------------------------------------------------
 
@@ -386,12 +403,20 @@ INSERT INTO `mappings` (`id`, `category`, `code_value`, `display_name`, `sort_or
 (28, 'inbound_status', 'IN_INSPECTION', 'En Inspección Técnica', 3, 1),
 (29, 'inbound_status', 'COMPLETED', 'Ingreso Finalizado', 4, 1),
 (30, 'inbound_status', 'CANCELLED', 'Anulado', 5, 1),
-(31, 'inbound_item_status', 'PENDING', 'Pendiente (대기)', 1, 1),
-(32, 'inbound_item_status', 'RECEIVED', 'Recibido (수령)', 2, 1),
-(33, 'inbound_item_status', 'PARTIAL', 'Parcial (부분 입고)', 3, 1),
-(34, 'inbound_item_status', 'EXCESS', 'Exceso (과입고)', 4, 1),
-(35, 'inbound_item_status', 'PENDING', 'Pendiente', 1, 1),
-(36, 'inbound_item_status', 'RECEIVED', 'Recibido', 2, 1);
+(31, 'inbound_item_status', 'PENDING', 'Pendiente', 1, 1),
+(32, 'inbound_item_status', 'RECEIVED', 'Recibido', 2, 1),
+(33, 'inbound_item_status', 'PARTIAL', 'Parcial', 3, 1),
+(34, 'inbound_item_status', 'EXCESS', 'Exceso', 4, 1),
+(37, 'sales_status', 'PENDING', 'Pendiente', 1, 1),
+(38, 'sales_status', 'IN_PROGRESS', 'En Proceso', 2, 1),
+(39, 'sales_status', 'SHIPPED', 'Enviado', 3, 1),
+(40, 'sales_status', 'COMPLETED', 'Finalizado', 4, 1),
+(41, 'sales_status', 'CANCELLED', 'Cancelado', 5, 1),
+(42, 'sales_item_status', 'READY', 'Listo', 1, 1),
+(43, 'sales_item_status', 'PICKED', 'Recogido', 2, 1),
+(44, 'sales_item_status', 'OUT_OF_STOCK', 'Sin Stock', 3, 1),
+(45, 'sales_item_status', 'SHIPPED', 'Enviado', 4, 1),
+(46, 'sales_item_status', 'RETURNED', 'Devuelto', 5, 1);
 
 -- --------------------------------------------------------
 
@@ -8003,7 +8028,8 @@ INSERT INTO `purchase_orders` (`id`, `po_number`, `supplier_id`, `warehouse_id`,
 (5, 'VPR-PO-20260329-233910', 1, NULL, 6, 3, NULL, 8, '1.0000', 0, 20, 11, '3000.00', '2026-03-29', '2026-04-30', '', '2026-03-29 23:39:10', 1, 1, '2026-03-30 01:15:46', '.'),
 (6, 'VPR-PO-20260331-172451', 2, 5, 6, 2, NULL, 7, '1.0000', 0, 18, 12, '12060.00', '2026-03-31', '2026-04-15', 'estoy creando PO para probar almacen de destino', '2026-03-31 17:24:51', 1, 1, '2026-03-31 17:34:30', 'ok'),
 (7, 'VPR-PO-20260331-181013', 2, NULL, 6, 1, NULL, 7, '1.0000', 0, 19, 11, '41000.00', '2026-03-31', '2026-05-05', 'con almacen', '2026-03-31 18:10:13', 1, NULL, NULL, NULL),
-(8, 'VPR-PO-20260331-181149', 2, 5, 5, 2, NULL, 7, '1.0000', 0, 18, 9, '100.00', '2026-03-31', '2027-05-01', 'almacen', '2026-03-31 18:11:49', 1, 1, '2026-03-31 18:11:58', 'ok');
+(8, 'VPR-PO-20260331-181149', 2, 5, 5, 2, NULL, 7, '1.0000', 0, 18, 9, '100.00', '2026-03-31', '2027-05-01', 'almacen', '2026-03-31 18:11:49', 1, 1, '2026-03-31 18:11:58', 'ok'),
+(9, 'VPR-PO-20260407-115650', 2, 12, 6, 2, NULL, 8, '1.0000', 0, 18, 9, '3000.00', '2026-04-07', '2026-04-15', 'hola como estas?\r\nesto es spartha', '2026-04-07 11:56:50', 1, 1, '2026-04-07 11:57:42', 'aprobado');
 
 -- --------------------------------------------------------
 
@@ -8048,7 +8074,48 @@ INSERT INTO `purchase_order_items` (`id`, `po_id`, `item_id`, `unit_price`, `qua
 (30, 6, 3, '10.00', 156, 0, '2026-04-03'),
 (31, 7, 13, '150.00', 100, 0, '2026-04-04'),
 (32, 7, 16, '130.00', 200, 0, '2026-04-06'),
-(33, 8, 4, '100.00', 1, 0, '2027-04-01');
+(33, 8, 4, '100.00', 1, 0, '2027-04-01'),
+(37, 9, 12, '300.00', 3, 0, '2026-04-16'),
+(38, 9, 14, '450.00', 4, 0, '2026-04-16'),
+(39, 9, 20, '300.00', 1, 0, '2026-04-23');
+
+-- --------------------------------------------------------
+
+--
+-- 테이블 구조 `sales`
+--
+
+CREATE TABLE `sales` (
+  `id` int(11) UNSIGNED NOT NULL,
+  `sales_number` varchar(50) NOT NULL COMMENT 'Ej: SL-2026-001',
+  `customer_entity_id` int(11) UNSIGNED NOT NULL COMMENT 'FK: entities.id',
+  `warehouse_id` int(11) UNSIGNED NOT NULL COMMENT 'FK: warehouses.id',
+  `status_id` int(11) UNSIGNED NOT NULL COMMENT 'FK: mappings.id',
+  `currency_id` int(11) UNSIGNED NOT NULL COMMENT 'FK: mappings.id',
+  `exchange_rate` decimal(10,4) DEFAULT 1.0000,
+  `total_amount` decimal(15,2) DEFAULT 0.00,
+  `sales_date` date NOT NULL,
+  `notes` text DEFAULT NULL,
+  `created_by` int(11) NOT NULL COMMENT 'FK: users.id',
+  `created_at` datetime DEFAULT current_timestamp(),
+  `updated_by` int(11) DEFAULT NULL COMMENT 'FK: users.id',
+  `updated_at` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- 테이블 구조 `sales_items`
+--
+
+CREATE TABLE `sales_items` (
+  `id` int(11) UNSIGNED NOT NULL,
+  `sales_id` int(11) UNSIGNED NOT NULL,
+  `item_id` int(11) UNSIGNED NOT NULL,
+  `unit_price` decimal(15,2) NOT NULL DEFAULT 0.00,
+  `quantity` int(11) NOT NULL DEFAULT 0,
+  `total_price` decimal(15,2) GENERATED ALWAYS AS (`unit_price` * `quantity`) VIRTUAL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -8075,7 +8142,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `email`, `division_id`, `hire_date`, `role`, `password`, `full_name`, `status`, `created_at`, `updated_at`, `last_login`) VALUES
-(1, 'jeongwoo.park@vatechglobal.com', 1, '2026-01-05', 'admin', '$2y$10$s.K.pjGB2piiUtav53Hv9ej7IPmkLKt/O703aKmD7P9BPfo88fY1u', 'Jeong Woo Park', 1, '2026-03-16 13:37:00', '2026-03-29 22:14:01', '2026-03-29 22:14:01'),
+(1, 'jeongwoo.park@vatechglobal.com', 1, '2026-01-05', 'admin', '$2y$10$s.K.pjGB2piiUtav53Hv9ej7IPmkLKt/O703aKmD7P9BPfo88fY1u', 'Jeong Woo Park', 1, '2026-03-16 13:37:00', '2026-04-07 15:38:41', '2026-04-07 15:38:41'),
 (3, 'dsfasf@sdafdsa.com', 2, '2026-03-26', 'user', '$2y$10$XT9RxlEQVwpjGohGsO7irebVKLF0q94laU7Tgf.zZBbSUW4i5G0R.', 'sdfsadf', 1, '2026-03-17 13:20:44', '2026-03-17 18:57:36', '2026-03-17 18:57:36'),
 (4, 'admin@vatech.pe', NULL, NULL, 'admin', '1234', 'Admin User', 1, '2026-03-27 11:56:24', '2026-03-27 11:56:24', NULL);
 
@@ -8238,7 +8305,8 @@ ALTER TABLE `inbounds`
   ADD UNIQUE KEY `idx_inbound_number` (`inbound_number`),
   ADD KEY `fk_inbound_warehouse` (`warehouse_id`),
   ADD KEY `fk_inbound_src_map_v2` (`source_type_id`),
-  ADD KEY `fk_inbound_sts_map_v2` (`status_id`);
+  ADD KEY `fk_inbound_sts_map_v2` (`status_id`),
+  ADD KEY `fk_inbounds_updated_by` (`updated_by`);
 
 --
 -- 테이블의 인덱스 `inbound_items`
@@ -8301,6 +8369,26 @@ ALTER TABLE `purchase_order_items`
   ADD PRIMARY KEY (`id`);
 
 --
+-- 테이블의 인덱스 `sales`
+--
+ALTER TABLE `sales`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `idx_sales_number` (`sales_number`),
+  ADD KEY `fk_sales_customer` (`customer_entity_id`),
+  ADD KEY `fk_sales_warehouse` (`warehouse_id`),
+  ADD KEY `fk_sales_status` (`status_id`),
+  ADD KEY `fk_sales_created_by` (`created_by`),
+  ADD KEY `fk_sales_updated_by` (`updated_by`);
+
+--
+-- 테이블의 인덱스 `sales_items`
+--
+ALTER TABLE `sales_items`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `fk_sales_items_master` (`sales_id`),
+  ADD KEY `fk_sales_items_product` (`item_id`);
+
+--
 -- 테이블의 인덱스 `users`
 --
 ALTER TABLE `users`
@@ -8322,13 +8410,13 @@ ALTER TABLE `warehouses`
 -- 테이블의 AUTO_INCREMENT `inbounds`
 --
 ALTER TABLE `inbounds`
-  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- 테이블의 AUTO_INCREMENT `inbound_items`
 --
 ALTER TABLE `inbound_items`
-  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- 테이블의 AUTO_INCREMENT `inventory`
@@ -8346,7 +8434,7 @@ ALTER TABLE `inventory_logs`
 -- 테이블의 AUTO_INCREMENT `mappings`
 --
 ALTER TABLE `mappings`
-  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=47;
 
 --
 -- 테이블의 AUTO_INCREMENT `products`
@@ -8364,13 +8452,25 @@ ALTER TABLE `product_items`
 -- 테이블의 AUTO_INCREMENT `purchase_orders`
 --
 ALTER TABLE `purchase_orders`
-  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- 테이블의 AUTO_INCREMENT `purchase_order_items`
 --
 ALTER TABLE `purchase_order_items`
-  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
+
+--
+-- 테이블의 AUTO_INCREMENT `sales`
+--
+ALTER TABLE `sales`
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- 테이블의 AUTO_INCREMENT `sales_items`
+--
+ALTER TABLE `sales_items`
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- 테이블의 AUTO_INCREMENT `users`
@@ -8394,7 +8494,8 @@ ALTER TABLE `warehouses`
 ALTER TABLE `inbounds`
   ADD CONSTRAINT `fk_inbound_src_map_v2` FOREIGN KEY (`source_type_id`) REFERENCES `mappings` (`id`),
   ADD CONSTRAINT `fk_inbound_sts_map_v2` FOREIGN KEY (`status_id`) REFERENCES `mappings` (`id`),
-  ADD CONSTRAINT `fk_inbound_warehouse` FOREIGN KEY (`warehouse_id`) REFERENCES `warehouses` (`id`);
+  ADD CONSTRAINT `fk_inbound_warehouse` FOREIGN KEY (`warehouse_id`) REFERENCES `warehouses` (`id`),
+  ADD CONSTRAINT `fk_inbounds_updated_by` FOREIGN KEY (`updated_by`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 --
 -- 테이블의 제약사항 `inbound_items`
@@ -8417,6 +8518,23 @@ ALTER TABLE `inventory`
 ALTER TABLE `purchase_orders`
   ADD CONSTRAINT `fk_po_user_approved` FOREIGN KEY (`approved_by`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_po_warehouse` FOREIGN KEY (`warehouse_id`) REFERENCES `warehouses` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+--
+-- 테이블의 제약사항 `sales`
+--
+ALTER TABLE `sales`
+  ADD CONSTRAINT `fk_sales_created_by` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`),
+  ADD CONSTRAINT `fk_sales_customer` FOREIGN KEY (`customer_entity_id`) REFERENCES `entities` (`id`),
+  ADD CONSTRAINT `fk_sales_status` FOREIGN KEY (`status_id`) REFERENCES `mappings` (`id`),
+  ADD CONSTRAINT `fk_sales_updated_by` FOREIGN KEY (`updated_by`) REFERENCES `users` (`id`),
+  ADD CONSTRAINT `fk_sales_warehouse` FOREIGN KEY (`warehouse_id`) REFERENCES `warehouses` (`id`);
+
+--
+-- 테이블의 제약사항 `sales_items`
+--
+ALTER TABLE `sales_items`
+  ADD CONSTRAINT `fk_sales_items_master` FOREIGN KEY (`sales_id`) REFERENCES `sales` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_sales_items_product` FOREIGN KEY (`item_id`) REFERENCES `product_items` (`id`);
 
 --
 -- 테이블의 제약사항 `warehouses`
