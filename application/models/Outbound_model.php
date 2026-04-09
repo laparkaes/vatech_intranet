@@ -1,6 +1,34 @@
 <?php
 class Outbound_model extends CI_Model {
 
+	public function get_outbound_by_id($id) {
+		$this->db->select('
+			o.*, 
+			m.display_name as status_name, 
+			w.name as warehouse_name, 
+			s.sales_number, 
+			e.name as customer_name,
+			u.full_name as creator_name
+		');
+		$this->db->from('outbounds o');
+		$this->db->join('mappings m', 'o.status_id = m.id', 'left');
+		$this->db->join('warehouses w', 'o.warehouse_id = w.id', 'left');
+		$this->db->join('sales s', 'o.sales_id = s.id', 'left');
+		$this->db->join('entities e', 's.customer_entity_id = e.id', 'left');
+		$this->db->join('users u', 'o.created_by = u.id', 'left');
+		$this->db->where('o.id', $id);
+		return $this->db->get()->row();
+	}
+
+	public function get_outbound_items($outbound_id) {
+		$this->db->select('oi.*, p.name as product_name, pi.option as item_option, pi.barcode, m.display_name as item_status_name');
+		$this->db->from('outbound_items oi');
+		$this->db->join('product_items pi', 'oi.item_id = pi.id', 'left');
+		$this->db->join('products p', 'pi.product_id = p.id', 'left');
+		$this->db->join('mappings m', 'oi.item_status_id = m.id', 'left');
+		$this->db->where('oi.outbound_id', $outbound_id);
+		return $this->db->get()->result();
+	}
 
 	public function get_outbound_list($warehouse_id = null, $status_id = null) {
 		$this->db->select('
