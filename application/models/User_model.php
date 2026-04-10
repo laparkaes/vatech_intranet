@@ -17,13 +17,15 @@ class User_model extends CI_Model {
      * @return object|null
      */
     public function get_user_by_email($email) {
-        // Se utiliza Query Builder para interactuar con la tabla 'users'
-        $query = $this->db->get_where('users', [
-            'email' => $email, 
-            'status' => 1
-        ]);
-        return $query->row();
-    }
+		$this->db->select('u.*, d.division_name');
+		$this->db->from('users u');
+		$this->db->join('divisions d', 'u.division_id = d.id', 'left'); // 부서가 없을 경우를 대비해 left join
+		$this->db->where('u.email', $email);
+		$this->db->where('u.status', 1);
+		
+		$query = $this->db->get();
+		return $query->row();
+	}
 	
 	/**
 	 * Obtiene todos los usuarios con el nombre de su división correspondiente.
@@ -112,5 +114,17 @@ class User_model extends CI_Model {
 		$months = $interval->m;
 
 		return "{$years}Y {$months}M";
+	}
+	
+	/**
+	 * 현재 활성화된(status=1) 사용자 중 관리자 권한을 가진 계정이 있는지 확인합니다.
+	 * @return bool
+	 */
+	public function has_admin_exists() {
+		$this->db->where('role', 'admin');
+		$this->db->where('status', 1);
+		$query = $this->db->get('users');
+		
+		return ($query->num_rows() > 0);
 	}
 }

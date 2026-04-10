@@ -9,7 +9,6 @@ class Auth extends CI_Controller {
     public function __construct() {
         parent::__construct();
         $this->load->model('user_model');
-        $this->load->library('session');
     }
 
     /**
@@ -25,81 +24,6 @@ class Auth extends CI_Controller {
     }
 	
 	/**
-     * Muestra la página de registro
-     */
-    public function register() {
-		$this->load->view('auth/register');
-    }
-	
-	/**
-	 * Muestra el formulario de recuperación de contraseña
-	 */
-	public function forgot_password() {
-		$this->load->view('auth/forgot_password');
-	}
-
-	/**
-	 * Procesa la recuperación de contraseña y envía el correo
-	 */
-	public function reset_password_process() {
-		$email = $this->input->post('email');
-		
-		// 1. Verificar si el usuario existe
-		$user = $this->user_model->get_user_by_email($email);
-		
-		if (!$user) {
-			$this->session->set_flashdata('error', 'El correo electrónico no existe en nuestro sistema.');
-			redirect('auth/forgot_password');
-			return;
-		}
-
-		// 2. Generar contraseña temporal de 10 caracteres
-		$this->load->helper('string');
-		$temporary_password = random_string('alnum', 10); // Genera 10 caracteres alfanuméricos
-
-		// 3. Actualizar en la Base de Datos (Encriptada)
-		$hashed_password = password_hash($temporary_password, PASSWORD_BCRYPT);
-		$this->user_model->update_password($email, $hashed_password);
-
-		/* desarrollar cuando tenga servicio hosting
-		
-		// 4. Configurar y enviar el correo electrónico
-		$this->load->library('email');
-
-		// Nota: Debe configurar los protocolos SMTP en application/config/email.php para que esto funcione
-		$this->email->from('no-reply@vpr.pe', 'VPR ERP System');
-		$this->email->to($email);
-		$this->email->subject('Su Nueva Contraseña Temporal - VPR ERP');
-		$this->email->message("
-			Hola " . $user->full_name . ",
-			
-			Se ha generado una nueva contraseña temporal para su acceso al sistema VPR ERP.
-			
-			Nueva Contraseña: " . $temporary_password . "
-			
-			Por seguridad, le recomendamos cambiar esta contraseña después de iniciar sesión.
-		");
-		
-		$send_mail = $this->email->send();
-		
-		*/
-		
-		$send_mail = true;
-
-		if ($send_mail) {
-			
-			//importante!!!!! a nivel desarrollo muestra nueva clave
-			
-			$this->session->set_flashdata('success', 'Se ha enviado una nueva contraseña a su correo electrónico. '.$temporary_password);
-			redirect('auth');
-		} else {
-			// En caso de que el servidor de correo falle
-			$this->session->set_flashdata('error', 'No se pudo enviar el correo. Contacte al administrador.');
-			redirect('auth/forgot_password');
-		}
-	}
-	
-	/**
 	 * Procesa el inicio de sesión, verifica el estado de la cuenta 
 	 * y actualiza el registro de last_login.
 	 */
@@ -109,36 +33,46 @@ class Auth extends CI_Controller {
 
 		$user = $this->user_model->get_user_by_email($email);
 
-		// 1. Verificar si el usuario existe y la contraseña es correcta
+		// 1. 사용자 존재 여부 및 비밀번호 확인
 		if ($user && password_verify($password, $user->password)) {
 			
-			// 2. Verificar si la cuenta está activa (status = 1)
+			// 2. 계정 활성화 상태 확인
 			if ($user->status != 1) {
 				$this->session->set_flashdata('error', 'Su cuenta está desactivada. Contacte al administrador.');
 				redirect('auth');
 				return;
 			}
 
-			// 3. Actualizar la fecha de último inicio de sesión en la DB
+			// 3. 마지막 로그인 시간 업데이트
 			$this->user_model->update_last_login($user->id);
 
-			// 4. Crear la sesión del usuario
+			// 4. 세션 데이터 생성 (Division 정보 포함)
 			$session_data = array(
-				'user_id'      => $user->id,
-                'email'   	   => $user->email,
-				'name'         => $user->full_name,
-				'role'         => $user->role,
-				'is_logged_in' => TRUE
+				'user_id'       => $user->id,
+				'email'         => $user->email,
+				'name'          => $user->full_name,
+				'role'          => $user->role,
+				'division_id'   => $user->division_id,   // 부서 ID 저장
+				'division_name' => $user->division_name, // 부서명 저장
+				'is_logged_in'  => TRUE
 			);
+			
 			$this->session->set_userdata($session_data);
 
 			redirect('dashboard');
 		} else {
-			// Credenciales inválidas
+			// 인증 실패
 			$this->session->set_flashdata('error', 'Correo o contraseña incorrectos.');
 			redirect('auth');
 		}
 	}
+	
+	/**
+     * Muestra la página de registro
+     */
+    public function register() {
+		$this->load->view('auth/register');
+    }
 	
 
 	/**
@@ -149,30 +83,48 @@ class Auth extends CI_Controller {
 		$email     = $this->input->post('email');
 		$password  = $this->input->post('password');
 
-		// 1. Verificar si el correo ya existe antes de intentar el INSERT
+		// 1. 이메일 중복 체크
 		if ($this->user_model->check_email_exists($email)) {
-			// Enviar mensaje de error si el correo ya está registrado
-			$this->session->set_flashdata('error', 'Este correo electrónico ya está registrado. Intente con otro o inicie sesión.');
+			$this->session->set_flashdata('error', 'Este correo electrónico ya está registrado.');
+			
+			// 입력했던 데이터를 다시 flashdata에 저장
+			$this->session->set_flashdata('old_full_name', $full_name);
+			$this->session->set_flashdata('old_email', $email);
+			
 			redirect('auth/register');
-			return; // Detener la ejecución
+			return;
 		}
 
-		// 2. Si no existe, proceder con la encriptación y el registro
+		// 2. 관리자 계정 존재 여부 확인
+		// 시스템에 유효한 admin 계정이 하나도 없다면 현재 가입자를 admin으로 설정
+		$role = 'user'; // 기본값은 user
+		if (!$this->user_model->has_admin_exists()) {
+			$role = 'admin';
+		}
+
+		// 3. 비밀번호 암호화
 		$hashed_password = password_hash($password, PASSWORD_BCRYPT);
 
 		$data = array(
 			'full_name' => $full_name,
 			'email'     => $email,
 			'password'  => $hashed_password,
-			'role'  	=> 'user',
+			'role'      => $role, // 동적으로 결정된 롤 적용
 			'status'    => 1
 		);
 
 		if ($this->user_model->insert_user($data)) {
-			$this->session->set_flashdata('success', 'Cuenta creada con éxito. Ya puede iniciar sesión.');
+			// 성공 시 로직
+			$this->session->set_flashdata('success', 'Cuenta creada con éxito.');
 			redirect('auth');
 		} else {
-			$this->session->set_flashdata('error', 'Error crítico al registrar el usuario en la base de datos.');
+			// DB 인서트 오류 등 예외 발생 시
+			$this->session->set_flashdata('error', 'Error crítico al registrar el usuario.');
+			
+			// 입력했던 데이터 유지
+			$this->session->set_flashdata('old_full_name', $full_name);
+			$this->session->set_flashdata('old_email', $email);
+			
 			redirect('auth/register');
 		}
 	}
