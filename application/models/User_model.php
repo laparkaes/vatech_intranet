@@ -127,4 +127,39 @@ class User_model extends CI_Model {
 		
 		return ($query->num_rows() > 0);
 	}
+	
+	/**
+	 * 검색 조건이 포함된 페이징 사용자 목록 가져오기
+	 */
+	public function get_users_paged($limit, $start, $search = []) {
+		$this->db->select('u.*, d.division_name');
+		$this->db->from('users u');
+		$this->db->join('divisions d', 'u.division_id = d.id', 'left');
+
+		// 검색 조건 동적 추가
+		if (!empty($search['name'])) $this->db->like('u.full_name', $search['name']);
+		if (!empty($search['email'])) $this->db->like('u.email', $search['email']);
+		if (!empty($search['division'])) $this->db->where('u.division_id', $search['division']);
+		if (!empty($search['role'])) $this->db->where('u.role', $search['role']);
+		if (isset($search['status']) && $search['status'] !== '') $this->db->where('u.status', $search['status']);
+
+		$this->db->limit($limit, $start);
+		$this->db->order_by('u.created_at', 'DESC');
+		
+		return $this->db->get()->result();
+	}
+
+	/**
+	 * 검색 조건이 포함된 전체 사용자 수 카운트
+	 */
+	public function count_all_users($search = []) {
+		$this->db->from('users u');
+		if (!empty($search['name'])) $this->db->like('u.full_name', $search['name']);
+		if (!empty($search['email'])) $this->db->like('u.email', $search['email']);
+		if (!empty($search['division'])) $this->db->where('u.division_id', $search['division']);
+		if (!empty($search['role'])) $this->db->where('u.role', $search['role']);
+		if (isset($search['status']) && $search['status'] !== '') $this->db->where('u.status', $search['status']);
+		
+		return $this->db->count_all_results();
+	}
 }

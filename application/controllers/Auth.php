@@ -74,7 +74,6 @@ class Auth extends CI_Controller {
 		$this->load->view('auth/register');
     }
 	
-
 	/**
 	 * Procesa la creación de una nueva cuenta con validación de duplicados
 	 */

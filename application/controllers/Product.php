@@ -11,43 +11,73 @@ class Product extends MY_Controller {
         parent::__construct();
         /* Carga de modelos necesarios */
         $this->load->model('product_model');
-        $this->load->model('exchange_model'); 
-        $this->load->library('session');
+        $this->load->model('exchange_model');
+		
+		$this->menu = "logistic";
+		$this->menu_sub = "products";
     }
 
     /**
      * Muestra el listado maestro (Index)
      */
-    public function index() {
-        $this->load->library('pagination');
+	public function index() {
+	
+		// 1. 검색 데이터 수집 (계정 컨트롤러와 동일한 방식)
+		$search = [
+			'name'        => $this->input->get('name'),
+			'category_id' => $this->input->get('category_id'),
+			'type'        => $this->input->get('type'),
+			'status'      => $this->input->get('status')
+		];
+		
+		// 2. 페이지네이션 설정
+		$config['base_url'] = base_url('product/index');
+		$config['total_rows'] = $this->product_model->count_all_products($search); // 모델 함수 인자 변경 필요
+		$config['per_page'] = 30;
+		$config['uri_segment'] = 3; 
+		$config['reuse_query_string'] = TRUE; // 검색어 유지
 
-        $keyword = $this->input->get('keyword');
-        $category_id = $this->input->get('category_id');
-        $type = $this->input->get('type');
-        
-        // 1. Configuración de la paginación
-        $config['base_url'] = base_url('product/index');
-        $config['reuse_query_string'] = TRUE;
-        $config['total_rows'] = $this->product_model->count_all_products($keyword, $category_id, $type);
-        $config['per_page'] = 30;
-        $config['uri_segment'] = 3; 
-        
-        $config['full_tag_open'] = '<div class="pagination">';
-        $config['full_tag_close'] = '</div>';
+		// 3. Bootstrap 5 스타일 적용 (계정 컨트롤러의 스타일 복사)
+		$config['full_tag_open'] = '<ul class="pagination justify-content-center">';
+		$config['full_tag_close'] = '</ul>';
+		$config['first_link'] = '<<';
+		$config['last_link'] = '>>';
+		$config['first_tag_open'] = '<li class="page-item">';
+		$config['first_tag_close'] = '</li>';
+		$config['prev_link'] = '<';
+		$config['prev_tag_open'] = '<li class="page-item">';
+		$config['prev_tag_close'] = '</li>';
+		$config['next_link'] = '>';
+		$config['next_tag_open'] = '<li class="page-item">';
+		$config['next_tag_close'] = '</li>';
+		$config['last_tag_open'] = '<li class="page-item">';
+		$config['last_tag_close'] = '</li>';
+		$config['cur_tag_open'] = '<li class="page-item active"><a class="page-link" href="#">';
+		$config['cur_tag_close'] = '</a></li>';
+		$config['num_tag_open'] = '<li class="page-item">';
+		$config['num_tag_close'] = '</li>';
+		$config['attributes'] = array('class' => 'page-link');
 
-        $this->pagination->initialize($config);
+		$this->pagination->initialize($config);
 
-        // 2. Obtener el número de página actual (offset)
-        $page = ($this->uri->segment(3)) ? $this->uri->segment(3) : 0;
-
-        // 3. Obtener productos correspondientes a la página actual
-        $data['products'] = $this->product_model->get_products_paged($config['per_page'], $page, $keyword, $category_id, $type);
-        $data['pagination_links'] = $this->pagination->create_links();
-        
-        $data['categories'] = $this->db->get('product_categories')->result();
-        $data['main'] = 'product/index';
-        $this->load->view('layout', $data);
-    }
+		// 4. 현재 페이지(offset) 및 데이터 가져오기
+		$page = ($this->uri->segment(3)) ? $this->uri->segment(3) : 0;
+		
+		// 제품 목록 가져오기 (계정 컨트롤러 방식처럼 $search 배열 전달)
+		$data['products'] = $this->product_model->get_products_paged($config['per_page'], $page, $search);
+		
+		// 5. 뷰에 전달할 데이터 구성
+		$data['pagination_links'] = $this->pagination->create_links();
+		$data['total_rows'] = $config['total_rows'];
+		$data['start_no']   = $page + 1; // 뷰에서 순번 계산용
+		$data['search']     = $search;   // 뷰의 검색 필드 유지용
+		
+		// 카테고리 목록 (검색 필터용)
+		$data['categories'] = $this->db->get('product_categories')->result();
+		
+		$data['main'] = 'product/index';
+		$this->load->view('layout', $data);
+	}
 
     /**
      * Muestra el formulario de registro de nuevo producto

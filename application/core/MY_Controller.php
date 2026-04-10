@@ -15,6 +15,9 @@ class MY_Controller extends CI_Controller {
 
         /* 2. Cargar permisos del usuario */
         $this->load_user_permissions();
+		
+		$this->menu = "";
+		$this->menu_sub = "";
     }
 
     private function load_user_permissions() {

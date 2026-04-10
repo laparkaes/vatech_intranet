@@ -233,40 +233,57 @@ class Product_model extends CI_Model {
     }
 
 	// Función para contar el total (necesario para la paginación)
-	public function count_all_products($keyword = null, $category_id = null, $type = null) {
-		if (!empty($keyword)) $this->db->like('name', $keyword);
-		if (!empty($category_id)) $this->db->where('category_id', $category_id);
-		if (!empty($type)) $this->db->where('type', $type);
+	public function count_all_products($search = []) {
+		if (!empty($search['name'])) {
+			$this->db->like('name', $search['name']);
+		}
+		if (!empty($search['category_id'])) {
+			$this->db->where('category_id', $search['category_id']);
+		}
+		if (!empty($search['type'])) {
+			$this->db->where('type', $search['type']);
+		}
+		if (isset($search['status']) && $search['status'] !== '') {
+			$this->db->where('is_active', $search['status']);
+		}
+		
 		return $this->db->count_all_results('products');
 	}
 
 	// Función para obtener productos con límite y desplazamiento (offset)
-	public function get_products_paged($limit, $start, $keyword = null, $category_id = null, $type = null) {
-		$this->db->select('p.*, c.category_name, u.full_name as editor_name');
+	public function get_products_paged($limit, $start, $search = []) {
+		// 1. 제품 마스터 정보 및 카테고리 가져오기
+		if (!empty($search['name'])) $this->db->like('p.name', $search['name']);
+		if (!empty($search['category_id'])) $this->db->where('p.category_id', $search['category_id']);
+		if (!empty($search['type'])) $this->db->where('p.type', $search['type']);
+		if (isset($search['status']) && $search['status'] !== '') $this->db->where('p.is_active', $search['status']);
+
+		$this->db->select('p.*, pc.category_name');
 		$this->db->from('products p');
-		$this->db->join('product_categories c', 'p.category_id = c.id', 'left');
-		$this->db->join('users u', 'p.updated_by = u.id', 'left');
-
-		if (!empty($keyword)) $this->db->like('p.name', $keyword);
-		if (!empty($category_id)) $this->db->where('p.category_id', $category_id);
-		if (!empty($type)) $this->db->where('p.type', $type);
-
+		$this->db->join('product_categories pc', 'pc.id = p.category_id', 'left');
+		$this->db->limit($limit, $start);
 		$this->db->order_by('p.id', 'DESC');
-		$this->db->limit($limit, $start); // AQUÍ se aplica el límite de 30
 		
-		$query = $this->db->get();
-		$products = $query->result();
+		$products = $this->db->get()->result();
 
-		// Obtener ítems para estos 30 productos
-		foreach ($products as &$p) {
-			$this->db->select('pi.id as item_id, pi.option, ph.purchase_price_usd, ph.purchase_price_pen, ph.sale_price_usd, ph.sale_price_pen, ph.applied_rate');
+		// 2. 각 제품에 속한 아이템들과 그 아이템의 "최신 가격" 가져오기
+		foreach ($products as $p) {
+			/* Subquery 설명: 
+			   product_price_history에서 각 item_id별로 가장 최근(id가 가장 큰) 가격 정보를 조인합니다.
+			*/
+			$this->db->select('pi.id, pi.product_id, pi.option, ph.sale_price_usd, ph.sale_price_pen');
 			$this->db->from('product_items pi');
-			$this->db->join('product_price_history ph', 'ph.item_id = pi.id', 'inner');
+			// 최신 가격 이력을 가져오기 위한 서브쿼리 조인
+			$this->db->join('(SELECT item_id, sale_price_usd, sale_price_pen 
+							  FROM product_price_history 
+							  WHERE id IN (SELECT MAX(id) FROM product_price_history GROUP BY item_id)
+							 ) ph', 'ph.item_id = pi.id', 'left');
+			
 			$this->db->where('pi.product_id', $p->id);
-			$this->db->order_by('ph.id', 'DESC');
-			$this->db->group_by('pi.id'); 
+			$this->db->where('pi.status', 1);
 			$p->items = $this->db->get()->result();
 		}
+
 		return $products;
 	}
 

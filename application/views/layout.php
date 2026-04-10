@@ -27,7 +27,7 @@
 
 		<div class="d-flex align-items-center justify-content-between">
 			<a href="<?= base_url() ?>" class="logo d-flex align-items-center">
-				<img src="assets/img/logo.png" alt="">
+				<img src="<?= base_url() ?>assets/img/logo.png" alt="">
 			</a>
 			<i class="bi bi-list toggle-sidebar-btn"></i>
 		</div>
@@ -141,8 +141,13 @@
 				</a>
 				<ul id="logistic-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
 					<li>
-						<a href="<?php echo base_url('warehouse'); ?>">
-							<i class="bi bi-circle"></i><span>Almacenes</span>
+						<a href="<?php echo base_url('inbound'); ?>">
+							<i class="bi bi-circle"></i><span>Ingresos</span>
+						</a>
+					</li>
+					<li>
+						<a href="<?php echo base_url('outbound'); ?>">
+							<i class="bi bi-circle"></i><span>Salidas</span>
 						</a>
 					</li>
 					<li>
@@ -151,13 +156,33 @@
 						</a>
 					</li>
 					<li>
-						<a href="<?php echo base_url('inbound'); ?>">
-							<i class="bi bi-circle"></i><span>Ingresos</span>
+						<a href="<?php echo base_url('warehouse'); ?>">
+							<i class="bi bi-circle"></i><span>Almacenes</span>
 						</a>
 					</li>
 					<li>
-						<a href="<?php echo base_url('outbound'); ?>">
-							<i class="bi bi-circle"></i><span>Salidas</span>
+						<a href="<?php echo base_url('product'); ?>">
+							<i class="bi bi-circle"></i><span>Productos</span>
+						</a>
+					</li>
+				</ul>
+			</li>
+			<?php endif; ?>
+
+			<?php if ($user_role === 'admin' || in_array('Sistema', $my_access)): ?>
+			<li class="nav-item">
+				<a class="nav-link <?= $this->menu === 'system' ? "" : "collapsed" ?>" data-bs-target="#system-nav" data-bs-toggle="collapse" href="#">
+					<i class="bi bi-pc-display"></i><span>Sistema</span><i class="bi bi-chevron-down ms-auto"></i>
+				</a>
+				<ul id="system-nav" class="nav-content collapse <?= $this->menu === 'system' ? "show" : "" ?>" data-bs-parent="#sidebar-nav">
+					<li>
+						<a href="<?php echo base_url('accounts'); ?>" class="<?= $this->menu_sub === 'accounts' ? "active" : "" ?>">
+							<i class="bi bi-circle"></i><span>Usuarios</span>
+						</a>
+					</li>
+					<li>
+						<a href="<?php echo base_url('access/requests'); ?>">
+							<i class="bi bi-circle"></i><span>Solicitudes de Acceso</span>
 						</a>
 					</li>
 				</ul>
@@ -170,11 +195,6 @@
 					<i class="bi bi-database"></i><span>Maestro</span><i class="bi bi-chevron-down ms-auto"></i>
 				</a>
 				<ul id="master-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-					<li>
-						<a href="<?php echo base_url('product'); ?>">
-							<i class="bi bi-circle"></i><span>Productos</span>
-						</a>
-					</li>
 					<li>
 						<a href="<?php echo base_url('division'); ?>">
 							<i class="bi bi-circle"></i><span>Divisiones</span>
@@ -190,29 +210,9 @@
 							<i class="bi bi-circle"></i><span>Tipos de Cambio</span>
 						</a>
 					</li>
-				</ul>
-			</li>
-			<?php endif; ?>
-
-			<?php if ($user_role === 'admin' || in_array('Sistema', $my_access)): ?>
-			<li class="nav-item">
-				<a class="nav-link collapsed" data-bs-target="#system-nav" data-bs-toggle="collapse" href="#">
-					<i class="bi bi-pc-display"></i><span>Sistema</span><i class="bi bi-chevron-down ms-auto"></i>
-				</a>
-				<ul id="system-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-					<li>
-						<a href="<?php echo base_url('accounts'); ?>">
-							<i class="bi bi-circle"></i><span>Usuarios</span>
-						</a>
-					</li>
 					<li>
 						<a href="<?php echo base_url('access'); ?>">
 							<i class="bi bi-circle"></i><span>Accesos</span>
-						</a>
-					</li>
-					<li>
-						<a href="<?php echo base_url('access/requests'); ?>">
-							<i class="bi bi-circle"></i><span>Solicitudes de Acceso</span>
 						</a>
 					</li>
 				</ul>
@@ -249,16 +249,16 @@
 
 	<a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
-	<script src="assets/vendor/apexcharts/apexcharts.min.js"></script>
-	<script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-	<script src="assets/vendor/chart.js/chart.umd.js"></script>
-	<script src="assets/vendor/echarts/echarts.min.js"></script>
-	<script src="assets/vendor/quill/quill.min.js"></script>
-	<script src="assets/vendor/simple-datatables/simple-datatables.js"></script>
-	<script src="assets/vendor/tinymce/tinymce.min.js"></script>
-	<script src="assets/vendor/php-email-form/validate.js"></script>
+	<script src="<?= base_url() ?>assets/vendor/apexcharts/apexcharts.min.js"></script>
+	<script src="<?= base_url() ?>assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+	<script src="<?= base_url() ?>assets/vendor/chart.js/chart.umd.js"></script>
+	<script src="<?= base_url() ?>assets/vendor/echarts/echarts.min.js"></script>
+	<script src="<?= base_url() ?>assets/vendor/quill/quill.min.js"></script>
+	<script src="<?= base_url() ?>assets/vendor/simple-datatables/simple-datatables.js"></script>
+	<script src="<?= base_url() ?>assets/vendor/tinymce/tinymce.min.js"></script>
+	<script src="<?= base_url() ?>assets/vendor/php-email-form/validate.js"></script>
 
-	<script src="assets/js/main.js"></script>
+	<script src="<?= base_url() ?>assets/js/main.js"></script>
 
 </body>
 </html>
