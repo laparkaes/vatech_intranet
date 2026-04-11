@@ -17,7 +17,7 @@ class Division extends MY_Controller {
         $this->load->view('layout', $data);
     }
 
-    public function save() {
+    public function add() {
         $data = array(
             'division_name' => $this->input->post('division_name'),
             'description'   => $this->input->post('description')

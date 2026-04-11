@@ -72,7 +72,7 @@
 			<div class="card">
 				<div class="card-body">
 					<h5 class="card-title">Lista</h5>
-						<table class="table text-center">
+						<table class="table align-middle text-center">
 							<thead>
 								<tr class="align-top">
 									<th scope="col">No.</th> 
