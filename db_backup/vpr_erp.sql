@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- 생성 시간: 26-04-09 00:49
+-- 생성 시간: 26-04-12 01:13
 -- 서버 버전: 10.4.24-MariaDB
 -- PHP 버전: 7.4.29
 
@@ -42,8 +42,8 @@ CREATE TABLE `access` (
 --
 
 INSERT INTO `access` (`id`, `access_name`, `description`, `status`, `created_at`, `updated_by`, `updated_at`) VALUES
-(1, 'Compras', 'Acceso al módulo de adquisiciones, órdenes de compra y gestión de proveedores.', 1, '2026-03-17 16:25:10', 1, '2026-03-17 17:00:21'),
-(2, 'Ventas', 'Acceso al módulo de facturación, pedidos de clientes y gestión de distribuidores.', 1, '2026-03-17 16:25:10', 1, '2026-03-17 16:25:10'),
+(1, 'Compras', 'Acceso al módulo de adquisiciones, órdenes de compra y gestión de proveedores.', 1, '2026-03-17 16:25:10', 1, '2026-04-10 17:29:03'),
+(2, 'Ventas', 'Acceso al módulo de facturación, pedidos de clientes y gestión de distribuidores.', 1, '2026-03-17 16:25:10', 1, '2026-04-10 17:29:06'),
 (3, 'Maestro', 'Acceso a la configuración de datos base como productos, categorías y divisiones.', 1, '2026-03-17 16:25:10', 1, '2026-03-17 16:25:10'),
 (4, 'Sistema', 'Acceso a la administración global, gestión de usuarios y configuraciones del sistema.', 1, '2026-03-17 16:25:10', 1, '2026-03-17 16:25:10');
 
@@ -114,7 +114,7 @@ INSERT INTO `countries` (`id`, `iso_code`, `country_name`, `status`) VALUES
 CREATE TABLE `divisions` (
   `id` int(11) NOT NULL,
   `division_name` varchar(100) NOT NULL,
-  `description` text DEFAULT NULL,
+  `parent_id` int(11) DEFAULT NULL,
   `status` tinyint(1) DEFAULT 1,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -123,9 +123,12 @@ CREATE TABLE `divisions` (
 -- 테이블의 덤프 데이터 `divisions`
 --
 
-INSERT INTO `divisions` (`id`, `division_name`, `description`, `status`, `created_at`) VALUES
-(1, 'Gerencia', 'Empleados de nivel C', 1, '2026-03-17 17:21:45'),
-(2, 'Administración y Marketing', '-', 1, '2026-03-17 17:25:29');
+INSERT INTO `divisions` (`id`, `division_name`, `parent_id`, `status`, `created_at`) VALUES
+(1, 'Gerencia', NULL, 1, '2026-03-17 17:21:45'),
+(2, 'Administración y Marketing', 1, 1, '2026-03-17 17:25:29'),
+(3, 'Logística', 1, 1, '2026-04-11 21:02:47'),
+(6, 'Venta', 1, 1, '2026-04-11 21:34:33'),
+(7, 'Servicio', 1, 1, '2026-04-11 21:34:57');
 
 -- --------------------------------------------------------
 
@@ -8259,9 +8262,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `email`, `division_id`, `hire_date`, `role`, `password`, `full_name`, `status`, `created_at`, `updated_at`, `last_login`) VALUES
-(1, 'jeongwoo.park@vatechglobal.com', 1, '2026-01-05', 'admin', '$2y$10$s.K.pjGB2piiUtav53Hv9ej7IPmkLKt/O703aKmD7P9BPfo88fY1u', 'Jeong Woo Park', 1, '2026-03-16 13:37:00', '2026-04-08 14:43:24', '2026-04-08 14:43:24'),
-(3, 'dsfasf@sdafdsa.com', 2, '2026-03-26', 'user', '$2y$10$XT9RxlEQVwpjGohGsO7irebVKLF0q94laU7Tgf.zZBbSUW4i5G0R.', 'sdfsadf', 1, '2026-03-17 13:20:44', '2026-03-17 18:57:36', '2026-03-17 18:57:36'),
-(4, 'admin@vatech.pe', NULL, NULL, 'admin', '1234', 'Admin User', 1, '2026-03-27 11:56:24', '2026-03-27 11:56:24', NULL);
+(1, 'jeongwoo.park@vatechglobal.com', 1, '2026-01-01', 'admin', '$2y$10$kcsUNDEhyZyEKmLdsBYETuKRqXH698XumTxv1/40w9z1Qqq61LwL.', 'Jeong Woo Park', 1, '2026-04-11 14:47:35', '2026-04-11 16:48:49', '2026-04-11 14:47:44');
 
 -- --------------------------------------------------------
 
@@ -8409,6 +8410,13 @@ ALTER TABLE `access_requests`
   ADD KEY `fk_requests_updated_by` (`updated_by`);
 
 --
+-- 테이블의 인덱스 `divisions`
+--
+ALTER TABLE `divisions`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `fk_parent_division` (`parent_id`);
+
+--
 -- 테이블의 인덱스 `entities`
 --
 ALTER TABLE `entities`
@@ -8541,6 +8549,12 @@ ALTER TABLE `warehouses`
 --
 
 --
+-- 테이블의 AUTO_INCREMENT `divisions`
+--
+ALTER TABLE `divisions`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+
+--
 -- 테이블의 AUTO_INCREMENT `inbounds`
 --
 ALTER TABLE `inbounds`
@@ -8622,7 +8636,7 @@ ALTER TABLE `sales_items`
 -- 테이블의 AUTO_INCREMENT `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- 테이블의 AUTO_INCREMENT `warehouses`
@@ -8633,6 +8647,12 @@ ALTER TABLE `warehouses`
 --
 -- 덤프된 테이블의 제약사항
 --
+
+--
+-- 테이블의 제약사항 `divisions`
+--
+ALTER TABLE `divisions`
+  ADD CONSTRAINT `fk_parent_division` FOREIGN KEY (`parent_id`) REFERENCES `divisions` (`id`) ON DELETE SET NULL;
 
 --
 -- 테이블의 제약사항 `inbounds`

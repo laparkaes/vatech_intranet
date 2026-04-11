@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- 생성 시간: 26-04-09 00:50
+-- 생성 시간: 26-04-12 01:13
 -- 서버 버전: 10.4.24-MariaDB
 -- PHP 버전: 7.4.29
 
@@ -79,7 +79,7 @@ CREATE TABLE `countries` (
 CREATE TABLE `divisions` (
   `id` int(11) NOT NULL,
   `division_name` varchar(100) NOT NULL,
-  `description` text DEFAULT NULL,
+  `parent_id` int(11) DEFAULT NULL,
   `status` tinyint(1) DEFAULT 1,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -482,6 +482,13 @@ ALTER TABLE `access_requests`
   ADD KEY `fk_requests_updated_by` (`updated_by`);
 
 --
+-- 테이블의 인덱스 `divisions`
+--
+ALTER TABLE `divisions`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `fk_parent_division` (`parent_id`);
+
+--
 -- 테이블의 인덱스 `entities`
 --
 ALTER TABLE `entities`
@@ -614,6 +621,12 @@ ALTER TABLE `warehouses`
 --
 
 --
+-- 테이블의 AUTO_INCREMENT `divisions`
+--
+ALTER TABLE `divisions`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- 테이블의 AUTO_INCREMENT `inbounds`
 --
 ALTER TABLE `inbounds`
@@ -706,6 +719,12 @@ ALTER TABLE `warehouses`
 --
 -- 덤프된 테이블의 제약사항
 --
+
+--
+-- 테이블의 제약사항 `divisions`
+--
+ALTER TABLE `divisions`
+  ADD CONSTRAINT `fk_parent_division` FOREIGN KEY (`parent_id`) REFERENCES `divisions` (`id`) ON DELETE SET NULL;
 
 --
 -- 테이블의 제약사항 `inbounds`

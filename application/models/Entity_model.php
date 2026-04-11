@@ -3,6 +3,49 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Entity_model extends CI_Model {
 
+	// 검색 조건 빌더 (내부 공통 함수)
+    private function _apply_filters($search) {
+        if (!empty($search['name'])) {
+            $this->db->like('name', $search['name']);
+        }
+        if (!empty($search['tax_id'])) {
+            $this->db->like('tax_id', $search['tax_id']);
+        }
+        if (!empty($search['role'])) {
+            if ($search['role'] == 'vendor') $this->db->where('is_vendor', 1);
+            if ($search['role'] == 'dealer') $this->db->where('is_dealer', 1);
+        }
+		if ($search['status'] !== '' && $search['status'] !== null) {
+			// entities 테이블의 별칭인 e를 명시합니다.
+			$this->db->where('e.status', (int)$search['status']); 
+		}
+    }
+
+    // 1. 전체 데이터 수 (페이지네이션용)
+    public function count_all_entities($search = []) {
+		// 테이블을 불러올 때 'entities as e' 또는 'entities e'로 별칭을 명시해야 합니다.
+		$this->db->from('entities e'); 
+		
+		// 이제 _apply_filters 내의 e.status, e.name 등을 정상적으로 인식합니다.
+		$this->_apply_filters($search); 
+		
+		return $this->db->count_all_results();
+	}
+
+    // 2. 페이지네이션된 데이터 가져오기
+    public function get_entities_paged($limit, $start, $search = []) {
+        $this->db->select('e.*, c.country_name');
+        $this->db->from('entities e');
+        $this->db->join('countries c', 'e.country_id = c.id', 'left');
+        
+        $this->_apply_filters($search);
+        
+        $this->db->limit($limit, $start);
+        $this->db->order_by('e.id', 'DESC');
+        return $this->db->get()->result();
+    }
+
+
     /**
      * Obtiene los detalles de una entidad (Vendor o Distributor)
      */

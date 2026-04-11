@@ -181,7 +181,7 @@
 						</a>
 					</li>
 					<li>
-						<a href="<?php echo base_url('access/requests'); ?>">
+						<a href="<?php echo base_url('access/requests'); ?>" class="<?= $this->menu_sub === 'access_request' ? "active" : "" ?>">
 							<i class="bi bi-circle"></i><span>Solicitudes de Acceso</span>
 						</a>
 					</li>
@@ -191,27 +191,27 @@
 
 			<?php if ($user_role === 'admin' || in_array('Maestro', $my_access)): ?>
 			<li class="nav-item">
-				<a class="nav-link collapsed" data-bs-target="#master-nav" data-bs-toggle="collapse" href="#">
+				<a class="nav-link <?= $this->menu === 'master' ? "" : "collapsed" ?>" data-bs-target="#master-nav" data-bs-toggle="collapse" href="#">
 					<i class="bi bi-database"></i><span>Maestro</span><i class="bi bi-chevron-down ms-auto"></i>
 				</a>
-				<ul id="master-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+				<ul id="master-nav" class="nav-content collapse <?= $this->menu === 'master' ? "show" : "" ?>" data-bs-parent="#sidebar-nav">
 					<li>
-						<a href="<?php echo base_url('division'); ?>">
+						<a href="<?php echo base_url('division'); ?>" class="<?= $this->menu_sub === 'division' ? "active" : "" ?>">
 							<i class="bi bi-circle"></i><span>Divisiones</span>
 						</a>
 					</li>
 					<li>
-						<a href="<?php echo base_url('entity'); ?>">
+						<a href="<?php echo base_url('entity'); ?>" class="<?= $this->menu_sub === 'entity' ? "active" : "" ?>">
 							<i class="bi bi-circle"></i><span>Entidades</span>
 						</a>
 					</li>
 					<li>
-						<a href="<?php echo base_url('exchange'); ?>">
+						<a href="<?php echo base_url('exchange'); ?>" class="<?= $this->menu_sub === 'exchange' ? "active" : "" ?>">
 							<i class="bi bi-circle"></i><span>Tipos de Cambio</span>
 						</a>
 					</li>
 					<li>
-						<a href="<?php echo base_url('access'); ?>">
+						<a href="<?php echo base_url('access'); ?>" class="<?= $this->menu_sub === 'access' ? "active" : "" ?>">
 							<i class="bi bi-circle"></i><span>Accesos</span>
 						</a>
 					</li>

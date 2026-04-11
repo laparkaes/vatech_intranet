@@ -7,8 +7,12 @@ class Division_model extends CI_Model {
      * Obtiene todas las divisiones (para el administrador)
      */
     public function get_all_divisions() {
-        return $this->db->get('divisions')->result();
-    }
+		$this->db->select('d1.*, d2.division_name as parent_name');
+		$this->db->from('divisions d1');
+		$this->db->join('divisions d2', 'd1.parent_id = d2.id', 'left'); // 자기 참조 조인
+		$this->db->order_by('d1.id', 'ASC');
+		return $this->db->get()->result();
+	}
 
     /**
      * Obtiene solo las divisiones activas (para los select de usuarios)

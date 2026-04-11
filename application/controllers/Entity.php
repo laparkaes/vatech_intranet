@@ -5,21 +5,70 @@ class Entity extends MY_Controller {
 
     public function __construct() {
         parent::__construct();
-        /**
-         * Carga del modelo de gestión de entidades (Maestro de Proveedores y Distribuidores)
-         */
+        
         $this->load->model('entity_model');
+		
+		$this->menu = "master";
+		$this->menu_sub = "entity";
     }
 
     /**
      * Muestra el listado maestro de todas las entidades registradas
      */
-    public function index() {
-        // Obtiene todos los registros sin filtrar por un rol específico
-        $data['entities'] = $this->entity_model->get_all_entities(); 
-        $data['main'] = 'entity/index';
-        $this->load->view('layout', $data);
-    }
+	public function index() {
+		// 1. 검색 데이터 수집 (GET)
+		$search = [
+			'name'   => $this->input->get('name'),
+			'tax_id' => $this->input->get('tax_id'),
+			'role'   => $this->input->get('role'),
+			'status' => $this->input->get('status')
+		];
+
+		// 2. 페이지네이션 설정
+		$this->load->library('pagination');
+		
+		$config['base_url'] = base_url('entity/index');
+		$config['total_rows'] = $this->entity_model->count_all_entities($search);
+		$config['per_page'] = 20;
+		$config['uri_segment'] = 3;
+		$config['reuse_query_string'] = TRUE;
+
+		// 부트스트랩 5 스타일 설정
+		$config['full_tag_open'] = '<ul class="pagination justify-content-center">';
+		$config['full_tag_close'] = '</ul>';
+		$config['first_link'] = '<<';
+		$config['last_link'] = '>>';
+		$config['first_tag_open'] = '<li class="page-item">';
+		$config['first_tag_close'] = '</li>';
+		$config['prev_link'] = '<';
+		$config['prev_tag_open'] = '<li class="page-item">';
+		$config['prev_tag_close'] = '</li>';
+		$config['next_link'] = '>';
+		$config['next_tag_open'] = '<li class="page-item">';
+		$config['next_tag_close'] = '</li>';
+		$config['last_tag_open'] = '<li class="page-item">';
+		$config['last_tag_close'] = '</li>';
+		$config['cur_tag_open'] = '<li class="page-item active"><a class="page-link" href="#">';
+		$config['cur_tag_close'] = '</a></li>';
+		$config['num_tag_open'] = '<li class="page-item">';
+		$config['num_tag_close'] = '</li>';
+		$config['attributes'] = array('class' => 'page-link');
+
+		$this->pagination->initialize($config);
+
+		// 3. 데이터 조회
+		$page = ($this->uri->segment(3)) ? $this->uri->segment(3) : 0;
+		$data['entities'] = $this->entity_model->get_entities_paged($config['per_page'], $page, $search);
+
+		// 4. 뷰 전달 데이터
+		$data['pagination'] = $this->pagination->create_links();
+		$data['total_rows'] = $config['total_rows'];
+		$data['start_no'] = $page + 1;
+		$data['search'] = $search;
+		
+		$data['main'] = 'entity/index';
+		$this->load->view('layout', $data);
+	}
 
     /**
      * Muestra el formulario para el registro de una nueva entidad (Proveedor/Distribuidor)

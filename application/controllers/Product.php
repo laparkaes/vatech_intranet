@@ -1,15 +1,11 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-/**
- * Controlador de Productos
- * Todos los métodos cargan la vista a través de 'layout' para mantener la consistencia de la UI.
- */
 class Product extends MY_Controller {
 
     public function __construct() {
         parent::__construct();
-        /* Carga de modelos necesarios */
+        
         $this->load->model('product_model');
         $this->load->model('exchange_model');
 		
