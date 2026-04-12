@@ -37,7 +37,7 @@
                                     <input type="text" name="tax_id" class="form-control" value="<?= $search['tax_id'] ?? '' ?>">
                                 </div>
                                 <div class="col-md-6">
-                                    <label class="form-label">Rol</label>
+                                    <label class="form-label">Type</label>
                                     <select name="role" class="form-select">
                                         <option value="">Todos</option>
                                         <option value="vendor" <?= ($search['role'] == 'vendor') ? 'selected' : '' ?>>Proveedor (Vendor)</option>
@@ -83,7 +83,7 @@
 									<?php endif; ?>
 								</th>
 								<th scope="col">
-									Rol
+									Type
 									<?php if (!empty($search['role'])): ?>
 										<br><small class="text-success fw-normal">
 											(<?= ($search['role'] == 'vendor') ? 'Proveedor' : 'Distribuidor' ?>)
