@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- 생성 시간: 26-04-12 01:13
+-- 생성 시간: 26-04-14 01:15
 -- 서버 버전: 10.4.24-MariaDB
 -- PHP 버전: 7.4.29
 
@@ -190,8 +190,11 @@ INSERT INTO `entity_contacts` (`id`, `entity_id`, `contact_name`, `position`, `e
 (1, 3, 'testeeeeeee', 'testeeeeeee', 'testeeeeeee@testeeeeeee.testeeeeeee', 'testeeeeeee', 0, 0, '2026-03-25 12:09:20'),
 (2, 3, 'testeeeeeeetesteeeeeee', 'testeeeeeeetesteeeeeee', 'testeeeeeee@d1.1', 'testeeeeeee', 1, 1, '2026-03-25 12:09:58'),
 (3, 1, 'testeeeeeee', 'testeeeeeee', 'testeeeeeee@testeeeeeee.co', 'testeeeeeee', 0, 1, '2026-03-25 12:10:52'),
-(4, 4, 'eeestedte', 'eeestedte', 'eeestedte@df.co', 'eeestedte', 1, 1, '2026-03-25 12:11:33'),
-(5, 3, 'ho1111', 'ho1111', 'ho1111@ho1111.c', 'ho1111', 0, 1, '2026-03-25 12:21:53');
+(4, 4, 'eeestedte', 'eeestedte', 'eeestedte@df.co', 'eeestedte', 0, 0, '2026-03-25 12:11:33'),
+(5, 3, 'ho1111', 'ho1111', 'ho1111@ho1111.c', 'ho1111', 0, 1, '2026-03-25 12:21:53'),
+(6, 4, 'Jeong Woo Park', 'Gerente de Michi', 'ladasf@dsfsadf.com', '992533099', 1, 1, '2026-04-13 18:06:43'),
+(7, 4, 'fulanito park', 'michi', 'asdf@sdfsda.com', '123 123 123', 0, 1, '2026-04-13 18:07:52'),
+(8, 4, 'hola hola', 'saludador', 'werwe@werdfs.com', '123 123 543', 0, 1, '2026-04-13 18:08:17');
 
 -- --------------------------------------------------------
 
@@ -8262,7 +8265,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `email`, `division_id`, `hire_date`, `role`, `password`, `full_name`, `status`, `created_at`, `updated_at`, `last_login`) VALUES
-(1, 'jeongwoo.park@vatechglobal.com', 1, '2026-01-01', 'admin', '$2y$10$kcsUNDEhyZyEKmLdsBYETuKRqXH698XumTxv1/40w9z1Qqq61LwL.', 'Jeong Woo Park', 1, '2026-04-11 14:47:35', '2026-04-11 16:48:49', '2026-04-11 14:47:44');
+(1, 'jeongwoo.park@vatechglobal.com', 1, '2026-01-01', 'admin', '$2y$10$kcsUNDEhyZyEKmLdsBYETuKRqXH698XumTxv1/40w9z1Qqq61LwL.', 'Jeong Woo Park', 1, '2026-04-11 14:47:35', '2026-04-13 16:11:00', '2026-04-13 16:11:00');
 
 -- --------------------------------------------------------
 
@@ -8423,6 +8426,12 @@ ALTER TABLE `entities`
   ADD PRIMARY KEY (`id`);
 
 --
+-- 테이블의 인덱스 `entity_contacts`
+--
+ALTER TABLE `entity_contacts`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- 테이블의 인덱스 `inbounds`
 --
 ALTER TABLE `inbounds`
@@ -8553,6 +8562,12 @@ ALTER TABLE `warehouses`
 --
 ALTER TABLE `divisions`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+
+--
+-- 테이블의 AUTO_INCREMENT `entity_contacts`
+--
+ALTER TABLE `entity_contacts`
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- 테이블의 AUTO_INCREMENT `inbounds`

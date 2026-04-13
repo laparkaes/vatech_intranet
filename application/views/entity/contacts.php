@@ -1,84 +1,110 @@
-<h2>Gestión de Contactos: <?php echo $entity->name; ?></h2>
-
-<div>
-    <a href="<?php echo base_url('entity/view/'.$entity->id); ?>">
-        <button type="button">Volver a Detalles</button>
-    </a>
+<div class="pagetitle">
+    <h1>Gestión de Contactos: <strong><?= $entity->name; ?></strong></h1>
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="<?= base_url() ?>">Dashboard</a></li>
+            <li class="breadcrumb-item">Mantenimiento</li>
+            <li class="breadcrumb-item"><a href="<?= base_url("entity") ?>">Entidades</a></li>
+            <li class="breadcrumb-item"><a href="<?= base_url('entity/view/'.$entity->id); ?>">Detalle</a></li>
+            <li class="breadcrumb-item active">Contactos</li>
+        </ol>
+    </nav>
 </div>
 
-<br>
+<section class="section">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="mb-3">
+                <a href="<?= base_url('entity/view/'.$entity->id); ?>" class="btn btn-primary">
+                    <i class="bi bi-arrow-left"></i> Volver
+                </a>
+				<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#largeModal">
+					<i class="bi bi-plus-lg"></i> Agregar
+				</button>
+            </div>
 
-<fieldset>
-    <legend>Registrar Nuevo Contacto</legend>
-    <form action="<?php echo base_url('entity/add_contact'); ?>" method="post">
-        <input type="hidden" name="entity_id" value="<?php echo $entity->id; ?>">
-        
-        <label>Nombre:</label>
-        <input type="text" name="contact_name" required>
-        
-        <label>Cargo:</label>
-        <input type="text" name="position">
-        
-        <label>Email:</label>
-        <input type="email" name="email" required>
-        
-        <label>Teléfono:</label>
-        <input type="text" name="phone">
-        
-        <button type="submit">Añadir Contacto</button>
-    </form>
-</fieldset>
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title"></h5>
+                    
+                </div>
+            </div>
 
-<br>
+            <div class="card mt-4">
+                <div class="card-body">
+                    <h5 class="card-title">Lista de Contactos Registrados</h5>
+                    
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th scope="col" style="width: 100px;">Estado</th>
+                                    <th scope="col" style="width: 120px;">Tipo</th>
+                                    <th scope="col">Nombre</th>
+                                    <th scope="col">Cargo</th>
+                                    <th scope="col">Email</th>
+                                    <th scope="col">Teléfono</th>
+                                    <th scope="col" class="text-center">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php if(!empty($contacts)): ?>
+                                    <?php foreach($contacts as $co): ?>
+                                    <tr>
+                                        <td>
+                                            <?php if($co->status == 1): ?>
+                                                <span class="badge bg-success-light text-success border border-success-subtle">Activo</span>
+                                            <?php else: ?>
+                                                <span class="badge bg-danger-light text-danger border border-danger-subtle">Eliminado</span>
+                                            <?php endif; ?>
+                                        </td>
+                                        <td>
+                                            <?php if($co->is_main == 1): ?>
+                                                <span class="badge bg-primary"><i class="bi bi-star-fill"></i> Principal</span>
+                                            <?php else: ?>
+                                                <span class="badge bg-light text-dark border">Adicional</span>
+                                            <?php endif; ?>
+                                        </td>
+                                        <td class="fw-bold"><?= $co->contact_name; ?></td>
+                                        <td><?= $co->position ? $co->position : '<span class="text-muted small">-</span>'; ?></td>
+                                        <td><?= $co->email; ?></td>
+                                        <td><?= $co->phone ? $co->phone : '<span class="text-muted small">-</span>'; ?></td>
+                                        <td class="text-center">
+                                            <?php if($co->status == 1): ?>
+                                                <?php if($co->is_main == 0): ?>
+                                                    <div class="btn-group" role="group">
+                                                        <a href="<?= base_url('entity/make_main_contact/'.$co->id.'/'.$entity->id); ?>" 
+                                                           class="btn btn-outline-primary btn-sm" title="Definir Principal">
+                                                            <i class="bi bi-star"></i>
+                                                        </a>
+                                                        <a href="<?= base_url('entity/delete_contact/'.$co->id.'/'.$entity->id); ?>" 
+                                                           class="btn btn-outline-danger btn-sm" 
+                                                           onclick="return confirm('¿Está seguro de eliminar este contacto?');" title="Eliminar">
+                                                            <i class="bi bi-trash"></i>
+                                                        </a>
+                                                    </div>
+                                                <?php else: ?>
+                                                    <span class="text-primary small fw-bold">Contacto Principal</span>
+                                                <?php endif; ?>
+                                            <?php else: ?>
+                                                <span class="text-muted small italic">Sin acciones</span>
+                                            <?php endif; ?>
+                                        </td>
+                                    </tr>
+                                    <?php endforeach; ?>
+                                <?php else: ?>
+                                    <tr>
+                                        <td colspan="7" class="text-center py-4 text-muted">
+                                            <i class="bi bi-info-circle me-1"></i> No hay contactos registrados para esta entidad.
+                                        </td>
+                                    </tr>
+                                <?php endif; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
 
-<table border="1">
-    <thead>
-        <tr>
-            <th>Estado</th>
-            <th>Tipo</th>
-            <th>Nombre</th>
-            <th>Cargo</th>
-            <th>Email</th>
-            <th>Teléfono</th>
-            <th>Acciones</th>
-        </tr>
-    </thead>
-    <tbody>
-        <?php if(!empty($contacts)): ?>
-            <?php foreach($contacts as $co): ?>
-            <tr>
-                <td>
-                    <?php echo ($co->status == 1) ? 'Activo' : '<strong>Eliminado</strong>'; ?>
-                </td>
-                <td>
-                    <?php echo ($co->is_main == 1) ? 'Principal' : 'Adicional'; ?>
-                </td>
-                <td><?php echo $co->contact_name; ?></td>
-                <td><?php echo $co->position; ?></td>
-                <td><?php echo $co->email; ?></td>
-                <td><?php echo $co->phone; ?></td>
-                <td>
-                    <?php if($co->status == 1): ?>
-                        <?php if($co->is_main == 0): ?>
-                            <a href="<?php echo base_url('entity/make_main_contact/'.$co->id.'/'.$entity->id); ?>">
-                                <button type="button">Definir Principal</button>
-                            </a>
-                            <a href="<?php echo base_url('entity/delete_contact/'.$co->id.'/'.$entity->id); ?>" onclick="return confirm('¿Está seguro de eliminar este contacto?');">
-                                <button type="button">Eliminar</button>
-                            </a>
-                        <?php else: ?>
-                            <span>(Contacto Principal)</span>
-                        <?php endif; ?>
-                    <?php else: ?>
-                        <span>Sin acciones</span>
-                    <?php endif; ?>
-                </td>
-            </tr>
-            <?php endforeach; ?>
-        <?php else: ?>
-            <tr>
-                <td colspan="7">No hay contactos registrados para esta entidad.</td>
-            </tr>
-        <?php endif; ?>
-    </tbody>
-</table>
+        </div>
+    </div>
+</section>

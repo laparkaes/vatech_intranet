@@ -154,14 +154,23 @@ class Entity_model extends CI_Model {
     }
 
     public function set_main_contact($contact_id, $entity_id) {
-        $this->db->trans_start();
-        $this->db->where('entity_id', $entity_id);
-        $this->db->update('entity_contacts', array('is_main' => 0));
-        $this->db->where('id', $contact_id);
-        $this->db->update('entity_contacts', array('is_main' => 1));
-        $this->db->trans_complete();
-        return $this->db->trans_status();
-    }
+		$this->db->trans_start();
+
+		// 1. 해당 엔티티의 모든 연락처를 '일반(0)'으로 초기화
+		$this->db->where('entity_id', $entity_id);
+		$this->db->update('entity_contacts', array('is_main' => 0));
+
+		// 중요: 이전 where 조건을 클리어하기 위해 Query Builder를 초기화하거나 명시적으로 작성
+		$this->db->reset_query(); 
+
+		// 2. 선택한 연락처만 '메인(1)'으로 지정
+		$this->db->where('id', $contact_id);
+		$this->db->where('entity_id', $entity_id); // 보안상 엔티티 ID를 한 번 더 체크하는 것이 좋습니다.
+		$this->db->update('entity_contacts', array('is_main' => 1));
+
+		$this->db->trans_complete();
+		return $this->db->trans_status();
+	}
 
     public function check_active_email_exists($email) {
         $this->db->where('email', $email);

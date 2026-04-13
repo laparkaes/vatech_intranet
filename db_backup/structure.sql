@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- 생성 시간: 26-04-12 01:13
+-- 생성 시간: 26-04-14 01:15
 -- 서버 버전: 10.4.24-MariaDB
 -- PHP 버전: 7.4.29
 
@@ -495,6 +495,12 @@ ALTER TABLE `entities`
   ADD PRIMARY KEY (`id`);
 
 --
+-- 테이블의 인덱스 `entity_contacts`
+--
+ALTER TABLE `entity_contacts`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- 테이블의 인덱스 `inbounds`
 --
 ALTER TABLE `inbounds`
@@ -625,6 +631,12 @@ ALTER TABLE `warehouses`
 --
 ALTER TABLE `divisions`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- 테이블의 AUTO_INCREMENT `entity_contacts`
+--
+ALTER TABLE `entity_contacts`
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- 테이블의 AUTO_INCREMENT `inbounds`

@@ -212,16 +212,24 @@ class Entity extends MY_Controller {
      * Establece un contacto específico como el principal para comunicaciones
      */
     public function make_main_contact($contact_id, $entity_id) {
-        $this->entity_model->set_main_contact($contact_id, $entity_id);
-        redirect('entity/contacts/'.$entity_id);
-    }
+		if ($this->entity_model->set_main_contact($contact_id, $entity_id)) {
+			// 성공 메시지: "Contacto principal actualizado con éxito."
+			$this->session->set_flashdata('success', 'Contacto principal actualizado con éxito.');
+		} else {
+			// 오류 메시지: "Ocurrió un error al actualizar el contacto."
+			$this->session->set_flashdata('error', 'Ocurrió un error al actualizar el contacto.');
+		}
+
+		// 담당자 관리 페이지에서 작업을 수행하므로 해당 페이지로 리다이렉트하는 것이 자연스럽습니다.
+		redirect('entity/view/'.$entity_id);
+	}
 
     /**
      * Desactiva de forma lógica un contacto del sistema
      */
     public function delete_contact($contact_id, $entity_id) {
         $this->entity_model->soft_delete_contact($contact_id);
-        redirect('entity/contacts/'.$entity_id);
+        redirect('entity/view/'.$entity_id);
     }
 
     /**
@@ -248,6 +256,6 @@ class Entity extends MY_Controller {
             $this->entity_model->insert_contact($data);
             $this->session->set_flashdata('success', 'Contacto añadido correctamente.');
         }
-        redirect('entity/contacts/'.$entity_id);
+        redirect('entity/view/'.$entity_id);
     }
 }

@@ -5,18 +5,17 @@
             <li class="breadcrumb-item"><a href="<?= base_url() ?>">Dashboard</a></li>
             <li class="breadcrumb-item">Mantenimiento</li>
             <li class="breadcrumb-item"><a href="<?= base_url("entity") ?>">Entidades</a></li>
-            <li class="breadcrumb-item active">Detalles</li>
+            <li class="breadcrumb-item active">Detalle</li>
         </ol>
     </nav>
 </div>
 
 <section class="section profile">
     <div class="row">
-        <div class="col-lg-8 mx-auto">
-            <div class="mb-3">
-                <a href="<?= base_url('entity') ?>" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Volver al Listado</a>
-                <a href="<?= base_url('entity/edit/'.$entity->id) ?>" class="btn btn-primary"><i class="bi bi-pencil"></i> Editar Información</a>
-                <a href="<?= base_url('entity/contacts/'.$entity->id) ?>" class="btn btn-info text-white"><i class="bi bi-people"></i> Gestionar Contactos</a>
+        <div class="col-12">
+            <div>
+                <a href="<?= base_url('entity') ?>" class="btn btn-primary mb-3"><i class="bi bi-arrow-left"></i> Lista</a>
+                <a href="<?= base_url('entity/edit/'.$entity->id) ?>" class="btn btn-primary mb-3"><i class="bi bi-pencil"></i> Editar</a>
             </div>
 
 			<div class="card">
@@ -85,27 +84,73 @@
 							<label class="form-label">Descripción / Notas</label>
 							<textarea class="form-control" style="height: 100px"><?= nl2br(htmlspecialchars($entity->description)) ?></textarea>
 						</div>
-						
 					</div>
-
 				</div>
 			</div>
 
-
-
             <div class="card mt-4">
                 <div class="card-body">
-                    <h5 class="card-title">Contactos de la Entidad</h5>
+					<div class="d-flex justify-content-between align-items-center">
+						<h5 class="card-title">Contactos de la Entidad</h5>
+						<a href="<?= base_url('entity/contacts/'.$entity->id) ?>" class="btn btn-primary btn-sm"><i class="bi bi-people"></i> Gestionar</a>
+						
+						<button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addContactModal">
+							<i class="bi bi-plus-lg"></i> Agregar
+						</button>
+						<div class="modal fade" id="addContactModal" tabindex="-1" style="display: none;" aria-hidden="true">
+							<div class="modal-dialog">
+								<form action="<?= base_url('entity/add_contact'); ?>" method="post" class="modal-content needs-validation" novalidate>
+									<div class="modal-header">
+										<h5 class="modal-title">Registrar Nuevo Contacto</h5>
+										<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+									</div>
+									<div class="modal-body">
+										<div class="row g-3">
+										
+											<input type="hidden" name="entity_id" value="<?= $entity->id; ?>">
+											
+											<div class="col-12">
+												<label class="form-label fw-bold">Nombre</label>
+												<input type="text" name="contact_name" class="form-control" placeholder="Ej: Juan Pérez" required>
+												<div class="invalid-feedback">Por favor, ingrese el nombre.</div>
+											</div>
+											
+											<div class="col-12">
+												<label class="form-label fw-bold">Cargo</label>
+												<input type="text" name="position" class="form-control" placeholder="Ej: Gerente de Ventas">
+											</div>
+											
+											<div class="col-12">
+												<label class="form-label fw-bold">Email</label>
+												<input type="email" name="email" class="form-control" placeholder="ejemplo@correo.com" required>
+												<div class="invalid-feedback">Ingrese un correo válido.</div>
+											</div>
+											
+											<div class="col-12">
+												<label class="form-label fw-bold">Teléfono</label>
+												<input type="text" name="phone" class="form-control" placeholder="+51 ...">
+											</div>
+											
+										</div>
+									</div>
+									<div class="modal-footer">
+										<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+										<button type="submit" class="btn btn-primary">Agregar</button>
+									</div>
+								</form>
+							</div>
+						</div>
+					</div>
                     <div class="table-responsive">
-                        <table class="table table-hover">
+                        <table class="table table-hover align-middle">
                             <thead class="table-light">
                                 <tr>
-                                    <th>Estado</th>
-                                    <th>Tipo</th>
-                                    <th>Nombre</th>
-                                    <th>Cargo</th>
-                                    <th>Email</th>
-                                    <th>Teléfono Directo</th>
+                                    <th scope="col" style="width: 100px;">Estado</th>
+                                    <th scope="col">Nombre</th>
+                                    <th scope="col">Cargo</th>
+                                    <th scope="col">Email</th>
+                                    <th scope="col">Teléfono</th>
+                                    <th scope="col" class="text-center">Acciones</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -113,20 +158,44 @@
                                     <?php foreach($contacts as $co): ?>
                                     <tr>
                                         <td>
-                                            <span class="badge <?= ($co->status == 1) ? 'bg-light text-success border' : 'bg-light text-danger border' ?>">
-                                                <?= ($co->status == 1) ? 'Activo' : 'Eliminado' ?>
-                                            </span>
+                                            <?php if($co->status == 1): ?>
+                                                <span class="badge bg-success-light text-success border border-success-subtle">Activo</span>
+                                            <?php else: ?>
+                                                <span class="badge bg-danger-light text-danger border border-danger-subtle">Eliminado</span>
+                                            <?php endif; ?>
                                         </td>
-                                        <td><?= ($co->is_main == 1) ? '<span class="badge bg-primary">Principal</span>' : 'Adicional' ?></td>
-                                        <td class="fw-bold"><?= $co->contact_name ?></td>
-                                        <td><?= $co->position ?></td>
-                                        <td><?= $co->email ?></td>
-                                        <td><?= $co->phone ?></td>
+                                        <td class="fw-bold"><?= $co->contact_name; ?></td>
+                                        <td><?= $co->position ? $co->position : '<span class="text-muted small">-</span>'; ?></td>
+                                        <td><?= $co->email; ?></td>
+                                        <td><?= $co->phone ? $co->phone : '<span class="text-muted small">-</span>'; ?></td>
+                                        <td class="text-center">
+                                            <?php if($co->status == 1): ?>
+                                                <?php if($co->is_main == 0): ?>
+                                                    <div class="btn-group" role="group">
+                                                        <a href="<?= base_url('entity/make_main_contact/'.$co->id.'/'.$entity->id); ?>" 
+                                                           class="btn btn-outline-primary btn-sm" title="Definir Principal">
+                                                            <i class="bi bi-star"></i>
+                                                        </a>
+                                                        <a href="<?= base_url('entity/delete_contact/'.$co->id.'/'.$entity->id); ?>" 
+                                                           class="btn btn-outline-danger btn-sm" 
+                                                           onclick="return confirm('¿Está seguro de eliminar este contacto?');" title="Eliminar">
+                                                            <i class="bi bi-trash"></i>
+                                                        </a>
+                                                    </div>
+                                                <?php else: ?>
+                                                    <span class="text-primary small fw-bold">Contacto Principal</span>
+                                                <?php endif; ?>
+                                            <?php else: ?>
+                                                <span class="text-muted small italic">Sin acciones</span>
+                                            <?php endif; ?>
+                                        </td>
                                     </tr>
                                     <?php endforeach; ?>
                                 <?php else: ?>
                                     <tr>
-                                        <td colspan="6" class="text-center">No hay contactos registrados para esta entidad.</td>
+                                        <td colspan="7" class="text-center py-4 text-muted">
+                                            <i class="bi bi-info-circle me-1"></i> No hay contactos registrados para esta entidad.
+                                        </td>
                                     </tr>
                                 <?php endif; ?>
                             </tbody>
