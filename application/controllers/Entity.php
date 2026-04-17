@@ -123,7 +123,7 @@ class Entity extends MY_Controller {
                         'position'     => $this->input->post('position')[$key],
                         'email'        => $this->input->post('contact_email')[$key],
                         'phone'        => $this->input->post('indiv_phone')[$key],
-                        'is_main'      => isset($this->input->post('is_main')[$key]) ? 1 : 0,
+                        'is_main'      => $this->input->post('is_main')[$key],
                         'status'       => 1
                     );
                 }
@@ -143,15 +143,22 @@ class Entity extends MY_Controller {
      * Muestra el formulario de edición para una entidad existente
      */
     public function edit($id) {
-        $data['entity'] = $this->entity_model->get_entity_details($id);
-        if (empty($data['entity'])) {
-            show_404();
-        }
+		// 1. 업체 기본 정보 불러오기
+		$data['entity'] = $this->entity_model->get_entity_details($id);
+		
+		if (empty($data['entity'])) {
+			show_404();
+		}
 
-        $data['countries'] = $this->entity_model->get_countries();
-        $data['main'] = 'entity/edit';
-        $this->load->view('layout', $data);
-    }
+		// 2. 해당 업체의 담당자 목록 불러오기 (추가된 부분)
+		$data['contacts'] = $this->entity_model->get_entity_contacts($id);
+
+		// 3. 국가 목록 및 페이지 설정
+		$data['countries'] = $this->entity_model->get_countries();
+		$data['main'] = 'entity/edit';
+		
+		$this->load->view('layout', $data);
+	}
 
     /**
      * Actualiza la información general y los roles de la entidad
@@ -192,19 +199,6 @@ class Entity extends MY_Controller {
         }
         $data['contacts'] = $this->entity_model->get_entity_contacts($id);
         $data['main'] = 'entity/view';
-        $this->load->view('layout', $data);
-    }
-
-    /**
-     * Interfaz para la gestión exclusiva de contactos de una entidad
-     */
-    public function contacts($entity_id) {
-        $data['entity'] = $this->entity_model->get_entity_details($entity_id);
-        if (empty($data['entity'])) { 
-            show_404(); 
-        }
-        $data['contacts'] = $this->entity_model->get_entity_contacts($entity_id);
-        $data['main'] = 'entity/contacts';
         $this->load->view('layout', $data);
     }
 

@@ -82,7 +82,7 @@
 						
 						<div class="col-md-12">
 							<label class="form-label">Descripción / Notas</label>
-							<textarea class="form-control" style="height: 100px"><?= nl2br(htmlspecialchars($entity->description)) ?></textarea>
+							<textarea class="form-control" style="height: 100px" readonly><?= $entity->description ?></textarea>
 						</div>
 					</div>
 				</div>
@@ -91,9 +91,7 @@
             <div class="card mt-4">
                 <div class="card-body">
 					<div class="d-flex justify-content-between align-items-center">
-						<h5 class="card-title">Contactos de la Entidad</h5>
-						<a href="<?= base_url('entity/contacts/'.$entity->id) ?>" class="btn btn-primary btn-sm"><i class="bi bi-people"></i> Gestionar</a>
-						
+						<h5 class="card-title">Contactos</h5>
 						<button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addContactModal">
 							<i class="bi bi-plus-lg"></i> Agregar
 						</button>
@@ -142,15 +140,15 @@
 						</div>
 					</div>
                     <div class="table-responsive">
-                        <table class="table table-hover align-middle">
-                            <thead class="table-light">
+                        <table class="table align-middle">
+                            <thead>
                                 <tr>
-                                    <th scope="col" style="width: 100px;">Estado</th>
+                                    <th scope="col">Estado</th>
                                     <th scope="col">Nombre</th>
                                     <th scope="col">Cargo</th>
                                     <th scope="col">Email</th>
                                     <th scope="col">Teléfono</th>
-                                    <th scope="col" class="text-center">Acciones</th>
+                                    <th scope="col" class="text-end">Acciones</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -159,21 +157,21 @@
                                     <tr>
                                         <td>
                                             <?php if($co->status == 1): ?>
-                                                <span class="badge bg-success-light text-success border border-success-subtle">Activo</span>
+                                                <span class="text-success">Activo</span>
                                             <?php else: ?>
-                                                <span class="badge bg-danger-light text-danger border border-danger-subtle">Eliminado</span>
+                                                <span class="text-danger">Eliminado</span>
                                             <?php endif; ?>
                                         </td>
                                         <td class="fw-bold"><?= $co->contact_name; ?></td>
-                                        <td><?= $co->position ? $co->position : '<span class="text-muted small">-</span>'; ?></td>
+                                        <td><?= $co->position ? $co->position : '-'; ?></td>
                                         <td><?= $co->email; ?></td>
-                                        <td><?= $co->phone ? $co->phone : '<span class="text-muted small">-</span>'; ?></td>
-                                        <td class="text-center">
+                                        <td><?= $co->phone ? $co->phone : '-'; ?></td>
+                                        <td class="text-end">
                                             <?php if($co->status == 1): ?>
                                                 <?php if($co->is_main == 0): ?>
                                                     <div class="btn-group" role="group">
                                                         <a href="<?= base_url('entity/make_main_contact/'.$co->id.'/'.$entity->id); ?>" 
-                                                           class="btn btn-outline-primary btn-sm" title="Definir Principal">
+                                                           class="btn btn-outline-primary btn-sm" onclick="return confirm('¿Está seguro de elegir como contacto principal?');" title="Definir Principal">
                                                             <i class="bi bi-star"></i>
                                                         </a>
                                                         <a href="<?= base_url('entity/delete_contact/'.$co->id.'/'.$entity->id); ?>" 
@@ -183,10 +181,10 @@
                                                         </a>
                                                     </div>
                                                 <?php else: ?>
-                                                    <span class="text-primary small fw-bold">Contacto Principal</span>
+                                                    <i class="bi bi-star-fill text-success"></i>
                                                 <?php endif; ?>
                                             <?php else: ?>
-                                                <span class="text-muted small italic">Sin acciones</span>
+                                                -
                                             <?php endif; ?>
                                         </td>
                                     </tr>
@@ -203,7 +201,6 @@
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
 </section>

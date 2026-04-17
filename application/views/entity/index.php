@@ -29,19 +29,19 @@
                         <div class="modal-body">
                             <div class="row g-3">
                                 <div class="col-md-12">
-                                    <label class="form-label">Nombre / Razón Social</label>
+                                    <label class="form-label">Nombre</label>
                                     <input type="text" name="name" class="form-control" value="<?= $search['name'] ?? '' ?>">
                                 </div>
                                 <div class="col-md-12">
-                                    <label class="form-label">Tax ID / RUC</label>
+                                    <label class="form-label">Tax ID</label>
                                     <input type="text" name="tax_id" class="form-control" value="<?= $search['tax_id'] ?? '' ?>">
                                 </div>
                                 <div class="col-md-6">
-                                    <label class="form-label">Type</label>
+                                    <label class="form-label">Tipo</label>
                                     <select name="role" class="form-select">
                                         <option value="">Todos</option>
-                                        <option value="vendor" <?= ($search['role'] == 'vendor') ? 'selected' : '' ?>>Proveedor (Vendor)</option>
-                                        <option value="dealer" <?= ($search['role'] == 'dealer') ? 'selected' : '' ?>>Distribuidor (Dealer)</option>
+                                        <option value="vendor" <?= ($search['role'] == 'vendor') ? 'selected' : '' ?>>Proveedor</option>
+                                        <option value="dealer" <?= ($search['role'] == 'dealer') ? 'selected' : '' ?>>Distribuidor</option>
                                     </select>
                                 </div>
                                 <div class="col-md-6">
@@ -67,9 +67,13 @@
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title">Lista</h5>
-                    <table class="table align-middle text-center">
+                    <table class="table align-middle">
                         <thead>
 							<tr class="align-top">
+								<th scope="col">
+									No.
+								</th>
+								<th scope="col">País</th>
 								<th scope="col">
 									Tax ID
 									<?php if (!empty($search['tax_id'])): ?>
@@ -90,7 +94,6 @@
 										</small>
 									<?php endif; ?>
 								</th>
-								<th scope="col">País</th>
 								<th scope="col">Contacto</th>
 								<th scope="col">
 									Estado
@@ -100,15 +103,17 @@
 										</small>
 									<?php endif; ?>
 								</th>
-								<th scope="col">Acciones</th>
+								<th class="text-end" scope="col">Acciones</th>
 							</tr>
 						</thead>
                         <tbody>
                             <?php if(!empty($entities)): ?>
                                 <?php foreach($entities as $e): ?>
                                 <tr class="align-middle">
+									<td><?php echo $start_no++; ?></td>
+                                    <td><?= $e->country_name ? $e->country_name : "-" ?></td>
                                     <td><?php echo $e->tax_id; ?></td>
-                                    <td class="text-start"><?php echo $e->name; ?></td>
+                                    <td><?php echo $e->name; ?></td>
                                     <td>
                                         <?php if($e->is_vendor): ?>
 										<div><span class="badge border text-primary border-primary">Proveedor</span></div>
@@ -118,7 +123,6 @@
                                         <?php endif; ?>
                                         <?php if(!$e->is_vendor && !$e->is_dealer) echo "-"; ?>
                                     </td>
-                                    <td><?= $e->country_name ? $e->country_name : "-" ?></td>
                                     <td>
                                         <?php if($e->phone) echo '<i class="bi bi-telephone"></i> '.$e->phone.'<br>'; ?>
                                         <?php if($e->mobile) echo '<i class="bi bi-phone"></i> '.$e->mobile; ?>
@@ -129,8 +133,8 @@
                                             <?= ($e->status == 1) ? 'ACTIVO' : 'INACTIVO' ?>
                                         </span>
                                     </td>
-                                    <td>
-                                        <a href="<?php echo base_url('entity/view/'.$e->id); ?>">
+                                    <td class="text-end">
+                                        <a href="<?php echo base_url('entity/view/'.$e->id); ?>" class="btn btn-sm btn-primary">
                                             <i class="bi bi-info-square"></i>
                                         </a>
                                     </td>

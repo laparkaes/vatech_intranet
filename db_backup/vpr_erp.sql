@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- 생성 시간: 26-04-14 01:15
+-- 생성 시간: 26-04-18 01:56
 -- 서버 버전: 10.4.24-MariaDB
 -- PHP 버전: 7.4.29
 
@@ -159,10 +159,12 @@ CREATE TABLE `entities` (
 --
 
 INSERT INTO `entities` (`id`, `name`, `country_id`, `tax_id`, `is_vendor`, `is_dealer`, `address`, `website`, `phone`, `mobile`, `description`, `status`, `created_by`, `created_at`, `updated_at`) VALUES
+(0, 'Probando creacion de empresa SAC1', 4, '2346784322', 1, 1, 'Av. por alli por aca 234, Surquillo1', 'www.facebook.com1', '12353341', '4435 34531', 'estoy probando1\r\na ver si todo se graba bien\r\nen realidad no debe importar lo que es', 1, 1, '2026-04-17 17:49:08', '2026-04-17 18:52:25'),
 (1, 'Vatech Co., Ltd.', 0, '294723489', 1, 0, NULL, '', '', '', '', 1, 1, '2026-03-18 17:23:10', '2026-03-18 17:49:40'),
 (2, 'asfdsflk sdflk j', 3, '23482349', 1, 1, '', 'www.holamundo.com', '123 131 312', '234 2423 423', 'isadl kfjasdfk jsalfk saj flksa;j fsd\r\nsa df\r\nsa fsad\r\nfsad fsad fsa f', 1, 1, '2026-03-18 18:27:48', '2026-04-07 18:19:11'),
 (3, 'testeeeeeeetesteeeeeee', 1, 'testeeeeeee', 1, 1, 'testeeeeeeetesteeeeeee', 'testeeeeeeetesteeeeeee', 'testeeeeeeetesteeeeeee', 'testeeeeeeetesteeeeeee', 'testeeeeeeetesteeeeeee', 1, 1, '2026-03-25 12:09:20', '2026-04-07 18:19:02'),
-(4, 'eeestedte', 4, 'eeestedte', 1, 0, 'eeestedte', 'eeestedte.co', 'eeestedte', 'eeestedte', 'eeestedte', 1, 1, '2026-03-25 12:11:33', '2026-03-25 12:11:33');
+(4, 'eeestedte', 4, 'eeestedte', 1, 0, 'eeestedte', 'eeestedte.co', 'eeestedte', 'eeestedte', 'eeestedte', 1, 1, '2026-03-25 12:11:33', '2026-03-25 12:11:33'),
+(5, 'Otra prueba de distribuidor', 2, '3242432423', 0, 1, 'sdlfkjsafsdasad fsdaf sad fsad fsa fsd 23``', 'www.faceook.cok', '234324kjhkjsfsa32`', 'sfoakj3sdfsd932`', 'dsfas fsa\\\r\nf sa\r\n fas\r\n fsa\r\n fsa\r\n fsa\r\n fsadfsafaslfkjsflk;sjafl', 1, 1, '2026-04-17 18:15:21', '2026-04-17 18:15:21');
 
 -- --------------------------------------------------------
 
@@ -192,9 +194,15 @@ INSERT INTO `entity_contacts` (`id`, `entity_id`, `contact_name`, `position`, `e
 (3, 1, 'testeeeeeee', 'testeeeeeee', 'testeeeeeee@testeeeeeee.co', 'testeeeeeee', 0, 1, '2026-03-25 12:10:52'),
 (4, 4, 'eeestedte', 'eeestedte', 'eeestedte@df.co', 'eeestedte', 0, 0, '2026-03-25 12:11:33'),
 (5, 3, 'ho1111', 'ho1111', 'ho1111@ho1111.c', 'ho1111', 0, 1, '2026-03-25 12:21:53'),
-(6, 4, 'Jeong Woo Park', 'Gerente de Michi', 'ladasf@dsfsadf.com', '992533099', 1, 1, '2026-04-13 18:06:43'),
-(7, 4, 'fulanito park', 'michi', 'asdf@sdfsda.com', '123 123 123', 0, 1, '2026-04-13 18:07:52'),
-(8, 4, 'hola hola', 'saludador', 'werwe@werdfs.com', '123 123 543', 0, 1, '2026-04-13 18:08:17');
+(6, 4, 'Jeong Woo Park', 'Gerente de Michi', 'ladasf@dsfsadf.com', '992533099', 0, 1, '2026-04-13 18:06:43'),
+(7, 4, 'fulanito park', 'michi', 'asdf@sdfsda.com', '123 123 123', 1, 1, '2026-04-13 18:07:52'),
+(8, 4, 'hola hola', 'saludador', 'werwe@werdfs.com', '123 123 543', 0, 0, '2026-04-13 18:08:17'),
+(9, 4, 'testgin', '', 'sadf@sdaf.com', '', 0, 1, '2026-04-17 12:15:20'),
+(10, 0, 'encargado 1', 'gerente general', 'sdfsd@safds.com', '23489238', 1, 1, '2026-04-17 17:49:08'),
+(11, 0, 'Encargado 2', 'Fulanito', 'sdfasdf@sdfasd.com', '32 234 24 sdfsd', 1, 1, '2026-04-17 17:49:08'),
+(12, 5, 'sadf sa sdaf', 'dsfsadf', 'sdafsda@sdf.co', 'sdafsadf', 0, 1, '2026-04-17 18:15:21'),
+(13, 5, 'sdafsadf', 'sdafsadf', 'sdafsdf@sdf.csdsd', 'sadfsadf', 1, 1, '2026-04-17 18:15:21'),
+(14, 5, 'asdfsdf', 'lk', 'jlk@sadfsa.co', 'jk', 0, 1, '2026-04-17 18:15:21');
 
 -- --------------------------------------------------------
 
@@ -8265,7 +8273,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `email`, `division_id`, `hire_date`, `role`, `password`, `full_name`, `status`, `created_at`, `updated_at`, `last_login`) VALUES
-(1, 'jeongwoo.park@vatechglobal.com', 1, '2026-01-01', 'admin', '$2y$10$kcsUNDEhyZyEKmLdsBYETuKRqXH698XumTxv1/40w9z1Qqq61LwL.', 'Jeong Woo Park', 1, '2026-04-11 14:47:35', '2026-04-13 16:11:00', '2026-04-13 16:11:00');
+(1, 'jeongwoo.park@vatechglobal.com', 1, '2026-01-01', 'admin', '$2y$10$kcsUNDEhyZyEKmLdsBYETuKRqXH698XumTxv1/40w9z1Qqq61LwL.', 'Jeong Woo Park', 1, '2026-04-11 14:47:35', '2026-04-17 15:52:19', '2026-04-17 15:52:19');
 
 -- --------------------------------------------------------
 
@@ -8564,10 +8572,16 @@ ALTER TABLE `divisions`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
+-- 테이블의 AUTO_INCREMENT `entities`
+--
+ALTER TABLE `entities`
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
 -- 테이블의 AUTO_INCREMENT `entity_contacts`
 --
 ALTER TABLE `entity_contacts`
-  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- 테이블의 AUTO_INCREMENT `inbounds`

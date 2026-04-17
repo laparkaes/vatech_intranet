@@ -43,14 +43,14 @@
 			<div class="card">
 				<div class="card-body">
 					<h5 class="card-title">Lista</h5>
-					<table class="table align-middle text-center">
+					<table class="table align-middle">
 						<thead>
 							<tr>
 								<th>No.</th>
 								<th>Nombre de División</th>
 								<th>División Superior</th>
 								<th>Estado</th>
-								<th>Acción</th>
+								<th class="text-end">Acción</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -69,7 +69,7 @@
 										<span class="text-danger">INACTIVO</span>
 									<?php endif; ?>
 								</td>
-								<td>
+								<td class="text-end">
 									<button type="button" 
 											class="btn btn-sm btn-primary edit-btn" 
 											data-bs-toggle="modal" 
