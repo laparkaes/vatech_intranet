@@ -90,7 +90,7 @@
                                     <td><?php echo $start_no++; ?></td>
                                     <td><?= $d->country_name ? $d->country_name : "-" ?></td>
                                     <td><?php echo $d->tax_id; ?></td>
-                                    <td><strong><?php echo $d->name; ?></strong></td>
+                                    <td><?php echo $d->name; ?></td>
                                     <td>
                                         <?php if($d->is_vendor): ?>
                                             <div><span class="badge border text-primary border-primary">Proveedor</span></div>

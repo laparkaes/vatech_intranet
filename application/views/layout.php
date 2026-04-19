@@ -88,7 +88,7 @@
 		<ul class="sidebar-nav" id="sidebar-nav">
 
 			<li class="nav-item">
-				<a class="nav-link " href="<?= base_url() ?>dashboard">
+				<a class="nav-link <?= $this->menu === '' ? "" : "collapsed" ?>" href="<?= base_url() ?>dashboard" >
 					<i class="bi bi-grid"></i>
 					<span>Dashboard</span>
 				</a>
@@ -116,17 +116,17 @@
 
 			<?php if ($user_role === 'admin' || in_array('Ventas', $my_access)): ?>
 			<li class="nav-item">
-				<a class="nav-link collapsed" data-bs-target="#sale-nav" data-bs-toggle="collapse" href="#">
+				<a class="nav-link <?= $this->menu === 'sale' ? "" : "collapsed" ?>" data-bs-target="#sale-nav" data-bs-toggle="collapse" href="#">
 					<i class="bi bi-upc-scan"></i><span>Ventas</span><i class="bi bi-chevron-down ms-auto"></i>
 				</a>
-				<ul id="sale-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+				<ul id="sale-nav" class="nav-content collapse <?= $this->menu === 'sale' ? "show" : "" ?>" data-bs-parent="#sidebar-nav">
 					<li>
-						<a href="<?php echo base_url('sale'); ?>">
+						<a href="<?php echo base_url('sale'); ?>" class="<?= $this->menu_sub === 'sale' ? "active" : "" ?>">
 							<i class="bi bi-circle"></i><span>Ventas</span>
 						</a>
 					</li>
 					<li>
-						<a href="<?php echo base_url('distributor'); ?>">
+						<a href="<?php echo base_url('distributor'); ?>" class="<?= $this->menu_sub === 'distributor' ? "active" : "" ?>">
 							<i class="bi bi-circle"></i><span>Distribuidores</span>
 						</a>
 					</li>

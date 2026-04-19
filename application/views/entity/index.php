@@ -66,7 +66,7 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
-                    <h5 class="card-title">Lista</h5>
+                    <h5 class="card-title">Lista de Entiedades</h5>
                     <table class="table align-middle">
                         <thead>
 							<tr class="align-top">

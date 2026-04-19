@@ -8,7 +8,7 @@ class Distributor extends MY_Controller {
         
         $this->load->model('entity_model');
         
-        $this->menu = "master";
+        $this->menu = "sale";
         $this->menu_sub = "distributor"; // 메뉴 활성화 구분
     }
 
