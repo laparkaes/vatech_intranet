@@ -59,29 +59,6 @@ class Entity_model extends CI_Model {
         return $this->db->get()->row();
     }
 
-	/**
-	 * Obtiene el listado maestro de todas las entidades registradas.
-	 * Se han corregido los nombres de las columnas según la estructura de la base de datos:
-	 * - Tabla 'countries': 'country_name'
-	 * - Tabla 'users': 'full_name'
-	 * * @return array Lista de todas las entidades con su país y el nombre completo del creador.
-	 */
-	public function get_all_entities() {
-		$this->db->select('e.*, c.country_name as country, u.full_name as creator_name');
-		$this->db->from('entities e');
-		
-		// Relación con la tabla de países
-		$this->db->join('countries c', 'c.id = e.country_id', 'left');
-		
-		// Relación con la tabla de usuarios utilizando 'full_name'
-		$this->db->join('users u', 'u.id = e.created_by', 'left');
-		
-		$this->db->order_by('e.name', 'ASC');
-		
-		$query = $this->db->get();
-		return $query->result();
-	}
-
     /**
 	 * Obtiene la lista de entidades por rol (is_vendor o is_dealer)
 	 * + Activos solamente
@@ -150,7 +127,7 @@ class Entity_model extends CI_Model {
 
     public function soft_delete_contact($id) {
         $this->db->where('id', $id);
-        return $this->db->update('entity_contacts', array('status' => 0));
+        return $this->db->update('entity_contacts', array('is_main' => 0, 'status' => 0));
     }
 
     public function set_main_contact($contact_id, $entity_id) {
@@ -177,4 +154,9 @@ class Entity_model extends CI_Model {
         $this->db->where('status', 1);
         return ($this->db->get('entity_contacts')->num_rows() > 0);
     }
+
+	public function update_contact($id, $data) {
+		$this->db->where('id', $id);
+		return $this->db->update('entity_contacts', $data);
+	}
 }

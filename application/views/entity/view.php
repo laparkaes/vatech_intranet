@@ -168,21 +168,29 @@
                                         <td><?= $co->phone ? $co->phone : '-'; ?></td>
                                         <td class="text-end">
                                             <?php if($co->status == 1): ?>
-                                                <?php if($co->is_main == 0): ?>
-                                                    <div class="btn-group" role="group">
-                                                        <a href="<?= base_url('entity/make_main_contact/'.$co->id.'/'.$entity->id); ?>" 
-                                                           class="btn btn-outline-primary btn-sm" onclick="return confirm('¿Está seguro de elegir como contacto principal?');" title="Definir Principal">
-                                                            <i class="bi bi-star"></i>
-                                                        </a>
-                                                        <a href="<?= base_url('entity/delete_contact/'.$co->id.'/'.$entity->id); ?>" 
-                                                           class="btn btn-outline-danger btn-sm" 
-                                                           onclick="return confirm('¿Está seguro de eliminar este contacto?');" title="Eliminar">
-                                                            <i class="bi bi-trash"></i>
-                                                        </a>
-                                                    </div>
-                                                <?php else: ?>
-                                                    <i class="bi bi-star-fill text-success"></i>
-                                                <?php endif; ?>
+											<div class="btn-group" role="group">
+												<?php if($co->is_main == 0): ?>
+												<a href="<?= base_url('entity/make_main_contact/'.$co->id.'/'.$entity->id); ?>" 
+												   class="btn btn-outline-success btn-sm" onclick="return confirm('¿Está seguro de elegir como contacto principal?');" title="Definir Principal">
+													<i class="bi bi-star"></i>
+												</a>
+												<?php else: ?>
+												<button type="button" class="btn btn-primary btn-sm" disabled>
+													<i class="bi bi-star-fill"></i>
+												</button>
+												<?php endif; ?>
+												<button type="button" class="btn btn-outline-primary btn-sm" 
+														title="Editar Contacto"
+														onclick="openEditContactModal(<?= htmlspecialchars(json_encode($co)); ?>)">
+													<i class="bi bi-pencil"></i>
+												</button>
+												
+												<a href="<?= base_url('entity/delete_contact/'.$co->id.'/'.$entity->id); ?>" 
+												   class="btn btn-outline-danger btn-sm" 
+												   onclick="return confirm('¿Está seguro de eliminar este contacto?');" title="Eliminar">
+													<i class="bi bi-trash"></i>
+												</a>
+											</div>
                                             <?php else: ?>
                                                 -
                                             <?php endif; ?>
@@ -204,3 +212,56 @@
         </div>
     </div>
 </section>
+
+<div class="modal fade" id="editContactModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form action="<?= base_url('entity/update_single_contact'); ?>" method="post">
+                <div class="modal-header">
+                    <h5 class="modal-title">Editar Contacto</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="contact_id" id="edit_contact_id">
+                    <input type="hidden" name="entity_id" value="<?= $entity->id; ?>">
+
+                    <div class="mb-3">
+                        <label class="form-label">Nombre <span class="text-danger">*</span></label>
+                        <input type="text" name="contact_name" id="edit_contact_name" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Cargo</label>
+                        <input type="text" name="position" id="edit_position" class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Email <span class="text-danger">*</span></label>
+                        <input type="email" name="email" id="edit_email" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Teléfono Directo</label>
+                        <input type="text" name="phone" id="edit_phone" class="form-control">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+function openEditContactModal(contact) {
+    // 폼 필드에 데이터 채우기
+    document.getElementById('edit_contact_id').value = contact.id;
+    document.getElementById('edit_contact_name').value = contact.contact_name;
+    document.getElementById('edit_position').value = contact.position;
+    document.getElementById('edit_email').value = contact.email;
+    document.getElementById('edit_phone').value = contact.phone;
+
+    // 모달 띄우기
+    var editModal = new bootstrap.Modal(document.getElementById('editContactModal'));
+    editModal.show();
+}
+</script>

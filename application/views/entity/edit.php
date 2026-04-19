@@ -14,8 +14,8 @@
     <div class="row">
         <div class="col-12">
             <div>
-                <a href="<?= base_url('entity') ?>" class="btn btn-secondary mb-3">
-                    <i class="bi bi-arrow-left"></i> Lista
+                <a href="<?= base_url('entity/view/'.$entity->id) ?>" class="btn btn-primary mb-3">
+                    <i class="bi bi-arrow-left"></i> Volver al Detalle
                 </a>
             </div>
 
@@ -92,49 +92,11 @@
                     </div>
                 </div>
 
-                <div class="card mt-4 shadow-none border">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <h5 class="card-title text-muted">Contactos Registrados</h5>
-                            <small class="text-secondary"><i class="bi bi-info-circle"></i> Los contactos se gestionan en una sección separada.</small>
-                        </div>
-                        
-                        <div class="table-responsive">
-                            <table class="table table-sm align-middle mb-0">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th>Nombre</th>
-                                        <th>Cargo</th>
-                                        <th>Email</th>
-                                        <th>Teléfono</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php if(!empty($contacts)): ?>
-                                        <?php foreach($contacts as $contact): ?>
-                                        <tr>
-                                            <td><?= $contact->contact_name; ?> <?php if($contact->is_main) echo '<span class="badge bg-info text-dark">Principal</span>'; ?></td>
-                                            <td><?= $contact->position; ?></td>
-                                            <td><?= $contact->email; ?></td>
-                                            <td><?= $contact->phone; ?></td>
-                                        </tr>
-                                        <?php endforeach; ?>
-                                    <?php else: ?>
-                                        <tr>
-                                            <td colspan="4" class="text-center py-3 text-muted">No hay contactos registrados.</td>
-                                        </tr>
-                                    <?php endif; ?>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
                 <div class="mt-4 mb-5">
-                    <button type="submit" class="btn btn-primary px-5">
-                        Actualizar Entidad
+                    <button type="submit" class="btn btn-primary">
+                        Actualizar
                     </button>
-                    <a href="<?= base_url('entity/view/'.$entity->id); ?>" class="btn btn-secondary px-4">Cancelar</a>
+                    <a href="<?= base_url('entity/view/'.$entity->id); ?>" class="btn btn-secondary">Cancelar</a>
                 </div>
             </form>
         </div>
