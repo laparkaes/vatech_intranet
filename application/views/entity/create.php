@@ -49,7 +49,7 @@
                             <div class="col-md-3">
                                 <label class="form-label">País</label>
                                 <select name="country_id" class="form-select" required>
-                                    <option value="">-- Seleccione un país --</option>
+                                    <option value="">Seleccionar --</option>
                                     <?php foreach($countries as $c): ?>
                                         <option value="<?= $c->id; ?>"><?= $c->country_name; ?></option>
                                     <?php endforeach; ?>
@@ -104,10 +104,10 @@
 							<table class="table align-middle" id="contactsTable">
 								<thead>
 									<tr>
-										<th>Nombre<span class="text-danger">*</span></th>
+										<th>Nombre <span class="text-danger">*</span></th>
 										<th>Cargo</th>
 										<th>Email <span class="text-danger">*</span></th>
-										<th>Teléfono Directo</th>
+										<th>Teléfono</th>
 										<th>Acción</th>
 									</tr>
 								</thead>
@@ -115,18 +115,18 @@
 									<tr>
 										<td>
 											<input type="hidden" name="is_main[]" value="1">
-											<input type="text" name="contact_name[]" class="form-control" placeholder="Juan Pérez" required>
+											<input type="text" name="contact_name[]" class="form-control" required>
 											<div class="invalid-feedback">Requerido.</div>
 										</td>
 										<td>
-											<input type="text" name="position[]" class="form-control" placeholder="Gerente">
+											<input type="text" name="position[]" class="form-control">
 										</td>
 										<td>
-											<input type="email" name="contact_email[]" class="form-control" placeholder="juan@ejemplo.com" required>
+											<input type="email" name="contact_email[]" class="form-control" required>
 											<div class="invalid-feedback">Email inválido.</div>
 										</td>
 										<td>
-											<input type="text" name="indiv_phone[]" class="form-control" placeholder="+51...">
+											<input type="text" name="indiv_phone[]" class="form-control">
 										</td>
 										<td class="text-center">
 											<button type="button" class="btn btn-light btn-sm" disabled><i class="bi bi-dash-circle"></i></button>
