@@ -162,7 +162,7 @@
                                                 <span class="text-danger">Eliminado</span>
                                             <?php endif; ?>
                                         </td>
-                                        <td class="fw-bold"><?= $co->contact_name; ?></td>
+                                        <td><?= $co->contact_name; ?></td>
                                         <td><?= $co->position ? $co->position : '-'; ?></td>
                                         <td><?= $co->email; ?></td>
                                         <td><?= $co->phone ? $co->phone : '-'; ?></td>
