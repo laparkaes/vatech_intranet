@@ -1,80 +1,122 @@
-<h2>Editar Distribuidor: <?php echo $distributor->name; ?></h2>
+<div class="pagetitle">
+    <h1>Editar Distribuidor</h1>
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="<?= base_url() ?>">Dashboard</a></li>
+            <li class="breadcrumb-item">Mantenimiento</li>
+            <li class="breadcrumb-item"><a href="<?= base_url("distributor") ?>">Distribuidores</a></li>
+            <li class="breadcrumb-item active">Editar</li>
+        </ol>
+    </nav>
+</div>
 
-<form action="<?php echo base_url('distributor/update'); ?>" method="post">
-    <input type="hidden" name="id" value="<?php echo $distributor->id; ?>">
+<section class="section">
+    <div class="row">
+        <div class="col-12">
+            <div>
+                <a href="<?= base_url('distributor/view/'.$distributor->id) ?>" class="btn btn-primary mb-3">
+                    <i class="bi bi-arrow-left"></i> Volver al Detalle
+                </a>
+            </div>
 
-    <fieldset>
-        <legend>Información de Registro (No editable)</legend>
-        
-        <label>País de Origen:</label>
-        <input type="text" value="<?php echo $distributor->country; ?>" readonly>
-        <input type="hidden" name="country_id" value="<?php echo $distributor->country_id; ?>">
+            <form action="<?= base_url('distributor/update'); ?>" method="post" class="needs-validation" novalidate>
+                <input type="hidden" name="id" value="<?= $distributor->id; ?>">
 
-        <br>
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Datos del Distribuidor: <?= $distributor->name; ?></h5>
+                        
+                        <div class="row g-3">
+                            <div class="col-md-9">
+                                <label class="form-label d-block">Tipo</label>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="checkbox" name="is_vendor" id="is_vendor" value="1" <?= ($distributor->is_vendor) ? 'checked' : ''; ?>>
+                                    <label class="form-check-label" for="is_vendor">Proveedor</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="checkbox" name="is_dealer" id="is_dealer" value="1" <?= ($distributor->is_dealer) ? 'checked' : ''; ?>>
+                                    <label class="form-check-label" for="is_dealer">Distribuidor</label>
+                                </div>
+                            </div>
 
-        <label>Tax ID / RUC:</label>
-        <input type="text" name="tax_id" value="<?php echo $distributor->tax_id; ?>" readonly>
-        <p><small>* El Tax ID y el país no pueden ser modificados por razones de integridad contable.</small></p>
-    </fieldset>
+                            <div class="col-md-3">
+                                <label class="form-label">Estado de la Entidad</label>
+                                <select name="status" class="form-select">
+                                    <option value="1" <?= ($distributor->status == 1) ? 'selected' : ''; ?>>Activo</option>
+                                    <option value="0" <?= ($distributor->status == 0) ? 'selected' : ''; ?>>Inactivo</option>
+                                </select>
+                            </div>
+                            
+                            <div class="col-md-12">
+                                <label class="form-label">Nombre o Razón Social</label>
+                                <input type="text" name="name" class="form-control" value="<?= $distributor->name; ?>" required>
+                                <div class="invalid-feedback">Por favor, ingrese el nombre.</div>
+                            </div>
 
-    <fieldset>
-        <legend>Roles y Estado Operativo</legend>
-        
-        <input type="checkbox" name="is_vendor" value="1" <?php echo ($distributor->is_vendor) ? 'checked' : ''; ?>>
-        <label>Es Proveedor (Vendor)</label>
-        
-        <br>
+                            <div class="col-md-3">
+                                <label class="form-label text-muted">País (No editable)</label>
+                                <input type="text" class="form-control bg-light" value="<?= $distributor->country_name ?? $distributor->country; ?>" readonly>
+                                <input type="hidden" name="country_id" value="<?= $distributor->country_id; ?>">
+                            </div>
 
-        <input type="checkbox" name="is_dealer" value="1" <?php echo ($distributor->is_dealer) ? 'checked' : ''; ?>>
-        <label>Es Distribuidor (Dealer)</label>
-        
-        <br><br>
+                            <div class="col-md-3">
+                                <label class="form-label text-muted">Tax ID / RUC (No editable)</label>
+                                <input type="text" name="tax_id" class="form-control bg-light" value="<?= $distributor->tax_id; ?>" readonly>
+                            </div>
 
-        <label>Estado de la Entidad:</label>
-        <select name="status">
-            <option value="1" <?php echo ($distributor->status == 1) ? 'selected' : ''; ?>>Activo</option>
-            <option value="0" <?php echo ($distributor->status == 0) ? 'selected' : ''; ?>>Inactivo</option>
-        </select>
-    </fieldset>
+                            <div class="col-md-3">
+                                <label class="form-label">Teléfono Corporativo</label>
+                                <input type="text" name="phone" class="form-control" value="<?= $distributor->phone; ?>">
+                            </div>
 
-    <fieldset>
-        <legend>Datos Actualizables</legend>
-        
-        <label>Nombre o Razón Social:</label>
-        <input type="text" name="name" value="<?php echo $distributor->name; ?>" required>
+                            <div class="col-md-3">
+                                <label class="form-label">Celular/Móvil</label>
+                                <input type="text" name="mobile" class="form-control" value="<?= $distributor->mobile; ?>">
+                            </div>
 
-        <br>
+                            <div class="col-md-6">
+                                <label class="form-label">Dirección</label>
+                                <input type="text" name="address" class="form-control" value="<?= $distributor->address; ?>">
+                            </div>
 
-        <label>Teléfono Corporativo:</label>
-        <input type="text" name="phone" value="<?php echo $distributor->phone; ?>">
+                            <div class="col-md-6">
+                                <label class="form-label">Sitio Web</label>
+                                <input type="text" name="website" class="form-control" value="<?= $distributor->website; ?>">
+                            </div>
 
-        <br>
+                            <div class="col-md-12">
+                                <label class="form-label">Descripción / Notas</label>
+                                <textarea name="description" class="form-control" style="height: 100px;"><?= $distributor->description; ?></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-        <label>Celular/Móvil:</label>
-        <input type="text" name="mobile" value="<?php echo $distributor->mobile; ?>">
-
-        <br>
-
-        <label>Sitio Web:</label>
-        <input type="text" name="website" value="<?php echo $distributor->website; ?>">
-
-        <br>
-
-        <label>Dirección:</label>
-        <textarea name="address"><?php echo $distributor->address; ?></textarea>
-
-        <br>
-
-        <label>Descripción/Notas:</label>
-        <textarea name="description"><?php echo $distributor->description; ?></textarea>
-    </fieldset>
-
-    <br>
-
-    <div>
-        <button type="submit">Actualizar Información</button>
-        <a href="<?php echo base_url('distributor/view/'.$distributor->id); ?>">
-            <button type="button">Cancelar</button>
-        </a>
+                <div class="mt-4 mb-5">
+                    <button type="submit" class="btn btn-primary">
+                        Actualizar
+                    </button>
+                    <a href="<?= base_url('distributor/view/'.$distributor->id); ?>" class="btn btn-secondary">Cancelar</a>
+                </div>
+            </form>
+        </div>
     </div>
-</form>
+</section>
+
+<script>
+// Bootstrap Validation Script
+(function () {
+  'use strict'
+  var forms = document.querySelectorAll('.needs-validation')
+  Array.prototype.slice.call(forms)
+    .forEach(function (form) {
+      form.addEventListener('submit', function (event) {
+        if (!form.checkValidity()) {
+          event.preventDefault()
+          event.stopPropagation()
+        }
+        form.classList.add('was-validated')
+      }, false)
+    })
+})()
+</script>

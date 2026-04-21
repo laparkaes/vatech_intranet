@@ -96,17 +96,17 @@
 
 			<?php if ($user_role === 'admin' || in_array('Compras', $my_access)): ?>
 			<li class="nav-item">
-				<a class="nav-link collapsed" data-bs-target="#purchase-nav" data-bs-toggle="collapse" href="#">
+				<a class="nav-link <?= $this->menu === 'purchase' ? "" : "collapsed" ?>" data-bs-target="#purchase-nav" data-bs-toggle="collapse" href="#">
 					<i class="bi bi-cart"></i><span>Compras</span><i class="bi bi-chevron-down ms-auto"></i>
 				</a>
-				<ul id="purchase-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+				<ul id="purchase-nav" class="nav-content collapse <?= $this->menu === 'purchase' ? "show" : "" ?>" data-bs-parent="#sidebar-nav">
 					<li>
-						<a href="<?php echo base_url('purchase'); ?>">
+						<a href="<?php echo base_url('purchase'); ?>" class="<?= $this->menu_sub === 'purchase' ? "active" : "" ?>">
 							<i class="bi bi-circle"></i><span>Compras</span>
 						</a>
 					</li>
 					<li>
-						<a href="<?php echo base_url('vendor'); ?>">
+						<a href="<?php echo base_url('vendor'); ?>" class="<?= $this->menu_sub === 'vendor' ? "active" : "" ?>">
 							<i class="bi bi-circle"></i><span>Proveedores</span>
 						</a>
 					</li>

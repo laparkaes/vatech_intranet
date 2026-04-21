@@ -104,24 +104,24 @@
                                     </div>
                                     <div class="modal-body">
                                         <div class="row g-3">
-                                            <input type="hidden" name="distributor_id" value="<?= $distributor->id; ?>">
+                                            <input type="hidden" name="entity_id" value="<?= $distributor->id; ?>">
                                             <div class="col-12">
                                                 <label class="form-label">Nombre</label>
-                                                <input type="text" name="contact_name" class="form-control" placeholder="Ej: Juan Pérez" required>
+                                                <input type="text" name="contact_name" class="form-control" required>
                                                 <div class="invalid-feedback">Por favor, ingrese el nombre.</div>
                                             </div>
                                             <div class="col-12">
                                                 <label class="form-label">Cargo</label>
-                                                <input type="text" name="position" class="form-control" placeholder="Ej: Gerente de Ventas">
+                                                <input type="text" name="position" class="form-control">
                                             </div>
                                             <div class="col-12">
                                                 <label class="form-label">Email</label>
-                                                <input type="email" name="email" class="form-control" placeholder="ejemplo@correo.com" required>
+                                                <input type="email" name="email" class="form-control" required>
                                                 <div class="invalid-feedback">Ingrese un correo válido.</div>
                                             </div>
                                             <div class="col-12">
                                                 <label class="form-label">Teléfono</label>
-                                                <input type="text" name="phone" class="form-control" placeholder="+51 ...">
+                                                <input type="text" name="phone" class="form-control">
                                             </div>
                                         </div>
                                     </div>
@@ -196,7 +196,7 @@
                                 <?php else: ?>
                                     <tr>
                                         <td colspan="7" class="text-center py-4 text-muted">
-                                            <i class="bi bi-info-circle me-1"></i> No hay contactos registrados para 이 distribuidor.
+                                            <i class="bi bi-info-circle me-1"></i> No hay contactos registrados.
                                         </td>
                                     </tr>
                                 <?php endif; ?>
