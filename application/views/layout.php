@@ -130,6 +130,11 @@
 							<i class="bi bi-circle"></i><span>Distribuidores</span>
 						</a>
 					</li>
+					<li>
+						<a href="<?php echo base_url('exchange'); ?>" class="<?= $this->menu_sub === 'exchange' ? "active" : "" ?>">
+							<i class="bi bi-circle"></i><span>Tipo de Cambio</span>
+						</a>
+					</li>
 				</ul>
 			</li>
 			<?php endif; ?>
@@ -203,11 +208,6 @@
 					<li>
 						<a href="<?php echo base_url('entity'); ?>" class="<?= $this->menu_sub === 'entity' ? "active" : "" ?>">
 							<i class="bi bi-circle"></i><span>Entidades</span>
-						</a>
-					</li>
-					<li>
-						<a href="<?php echo base_url('exchange'); ?>" class="<?= $this->menu_sub === 'exchange' ? "active" : "" ?>">
-							<i class="bi bi-circle"></i><span>Tipos de Cambio</span>
 						</a>
 					</li>
 					<li>

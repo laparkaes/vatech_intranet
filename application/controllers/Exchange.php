@@ -6,6 +6,9 @@ class Exchange extends MY_Controller {
     public function __construct() {
         parent::__construct();
         $this->load->model('Exchange_model');
+		
+		$this->menu = "sale";
+		$this->menu_sub = "exchange";
     }
 
     /**
@@ -51,69 +54,90 @@ class Exchange extends MY_Controller {
 	}
 
     /**
-     * Registro con Flash Messages
-     */
-    public function add() {
-        $base   = $this->input->post('base_currency');
-        $target = $this->input->post('target_currency');
-        $date   = $this->input->post('effective_date');
+	 * Registro con Validaciones
+	 */
+	public function add() {
+		$base   = $this->input->post('base_currency');
+		$target = $this->input->post('target_currency');
+		$date   = $this->input->post('effective_date');
+		$rate   = (float)$this->input->post('rate'); // 형변환
 
-        if ($this->Exchange_model->check_duplicate($base, $target, $date)) {
-            $this->session->set_flashdata('error', "Ya existe un registro para $base/$target en la fecha $date.");
-            redirect('exchange/index');
-            return;
-        }
+		// 1. 환율 0 또는 음수 체크
+		if ($rate <= 0) {
+			$this->session->set_flashdata('error', 'La tasa (rate) debe ser mayor que cero.');
+			$this->session->set_flashdata('temp_data', $this->input->post());
+			redirect('exchange/index');
+			return;
+		}
 
-        $data = array(
-            'base_currency'   => $base,
-            'target_currency' => $target,
-            'rate'            => $this->input->post('rate'),
-            'effective_date'  => $date,
-            'created_by'      => $this->session->userdata('user_id') ?? 1
-        );
+		// 2. 중복 체크
+		if ($this->Exchange_model->check_duplicate($base, $target, $date)) {
+			$this->session->set_flashdata('error', "Ya existe un registro para $base/$target en la fecha $date.");
+			$this->session->set_flashdata('temp_data', $this->input->post());
+			redirect('exchange/index');
+			return;
+		}
 
-        if ($this->Exchange_model->insert_rate($data)) {
-            $this->session->set_flashdata('success', 'Tipo de cambio registrado con éxito.');
-        } else {
-            $this->session->set_flashdata('error', 'Error al procesar el registro.');
-        }
-        
-        redirect('exchange/index');
-    }
+		$data = array(
+			'base_currency'   => $base,
+			'target_currency' => $target,
+			'rate'            => $rate,
+			'effective_date'  => $date,
+			'created_by'      => $this->session->userdata('user_id') ?? 1
+		);
 
-    /**
-     * Actualización con Flash Messages
-     */
-    public function update() {
-        $id     = $this->input->post('id');
-        $base   = $this->input->post('base_currency');
-        $target = $this->input->post('target_currency');
-        $date   = $this->input->post('effective_date');
+		if ($this->Exchange_model->insert_rate($data)) {
+			$this->session->set_flashdata('success', 'Tipo de cambio registrado con éxito.');
+		} else {
+			$this->session->set_flashdata('temp_data', $this->input->post());
+			$this->session->set_flashdata('error', 'Error al procesar el registro.');
+		}
+		
+		redirect('exchange/index');
+	}
 
-        if ($this->Exchange_model->check_duplicate($base, $target, $date, $id)) {
-            $this->session->set_flashdata('error', 'No se puede actualizar. Existe otro registro idéntico.');
-            redirect('exchange/edit/' . $id);
-            return;
-        }
+	/**
+	 * Actualización con Validaciones
+	 */
+	public function update() {
+		$id     = $this->input->post('id');
+		$base   = $this->input->post('base_currency');
+		$target = $this->input->post('target_currency');
+		$date   = $this->input->post('effective_date');
+		$rate   = (float)$this->input->post('rate');
 
-        $data = array(
-            'base_currency'   => $base,
-            'target_currency' => $target,
-            'rate'            => $this->input->post('rate'),
-            'effective_date'  => $date,
-            'created_by'      => $this->session->userdata('user_id') ?? 1
-        );
+		// 1. 환율 0 또는 음수 체크
+		if ($rate <= 0) {
+			$this->session->set_flashdata('error', 'La tasa (rate) debe ser mayor que cero.');
+			// 수정 시에는 해당 페이지 또는 모달 유지를 위해 index로 가되 에러 메시지 전달
+			redirect('exchange/index'); 
+			return;
+		}
 
-        if ($this->Exchange_model->update_rate($id, $data)) {
-            $this->session->set_flashdata('success', 'Actualización completada.');
-            redirect('exchange/index');
-        } else {
-            $this->session->set_flashdata('error', 'Error al intentar actualizar.');
-            redirect('exchange/edit/' . $id);
-        }
-    }
+		// 2. 중복 체크 (본인 제외)
+		if ($this->Exchange_model->check_duplicate($base, $target, $date, $id)) {
+			$this->session->set_flashdata('error', 'No se puede actualizar. Existe otro registro idéntico.');
+			redirect('exchange/index');
+			return;
+		}
 
-    public function edit($id) {
+		$data = array(
+			'base_currency'   => $base,
+			'target_currency' => $target,
+			'rate'            => $rate,
+			'effective_date'  => $date,
+			'created_by'      => $this->session->userdata('user_id') ?? 1
+		);
+
+		if ($this->Exchange_model->update_rate($id, $data)) {
+			$this->session->set_flashdata('success', 'Actualización completada.');
+		} else {
+			$this->session->set_flashdata('error', 'Error al intentar actualizar.');
+		}
+		redirect('exchange/index');
+	}
+  
+	public function edit($id) {
         $data['rate_item'] = $this->Exchange_model->get_rate_by_id($id);
         if (!$data['rate_item']) {
             $this->session->set_flashdata('error', 'Registro no encontrado.');
@@ -123,4 +147,244 @@ class Exchange extends MY_Controller {
         $data['main'] = 'exchange/edit';
         $this->load->view('layout', $data);
     }
+
+	public function aux(){
+		
+		$url = "https://serums-proyecto.onrender.com/api/hospitales/map?profesion=MEDICINA&grado_dificultad=GD-5&serums_periodo=2026-I";
+
+		$ch = curl_init();
+		curl_setopt($ch, CURLOPT_URL, $url);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); // HTTPS 인증서 무시 필요 시
+
+		$response = curl_exec($ch);
+		curl_close($ch);
+
+		// 데이터 변환 및 저장
+		$result = json_decode($response, true);
+		
+		echo "Total: ".count($result)." instituciones<br/><br/><br/>==================================<br/>";
+		
+		
+		
+		
+		
+		
+		foreach($result as $i => $item_result){
+			if ($i > 1) break;
+			
+			$details = $this->aux_($item_result['id']);
+			
+			
+			print_r($details);
+		
+			$id = $details['id'];
+			$profesion = $details['profesion'];
+			$profesiones = $details['profesiones'];
+			$institucion = $details['institucion'];
+			$departamento = $details['departamento'];
+			$provincia = $details['provincia'];
+			$distrito = $details['distrito'];
+			$grado_dificultad = $details['grado_dificultad'];
+			$codigo_renipress_modular = $details['codigo_renipress_modular'];
+			$nombre_establecimiento = $details['nombre_establecimiento'];
+			$presupuesto = $details['presupuesto'];
+			$categoria = $details['categoria'];
+			$zaf = $details['zaf'];
+			$ze = $details['ze'];
+			$imagenes = $details['imagenes'];
+			$lat = $details['lat'];
+			$lng = $details['lng'];
+			$coordenadas_fuente = $details['coordenadas_fuente'];
+			$override_updated_at = $details['override_updated_at'];
+			$updated_at = $details['updated_at'];
+			$encaps_puntaje_2025_i = $details['encaps_puntaje_2025_i'];
+			$encaps_serumista_2025_i = $details['encaps_serumista_2025_i'];
+			
+			
+			$serums_ofertas = $details['serums_ofertas'];
+			
+			$aux = [];
+					
+			foreach($details['serums_ofertas'] as $v){
+				
+				if ($v['profesion'] === 'MEDICINA'){
+				
+					$aux[] = $v['periodo'].", ".$v['modalidad'].", ".$v['profesion'].", ".$v['plazas']." Plazas";
+
+				}
+			}
+			
+			$serums_ofertas = implode("<br/>", $aux);
+			
+			//$serums_resumen = $details['serums_resumen']; //no se necesita
+			
+			$encaps_2025_i = $details['encaps_2025_i'];
+			
+			foreach($details['encaps_2025_i'] as $v){
+				
+				if ($v['profesion'] === 'MEDICINA'){
+					//print_r($v); 
+					
+					$entries = $v['entries'];
+					foreach($entries as $entry){
+						//print_r($entry); 
+						
+						$encaps_2025_i_periodo = $v['periodo'];
+						$encaps_2025_i_modalidad = $v['modalidad'];
+						$encaps_2025_i_profesion = $v['profesion'];
+						$encaps_2025_i_serumista = $entry['serumista'];
+						$encaps_2025_i_nota = $entry['nota'];
+						
+						echo $encaps_2025_i_nota."<br/><br/><br/><br/>";
+					}
+				}
+			}
+			
+			
+		}
+		
+		
+		return;
+		
+		
+		
+		
+		
+		
+		echo "<table>";
+		echo "<tr>";
+		echo "
+				<td>id</td>
+				<td>profesion</td>
+				<td>profesiones</td>
+				<td>institucion</td>
+				<td>departamento</td>
+				<td>provincia</td>
+				<td>distrito</td>
+				<td>grado_dificultad</td>
+				<td>codigo_renipress_modular</td>
+				<td>nombre_establecimiento</td>
+				<td>presupuesto</td>
+				<td>categoria</td>
+				<td>zaf</td>
+				<td>ze</td>
+				<td>imagenes</td>
+				<td>lat</td>
+				<td>lng</td>
+				<td>coordenadas_fuente</td>
+				<td>override_updated_at</td>
+				<td>updated_at</td>
+				<td>encaps_puntaje_2025_i</td>
+				<td>encaps_serumista_2025_i</td>
+				<td>encaps_2025_i</td>
+				<td>serums_ofertas</td>
+				<td>serums_resumen</td>";
+		echo "</tr>";
+		
+		foreach($result as $i => $item){
+			//print_r($item); echo "<br/><br/>";
+			
+			$detail = $this->aux_($item['id']);
+			//print_r($detail); echo "<br/><br/>";
+			
+			echo "<tr>";
+			
+			foreach($detail as $key => $values){
+				
+				//echo "--".$key."/--<br/>";
+				
+				echo "<td>";
+				
+				$cell = "";
+				if ($key === "encaps_2025_i"){
+					foreach($values as $v){
+						
+						if ($v['profesion'] === 'MEDICINA'){
+							//print_r($v); 
+							
+							$entries = $v['entries'];
+							foreach($entries as $entry){
+								//print_r($entry); 
+								
+								$cell .= $v['periodo'].", ".$v['modalidad'].", ".$v['profesion'].", ".$entry['serumista'].", ".$entry['nota'];
+							}
+						}
+					}
+				}elseif ($key === "serums_ofertas"){
+					
+					$aux = [];
+					
+					foreach($values as $v){
+						
+						if ($v['profesion'] === 'MEDICINA'){
+							//print_r($v);
+							
+							$aux[] = $v['periodo'].", ".$v['modalidad'].", ".$v['profesion'].", ".$v['plazas']." Plazas";
+							
+							//echo "<br/><br/>";
+						}
+					}
+					
+					$cell .= implode("<br/>", $aux);
+				}elseif ($key === "serums_resumen"){
+					
+					/*
+					$aux = [];
+					
+					foreach($values as $v){
+						
+						if ($v['profesion'] === 'MEDICINA'){
+							//print_r($v);
+							
+							$aux[] = $v['periodo'].", ".$v['modalidad'].", ".$v['profesion'].", ".$v['plazas']." Plazas";
+							
+							//echo "<br/><br/>";
+						}
+					}
+					
+					$cell .= implode("<br/>", $aux);
+					*/
+					
+					//print_r($values);
+					
+					$cell .= "";
+				}elseif ($key === "profesiones") $cell .= implode(", ", $values);
+				elseif ($values) $cell = $values;
+				
+				
+				echo $cell."</td>";
+				
+				//echo "<br/>";
+			}
+			
+			echo "</tr>";
+			
+			//echo "<br/>==================================<br/>";
+			
+			if ($i > 1) break;
+		}
+		
+		echo "</table>";
+	}
+	
+	public function aux_($id){
+		
+		$url = "https://serums-proyecto.onrender.com/api/hospitales/".$id;
+
+		$ch = curl_init();
+		curl_setopt($ch, CURLOPT_URL, $url);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); // HTTPS 인증서 무시 필요 시
+
+		$response = curl_exec($ch);
+		curl_close($ch);
+
+		// 데이터 변환 및 저장
+		$result = json_decode($response, true);
+		
+		return $result;
+	}
 }

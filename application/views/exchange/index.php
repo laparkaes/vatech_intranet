@@ -1,10 +1,10 @@
 <div class="pagetitle">
-    <h1>Gestión de Tipos de Cambio</h1>
+    <h1>Gestión de Tipo de Cambio</h1>
     <nav>
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="<?= base_url() ?>">Dashboard</a></li>
             <li class="breadcrumb-item">Configuración</li>
-            <li class="breadcrumb-item active">Tipos de Cambio</li>
+            <li class="breadcrumb-item active">Tipo de Cambio</li>
         </ol>
     </nav>
 </div>
@@ -80,6 +80,11 @@
     </div>
 </section>
 
+<?php 
+    // 리다이렉트 후 전달된 임시 데이터가 있는지 확인
+    $temp = $this->session->flashdata('temp_data'); 
+?>
+
 <div class="modal fade" id="addExchangeModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
         <form action="<?php echo base_url('exchange/add'); ?>" method="post" class="modal-content needs-validation" novalidate>
@@ -92,24 +97,26 @@
                     <div class="col-md-6">
                         <label class="form-label">Moneda Base</label>
                         <select name="base_currency" class="form-select" required>
-                            <option value="USD">USD - Dólar</option>
-                            <option value="PEN">PEN - Sol</option>
+                            <option value="USD" <?php echo (isset($temp['base_currency']) && $temp['base_currency'] == 'USD') ? 'selected' : ''; ?>>USD - Dólar</option>
+                            <option value="PEN" <?php echo (isset($temp['base_currency']) && $temp['base_currency'] == 'PEN') ? 'selected' : ''; ?>>PEN - Sol</option>
                         </select>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Moneda Destino</label>
                         <select name="target_currency" class="form-select" required>
-                            <option value="PEN" selected>PEN - Sol</option>
-                            <option value="USD">USD - Dólar</option>
+                            <option value="PEN" <?php echo (!isset($temp) || (isset($temp['target_currency']) && $temp['target_currency'] == 'PEN')) ? 'selected' : ''; ?>>PEN - Sol</option>
+                            <option value="USD" <?php echo (isset($temp['target_currency']) && $temp['target_currency'] == 'USD') ? 'selected' : ''; ?>>USD - Dólar</option>
                         </select>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Tasa (Rate)</label>
-                        <input type="number" name="rate" class="form-control" step="0.0001" placeholder="Ej: 3.7550" required>
+                        <input type="number" name="rate" class="form-control" step="0.0001" 
+                               value="<?php echo $temp['rate'] ?? ''; ?>" required>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Fecha Efectiva</label>
-                        <input type="date" name="effective_date" class="form-control" value="<?= date('Y-m-d') ?>" required>
+                        <input type="date" name="effective_date" class="form-control" 
+                               value="<?php echo $temp['effective_date'] ?? date('Y-m-d'); ?>" required>
                     </div>
                 </div>
             </div>
