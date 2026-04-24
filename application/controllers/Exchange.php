@@ -1,4 +1,4 @@
-<?php
+#<?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Exchange extends MY_Controller {
@@ -164,22 +164,51 @@ class Exchange extends MY_Controller {
 		// 데이터 변환 및 저장
 		$result = json_decode($response, true);
 		
-		echo "Total: ".count($result)." instituciones<br/><br/><br/>==================================<br/>";
+		//echo "Total: ".count($result)." instituciones<br/><br/><br/>";
 		
+		$rows = [];
+		$row = [
+			'id',
+			//'profesion',
+			//'profesiones',
+			'institucion',
+			'departamento',
+			'provincia',
+			'distrito',
+			'grado_dificultad',
+			'codigo_renipress_modular',
+			'nombre_establecimiento',
+			'presupuesto',
+			'categoria',
+			'zaf',
+			'ze',
+			//'imagenes',
+			'lat',
+			'lng',
+			'coordenadas_fuente',
+			//'override_updated_at',
+			'updated_at',
+			//'encaps_puntaje_2025_i',
+			//'encaps_serumista_2025_i',
+			'serums_ofertas',
+			'encaps_2025_i_periodo',
+			'encaps_2025_i_modalidad',
+			'encaps_2025_i_profesion',
+			'encaps_2025_i_serumista',
+			'encaps_2025_i_nota',
+		];
 		
-		
-		
-		
+		$rows[] = $row;
+		//print_r($row); echo "<br/><br/>";
 		
 		foreach($result as $i => $item_result){
-			if ($i > 1) break;
+			//if ($i > 100) break;
 			
 			$details = $this->aux_($item_result['id']);
 			
-			
-			print_r($details);
+			//print_r($details);
 		
-			$id = $details['id'];
+			$id = (string)$details['id'];
 			$profesion = $details['profesion'];
 			$profesiones = $details['profesiones'];
 			$institucion = $details['institucion'];
@@ -217,6 +246,7 @@ class Exchange extends MY_Controller {
 			}
 			
 			$serums_ofertas = implode("<br/>", $aux);
+			$serums_ofertas = $aux ? $aux[0] : "";
 			
 			//$serums_resumen = $details['serums_resumen']; //no se necesita
 			
@@ -237,7 +267,42 @@ class Exchange extends MY_Controller {
 						$encaps_2025_i_serumista = $entry['serumista'];
 						$encaps_2025_i_nota = $entry['nota'];
 						
-						echo $encaps_2025_i_nota."<br/><br/><br/><br/>";
+						$row = [
+							$id,	
+							//$profesion,	
+							//$profesiones,	
+							$institucion,	
+							$departamento,	
+							$provincia,	
+							$distrito,	
+							$grado_dificultad,	
+							$codigo_renipress_modular,	
+							$nombre_establecimiento,	
+							$presupuesto,	
+							$categoria,	
+							$zaf,	
+							$ze,	
+							//$imagenes,	
+							$lat,	
+							$lng,	
+							$coordenadas_fuente,	
+							//$override_updated_at,	
+							$updated_at,	
+							//$encaps_puntaje_2025_i,	
+							//$encaps_serumista_2025_i,	
+							$serums_ofertas,
+							$encaps_2025_i_periodo,	
+							$encaps_2025_i_modalidad,	
+							$encaps_2025_i_profesion,	
+							$encaps_2025_i_serumista,	
+							$encaps_2025_i_nota,
+						];
+						
+						$rows[] = $row;
+						
+						//print_r($row); echo "<br/><br/>";
+						
+						//echo $encaps_2025_i_nota."<br/><br/><br/><br/>";
 					}
 				}
 			}
@@ -246,127 +311,24 @@ class Exchange extends MY_Controller {
 		}
 		
 		
-		return;
-		
-		
-		
-		
-		
-		
 		echo "<table>";
-		echo "<tr>";
-		echo "
-				<td>id</td>
-				<td>profesion</td>
-				<td>profesiones</td>
-				<td>institucion</td>
-				<td>departamento</td>
-				<td>provincia</td>
-				<td>distrito</td>
-				<td>grado_dificultad</td>
-				<td>codigo_renipress_modular</td>
-				<td>nombre_establecimiento</td>
-				<td>presupuesto</td>
-				<td>categoria</td>
-				<td>zaf</td>
-				<td>ze</td>
-				<td>imagenes</td>
-				<td>lat</td>
-				<td>lng</td>
-				<td>coordenadas_fuente</td>
-				<td>override_updated_at</td>
-				<td>updated_at</td>
-				<td>encaps_puntaje_2025_i</td>
-				<td>encaps_serumista_2025_i</td>
-				<td>encaps_2025_i</td>
-				<td>serums_ofertas</td>
-				<td>serums_resumen</td>";
-		echo "</tr>";
 		
-		foreach($result as $i => $item){
-			//print_r($item); echo "<br/><br/>";
+		foreach($rows as $row){
 			
-			$detail = $this->aux_($item['id']);
-			//print_r($detail); echo "<br/><br/>";
+			//print_r($row);
 			
+			/*
+			*/
 			echo "<tr>";
 			
-			foreach($detail as $key => $values){
-				
-				//echo "--".$key."/--<br/>";
-				
-				echo "<td>";
-				
-				$cell = "";
-				if ($key === "encaps_2025_i"){
-					foreach($values as $v){
-						
-						if ($v['profesion'] === 'MEDICINA'){
-							//print_r($v); 
-							
-							$entries = $v['entries'];
-							foreach($entries as $entry){
-								//print_r($entry); 
-								
-								$cell .= $v['periodo'].", ".$v['modalidad'].", ".$v['profesion'].", ".$entry['serumista'].", ".$entry['nota'];
-							}
-						}
-					}
-				}elseif ($key === "serums_ofertas"){
-					
-					$aux = [];
-					
-					foreach($values as $v){
-						
-						if ($v['profesion'] === 'MEDICINA'){
-							//print_r($v);
-							
-							$aux[] = $v['periodo'].", ".$v['modalidad'].", ".$v['profesion'].", ".$v['plazas']." Plazas";
-							
-							//echo "<br/><br/>";
-						}
-					}
-					
-					$cell .= implode("<br/>", $aux);
-				}elseif ($key === "serums_resumen"){
-					
-					/*
-					$aux = [];
-					
-					foreach($values as $v){
-						
-						if ($v['profesion'] === 'MEDICINA'){
-							//print_r($v);
-							
-							$aux[] = $v['periodo'].", ".$v['modalidad'].", ".$v['profesion'].", ".$v['plazas']." Plazas";
-							
-							//echo "<br/><br/>";
-						}
-					}
-					
-					$cell .= implode("<br/>", $aux);
-					*/
-					
-					//print_r($values);
-					
-					$cell .= "";
-				}elseif ($key === "profesiones") $cell .= implode(", ", $values);
-				elseif ($values) $cell = $values;
-				
-				
-				echo $cell."</td>";
-				
-				//echo "<br/>";
-			}
+			foreach($row as $item) echo "<td>".$item."</td>";
 			
 			echo "</tr>";
-			
-			//echo "<br/>==================================<br/>";
-			
-			if ($i > 1) break;
 		}
 		
 		echo "</table>";
+		
+		
 	}
 	
 	public function aux_($id){
