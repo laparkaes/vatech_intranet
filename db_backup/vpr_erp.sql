@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- 생성 시간: 26-04-18 01:56
+-- 생성 시간: 26-04-25 01:15
 -- 서버 버전: 10.4.24-MariaDB
 -- PHP 버전: 7.4.29
 
@@ -42,6 +42,7 @@ CREATE TABLE `access` (
 --
 
 INSERT INTO `access` (`id`, `access_name`, `description`, `status`, `created_at`, `updated_by`, `updated_at`) VALUES
+(0, 'Logistica', 'Operaciones logisticas', 1, '2026-04-24 17:28:39', 1, '2026-04-24 17:28:39'),
 (1, 'Compras', 'Acceso al módulo de adquisiciones, órdenes de compra y gestión de proveedores.', 1, '2026-03-17 16:25:10', 1, '2026-04-10 17:29:03'),
 (2, 'Ventas', 'Acceso al módulo de facturación, pedidos de clientes y gestión de distribuidores.', 1, '2026-03-17 16:25:10', 1, '2026-04-10 17:29:06'),
 (3, 'Maestro', 'Acceso a la configuración de datos base como productos, categorías y divisiones.', 1, '2026-03-17 16:25:10', 1, '2026-03-17 16:25:10'),
@@ -72,6 +73,7 @@ CREATE TABLE `access_requests` (
 --
 
 INSERT INTO `access_requests` (`id`, `user_id`, `access_id`, `module_name`, `reason`, `status`, `updated_by`, `admin_comment`, `processed_by_id`, `created_at`, `updated_at`) VALUES
+(0, 1, 0, '', 'trabajo', 'PENDING', NULL, NULL, NULL, '2026-04-24 18:14:08', NULL),
 (13, 1, 1, '', 'trabajo', 'REJECTED', 1, NULL, NULL, '2026-03-17 22:47:00', '2026-03-17 22:47:21'),
 (14, 1, 2, '', 'trabajo', 'REJECTED', 1, NULL, NULL, '2026-03-17 22:47:00', '2026-03-17 22:47:26'),
 (15, 1, 3, '', 'trabajo', 'APPROVED', 1, NULL, NULL, '2026-03-17 22:47:00', '2026-03-17 22:47:27'),
@@ -164,7 +166,9 @@ INSERT INTO `entities` (`id`, `name`, `country_id`, `tax_id`, `is_vendor`, `is_d
 (2, 'asfdsflk sdflk j', 3, '23482349', 1, 1, '', 'www.holamundo.com', '123 131 312', '234 2423 423', 'isadl kfjasdfk jsalfk saj flksa;j fsd\r\nsa df\r\nsa fsad\r\nfsad fsad fsa f', 1, 1, '2026-03-18 18:27:48', '2026-04-07 18:19:11'),
 (3, 'testeeeeeeetesteeeeeee', 1, 'testeeeeeee', 1, 1, 'testeeeeeeetesteeeeeee', 'testeeeeeeetesteeeeeee', 'testeeeeeeetesteeeeeee', 'testeeeeeeetesteeeeeee', 'testeeeeeeetesteeeeeee', 1, 1, '2026-03-25 12:09:20', '2026-04-07 18:19:02'),
 (4, 'eeestedte', 4, 'eeestedte', 1, 0, 'eeestedte', 'eeestedte.co', 'eeestedte', 'eeestedte', 'eeestedte', 1, 1, '2026-03-25 12:11:33', '2026-03-25 12:11:33'),
-(5, 'Otra prueba de distribuidor', 2, '3242432423', 0, 1, 'sdlfkjsafsdasad fsdaf sad fsad fsa fsd 23``', 'www.faceook.cok', '234324kjhkjsfsa32`', 'sfoakj3sdfsd932`', 'dsfas fsa\\\r\nf sa\r\n fas\r\n fsa\r\n fsa\r\n fsa\r\n fsadfsafaslfkjsflk;sjafl', 1, 1, '2026-04-17 18:15:21', '2026-04-17 18:15:21');
+(5, 'Otra prueba de distribuidor', 2, '3242432423', 0, 1, 'sdlfkjsafsdasad fsdaf sad fsad fsa fsd 23``', 'www.faceook.cok', '234324kjhkjsfsa32`', 'sfoakj3sdfsd932`', 'dsfas fsa\\\r\nf sa\r\n fas\r\n fsa\r\n fsa\r\n fsa\r\n fsadfsafaslfkjsflk;sjafl', 1, 1, '2026-04-17 18:15:21', '2026-04-17 18:15:21'),
+(6, 'distribuidor desde distribuidor1', 4, '2937420384', 0, 1, 'av tal cual por alla1', 'www.faceo.fdo1', '138372921', '398723941', '3123131\r\n213sdfsd\r\nsdft;te;lrk', 1, 1, '2026-04-19 18:04:49', '2026-04-20 17:32:40'),
+(7, 'probando proveedor1', 3, '3294873', 1, 1, 'av probando 234, Surquillo1', 'provado.com1', '2342 324 1', '1123 123 2131', 'sdafasfsafas fsa fsad fsa fsa fsa fsa fds fsad fsd fsd1\r\nsd fsa fsda fsda fsda fsd fsd f\r\nsd faofpwfwaegesogjds ds fsda f1', 1, 1, '2026-04-21 12:27:06', '2026-04-21 16:29:25');
 
 -- --------------------------------------------------------
 
@@ -194,15 +198,20 @@ INSERT INTO `entity_contacts` (`id`, `entity_id`, `contact_name`, `position`, `e
 (3, 1, 'testeeeeeee', 'testeeeeeee', 'testeeeeeee@testeeeeeee.co', 'testeeeeeee', 0, 1, '2026-03-25 12:10:52'),
 (4, 4, 'eeestedte', 'eeestedte', 'eeestedte@df.co', 'eeestedte', 0, 0, '2026-03-25 12:11:33'),
 (5, 3, 'ho1111', 'ho1111', 'ho1111@ho1111.c', 'ho1111', 0, 1, '2026-03-25 12:21:53'),
-(6, 4, 'Jeong Woo Park', 'Gerente de Michi', 'ladasf@dsfsadf.com', '992533099', 0, 1, '2026-04-13 18:06:43'),
-(7, 4, 'fulanito park', 'michi', 'asdf@sdfsda.com', '123 123 123', 1, 1, '2026-04-13 18:07:52'),
+(6, 4, 'Jeong Woo Park', 'Gerente de Michi', 'ladasf@dsfsadf.com', '992533099', 0, 0, '2026-04-13 18:06:43'),
+(7, 4, 'fulanito park', 'michi', 'asdf@sdfsda.com', '123 123 123', 0, 0, '2026-04-13 18:07:52'),
 (8, 4, 'hola hola', 'saludador', 'werwe@werdfs.com', '123 123 543', 0, 0, '2026-04-13 18:08:17'),
 (9, 4, 'testgin', '', 'sadf@sdaf.com', '', 0, 1, '2026-04-17 12:15:20'),
 (10, 0, 'encargado 1', 'gerente general', 'sdfsd@safds.com', '23489238', 1, 1, '2026-04-17 17:49:08'),
 (11, 0, 'Encargado 2', 'Fulanito', 'sdfasdf@sdfasd.com', '32 234 24 sdfsd', 1, 1, '2026-04-17 17:49:08'),
 (12, 5, 'sadf sa sdaf', 'dsfsadf', 'sdafsda@sdf.co', 'sdafsadf', 0, 1, '2026-04-17 18:15:21'),
 (13, 5, 'sdafsadf', 'sdafsadf', 'sdafsdf@sdf.csdsd', 'sadfsadf', 1, 1, '2026-04-17 18:15:21'),
-(14, 5, 'asdfsdf', 'lk', 'jlk@sadfsa.co', 'jk', 0, 1, '2026-04-17 18:15:21');
+(14, 5, 'asdfsdf', 'lk', 'jlk@sadfsa.co', 'jk', 0, 1, '2026-04-17 18:15:21'),
+(15, 6, 'Jeong Woo Park1', 'Gerente General1', 'laparkaes@gmail.com1', '9925330991', 1, 1, '2026-04-19 18:04:49'),
+(16, 6, 'Por si acaso voy12', 'Gerente administracion12', 'milagros@dddd.co12', '9234-3847512', 0, 1, '2026-04-19 18:04:49'),
+(17, 7, 'asfsdaf', 'sdfsaf', 'sdafsadf@sdfas.com', 'sdafsdaf', 0, 1, '2026-04-21 12:27:06'),
+(18, 7, 'sdfs ', 'sdfsadf', 'sdfsadf@sdaf.co', 'asfd', 0, 1, '2026-04-21 12:27:06'),
+(19, 7, 'asfasd ', 'sadfasf', 'sdfsdaf@sdafdsa.ce', 'sdafsadf', 1, 1, '2026-04-21 12:38:29');
 
 -- --------------------------------------------------------
 
@@ -255,7 +264,8 @@ INSERT INTO `exchange_rates` (`id`, `base_currency`, `target_currency`, `rate`, 
 (30, 'USD', 'PEN', '3.7758', '2026-03-24', 1, '2026-03-26 21:17:12'),
 (31, 'USD', 'PEN', '3.7272', '2026-03-25', 1, '2026-03-26 21:17:12'),
 (32, 'USD', 'PEN', '3.7683', '2026-03-26', 1, '2026-03-26 21:17:12'),
-(34, 'USD', 'PEN', '3.3000', '2026-03-28', 1, '2026-03-28 06:25:48');
+(34, 'USD', 'PEN', '3.3000', '2026-03-28', 1, '2026-03-28 06:25:48'),
+(0, 'USD', 'PEN', '3.3410', '2026-04-23', 1, '2026-04-23 19:59:14');
 
 -- --------------------------------------------------------
 
@@ -8273,7 +8283,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `email`, `division_id`, `hire_date`, `role`, `password`, `full_name`, `status`, `created_at`, `updated_at`, `last_login`) VALUES
-(1, 'jeongwoo.park@vatechglobal.com', 1, '2026-01-01', 'admin', '$2y$10$kcsUNDEhyZyEKmLdsBYETuKRqXH698XumTxv1/40w9z1Qqq61LwL.', 'Jeong Woo Park', 1, '2026-04-11 14:47:35', '2026-04-17 15:52:19', '2026-04-17 15:52:19');
+(1, 'jeongwoo.park@vatechglobal.com', 1, '2026-01-01', 'admin', '$2y$10$kcsUNDEhyZyEKmLdsBYETuKRqXH698XumTxv1/40w9z1Qqq61LwL.', 'Jeong Woo Park', 1, '2026-04-11 14:47:35', '2026-04-24 16:39:46', '2026-04-24 16:39:46');
 
 -- --------------------------------------------------------
 
@@ -8575,13 +8585,13 @@ ALTER TABLE `divisions`
 -- 테이블의 AUTO_INCREMENT `entities`
 --
 ALTER TABLE `entities`
-  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- 테이블의 AUTO_INCREMENT `entity_contacts`
 --
 ALTER TABLE `entity_contacts`
-  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- 테이블의 AUTO_INCREMENT `inbounds`

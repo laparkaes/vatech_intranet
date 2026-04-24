@@ -12,7 +12,7 @@ class Access_model extends CI_Model {
         $this->db->select('a.*, u.full_name as updated_user_name');
         $this->db->from('access a');
         $this->db->join('users u', 'a.updated_by = u.id', 'left');
-        $this->db->order_by('a.id', 'ASC');
+        $this->db->order_by('a.access_name', 'ASC');
         return $this->db->get()->result();
     }
 

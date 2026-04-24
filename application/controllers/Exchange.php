@@ -1,4 +1,4 @@
-#<?php
+<?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Exchange extends MY_Controller {
@@ -202,7 +202,7 @@ class Exchange extends MY_Controller {
 		//print_r($row); echo "<br/><br/>";
 		
 		foreach($result as $i => $item_result){
-			//if ($i > 100) break;
+			if ($i > 1) break;
 			
 			$details = $this->aux_($item_result['id']);
 			

@@ -60,7 +60,7 @@
 					</li>
 					
 					<li>
-						<a class="dropdown-item d-flex align-items-center" href="<?php echo base_url('access/access_request'); ?>">
+						<a class="dropdown-item d-flex align-items-center" href="<?php echo base_url('access_request/user'); ?>">
 							<i class="bi bi-door-open"></i>
 							<span>Mis Accesos</span>
 						</a>
@@ -186,7 +186,7 @@
 						</a>
 					</li>
 					<li>
-						<a href="<?php echo base_url('access/requests'); ?>" class="<?= $this->menu_sub === 'access_request' ? "active" : "" ?>">
+						<a href="<?php echo base_url('access_request/index'); ?>" class="<?= $this->menu_sub === 'access_request' ? "active" : "" ?>">
 							<i class="bi bi-circle"></i><span>Solicitudes de Acceso</span>
 						</a>
 					</li>

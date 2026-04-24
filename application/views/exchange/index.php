@@ -13,24 +13,24 @@
     <div class="row">
         <div class="col-12">
             <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addExchangeModal">
-                <i class="bi bi-plus"></i> Registrar Tasa
+                <i class="bi bi-plus"></i> Registrar
             </button>
         </div>
 
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
-                    <h5 class="card-title">Historial de Tasas</h5>
+                    <h5 class="card-title">Lista</h5>
                     
-                    <table class="table align-middle">
+                    <table class="table align-middle text-center">
                         <thead>
                             <tr>
                                 <th scope="col">No.</th>
-                                <th scope="col">Par de Divisas</th>
-                                <th scope="col">Tasa (Rate)</th>
-                                <th scope="col">Promedio (30)</th>
-                                <th scope="col">Fecha Efectiva</th>
-                                <th scope="col">Responsable</th>
+                                <th scope="col">Fecha</th>
+                                <th scope="col">Moneda</th>
+                                <th scope="col">Tipo de Cambio</th>
+                                <th scope="col">Avg30</th>
+                                <th scope="col">Registrado por</th>
                                 <th class="text-end" scope="col">Acciones</th>
                             </tr>
                         </thead>
@@ -39,17 +39,15 @@
                                 <?php foreach($rates as $r): ?>
                                 <tr>
                                     <td><?php echo $start_no++; ?></td>
-                                    <td>
-                                        <span class="badge bg-light text-dark border">1 <?php echo $r->base_currency; ?></span>
-                                        <i class="bi bi-arrow-right text-muted mx-1"></i>
-                                        <span class="badge bg-light text-dark border"><?php echo $r->target_currency; ?></span>
-                                    </td>
-                                    <td><strong><?php echo number_format($r->rate, 4); ?></strong></td>
-                                    <td>
-                                        <span class="text-secondary small">avg: <?php echo number_format($r->avg_30last, 4); ?></span>
-                                    </td>
                                     <td><?php echo $r->effective_date; ?></td>
-                                    <td><small class="text-muted"><?php echo $r->user_name; ?></small></td>
+                                    <td>
+                                        <?php echo $r->base_currency; ?>
+                                        <i class="bi bi-arrow-right"></i>
+                                        <?php echo $r->target_currency; ?>
+                                    </td>
+                                    <td class="bg-light"><?php echo number_format($r->rate, 4); ?></td>
+                                    <td><?php echo number_format($r->avg_30last, 4); ?></td>
+                                    <td><?php echo $r->user_name; ?></td>
                                     <td class="text-end">
                                         <button type="button" class="btn btn-sm btn-outline-primary edit-btn" 
                                                 data-bs-toggle="modal" data-bs-target="#editExchangeModal"
@@ -164,7 +162,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                <button type="submit" class="btn btn-primary">Guardar</button>
             </div>
         </form>
     </div>

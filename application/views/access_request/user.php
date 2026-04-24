@@ -2,7 +2,7 @@
 
 <p>Seleccione todos los tipos de acceso que requiere y proporcione un motivo para su evaluación.</p>
 
-<form action="<?php echo base_url('access/submit_request'); ?>" method="post">
+<form action="<?php echo base_url('access_request/submit_user_request'); ?>" method="post">
     <table border="1">
         <thead>
             <tr>
